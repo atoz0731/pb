@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#111111">
 <title>Private</title>
 <style>
@@ -80,7 +80,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .sender{margin:0 7px 2px;font-size:10px;color:#888}
 .bubbleLine{display:flex;align-items:center;gap:2px;max-width:90%}
 .mine .bubbleLine{flex-direction:row-reverse}
-.bubble{max-width:100%;background:#fff;padding:7px 10px;border-radius:15px;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,.035);line-height:1.38}
+.bubble{max-width:100%;background:#fff;padding:7px 10px;border-radius:15px;word-break:break-word;white-space:pre-wrap;box-shadow:0 1px 2px rgba(0,0,0,.035);line-height:1.38}
 .mine .bubble{background:#222;color:#fff}
 .replyQuote{border-left:3px solid #aaa;padding:4px 7px;margin-bottom:5px;font-size:11px;opacity:.7}
 .emojiBubble{background:transparent!important;box-shadow:none!important;padding:0 3px!important}
@@ -209,12 +209,12 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 
 /* SOLO */
 #soloList{padding:0 14px}
-.post{background:#fff;margin:0 -14px;padding:14px;border-bottom:1px solid #eee}
+.post{background:#fff;margin:0 -14px;padding:9px 12px;border-bottom:1px solid #eee}
 .postHead{display:flex;justify-content:space-between}
 .postUser{font-weight:700;font-size:14px}
 .postTime{color:#999;font-size:10px}
-.postText{white-space:pre-wrap;line-height:1.5;margin:8px 0}
-.postFooter{display:flex;gap:10px}
+.postText{white-space:pre-wrap;line-height:1.35;margin:5px 0}
+.postFooter{display:flex;gap:8px;margin-top:1px}
 .postFooter button{border:0;background:none;color:#777;padding:3px;font-size:12px}
 
 /* CALENDAR */
@@ -246,6 +246,24 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .scheduleMemo{white-space:pre-wrap;font-size:12px;color:#555}
 .scheduleOwner{font-size:10px;color:#999;margin-top:6px}
 .scheduleActions button{border:0;background:none;color:#777;font-size:11px;padding:5px 7px 0 0}
+
+
+/* v3.2 additions */
+.calendarRightBtns{display:flex;gap:6px;align-items:center}
+.todayBtn{height:32px;border:0;background:#111;color:#fff;border-radius:9px;padding:0 10px;font-size:11px;font-weight:700}
+.tabLabelWrap{display:inline-flex;align-items:center;gap:4px}
+.unreadBadge{display:inline-flex;min-width:17px;height:17px;align-items:center;justify-content:center;padding:0 5px;border-radius:10px;background:#d7263d;color:#fff;font-size:10px;font-weight:800}
+.tab.flashNotice{animation:pbTabFlash .55s ease-in-out 4}
+@keyframes pbTabFlash{0%,100%{background:#fff}50%{background:#fff0b8}}
+.settingsGroup{margin:13px 0 4px;font-weight:800;font-size:13px}
+.settingRow{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:10px 0;border-bottom:1px solid #eee}
+.settingRow:last-child{border-bottom:0}
+.settingText{font-size:13px}
+.settingSub{font-size:10px;color:#888;margin-top:3px}
+.settingCheck{width:22px!important;height:22px!important;flex-shrink:0}
+.settingsNote{font-size:10px;color:#888;line-height:1.5;margin-top:9px}
+.dangerButton{width:100%;margin-top:12px;border:0;border-radius:10px;padding:11px;background:#f3e6e6;color:#a1001a;font-weight:700}
+.endDateRow{margin-top:2px}
 
 /* SCHEDULE MODAL */
 .modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:200}
@@ -307,7 +325,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.1.9</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.2.0</span></div>
   </div>
   <div class="headerRight">
     <button id="headerMenuButton" class="headerIcon" aria-label="メニュー">⋯</button>
@@ -315,21 +333,24 @@ audio{display:none}
   <div id="headerMenu" class="headerMenu hidden">
     <button id="menuSearch">🔍 メッセージを検索</button>
     <button id="menuDateFilter">📅 日付で見る</button>
-    <button id="menuVoice" class="hidden">🎙 ボイスルームを開く</button>
+    <button id="menuVoice">🎙 ボイスルームを開く</button>
     <button id="menuSettings">⚙️ 設定</button>
-    <div style="padding:10px 14px;color:#777;font-size:12px;line-height:1.6;border-top:1px solid #eee">
+    <div style="padding:10px 14px;color:#777;font-size:12px;line-height:1.55;border-top:1px solid #eee">
       <div style="font-weight:700;color:#555;margin-bottom:3px">アップデート情報</div>
-      <div>v3.1.9</div>
-      <div>・メッセージメニュー表示を改善</div>
-      <div>・ボイスルームを一時停止</div>
-      <div>・終日予定に対応</div>
+      <div>v3.2.0</div>
+      <div>・複数日の終日予定に対応</div>
+      <div>・トーク内の改行に対応</div>
+      <div>・簡易通知を追加</div>
+      <div>・ボイスルームを再開／古いルームを自動整理</div>
+      <div>・カレンダーに「今日」を追加</div>
+      <div>・ひとりごとの表示を圧縮</div>
     </div>
     <button id="logoutButton">ログアウト</button>
   </div>
 </header>
 
 <nav class="tabs">
-  <button class="tab active" data-page="talkPage">トーク</button>
+  <button id="talkTab" class="tab active" data-page="talkPage"><span class="tabLabelWrap">トーク<span id="talkUnreadBadge" class="unreadBadge hidden">0</span></span></button>
   <button class="tab" data-page="soloPage">ひとりごと</button>
   <button class="tab" data-page="schedulePage">予定</button>
   <button class="tab" data-page="locationPage">位置情報</button>
@@ -341,7 +362,7 @@ audio{display:none}
     <button id="clearTalkFilter">× 絞り込み解除</button>
   </div>
 
-  <div id="voiceBar" class="hidden" style="display:none!important">
+  <div id="voiceBar" class="hidden">
     <div class="voiceBarInner">
       <div id="voiceInfo" class="voiceInfo"><span class="voiceDot"></span>ボイスルーム開催中</div>
       <div class="voiceActions">
@@ -381,7 +402,10 @@ audio{display:none}
     <div class="calendarMonthRow">
       <button id="prevMonth" class="monthNav">‹</button>
       <div id="calendarTitle"></div>
-      <button id="nextMonth" class="monthNav">›</button>
+      <div class="calendarRightBtns">
+        <button id="todayButton" class="todayBtn">今日</button>
+        <button id="nextMonth" class="monthNav">›</button>
+      </div>
     </div>
     <div class="filters">
       <button class="filterBtn active" data-filter="all">全員</button>
@@ -454,6 +478,57 @@ audio{display:none}
   </div>
 </div>
 
+
+<div id="settingsModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3>設定</h3>
+
+    <div class="settingsGroup">トーク簡易通知</div>
+
+    <div class="settingRow">
+      <div><div class="settingText">受信音</div><div class="settingSub">PBを開いている間、相手の新着で小さく鳴らします</div></div>
+      <input id="settingSound" class="settingCheck" type="checkbox">
+    </div>
+
+    <div class="settingRow">
+      <div><div class="settingText">未読バッジ</div><div class="settingSub">トークタブと対応端末のアプリアイコンに未読数を表示</div></div>
+      <input id="settingBadge" class="settingCheck" type="checkbox">
+    </div>
+
+    <div class="settingRow">
+      <div><div class="settingText">トークタブを強調</div><div class="settingSub">新着時にトークタブを短時間だけ強調</div></div>
+      <input id="settingTabFlash" class="settingCheck" type="checkbox">
+    </div>
+
+    <div class="settingRow">
+      <div><div class="settingText">ブラウザタイトル変更</div><div class="settingSub">未読時にタイトルへ新着情報を表示</div></div>
+      <input id="settingTitle" class="settingCheck" type="checkbox">
+    </div>
+
+    <div class="settingRow">
+      <div><div class="settingText">バイブ</div><div class="settingSub">対応端末のみ短く振動します</div></div>
+      <input id="settingVibrate" class="settingCheck" type="checkbox">
+    </div>
+
+    <div class="settingRow">
+      <div><div class="settingText">バックグラウンドタブ通知</div><div class="settingSub">PBのタブを開いたまま別タブを見ている時にブラウザ通知</div></div>
+      <input id="settingBackgroundNotification" class="settingCheck" type="checkbox">
+    </div>
+
+    <div class="settingsNote">
+      本格的なPush通知ではありません。PBのページが完全に閉じられている場合や、OSがブラウザを停止した場合は通知されません。
+    </div>
+
+    <div class="settingsGroup">ボイスルーム</div>
+    <button id="resetVoiceRoom" class="dangerButton">ボイスルームをリセット</button>
+    <div class="settingsNote">古い「開催中」表示が残った場合だけ使用してください。</div>
+
+    <div class="modalBtns">
+      <button id="closeSettings">閉じる</button>
+    </div>
+  </div>
+</div>
+
 <div id="scheduleModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="scheduleModalTitle">予定を追加</h3>
@@ -462,6 +537,9 @@ audio{display:none}
     <div class="allDayRow">
       <label for="scheduleAllDayInput">終日</label>
       <input id="scheduleAllDayInput" class="allDayCheck" type="checkbox">
+    </div>
+    <div id="scheduleEndDateRow" class="endDateRow hidden">
+      <input id="scheduleEndDateInput" type="date" aria-label="終了日">
     </div>
     <input id="scheduleTimeInput" type="time">
     <textarea id="scheduleMemoInput" rows="3" placeholder="メモ（任意）"></textarea>
@@ -507,6 +585,21 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
 
+const DEFAULT_SETTINGS={
+  sound:true,
+  badge:true,
+  tabFlash:true,
+  title:true,
+  vibrate:false,
+  backgroundNotification:false
+};
+let pbSettings={...DEFAULT_SETTINGS};
+let unreadTalkCount=0;
+let audioContext=null;
+let voiceHeartbeatTimer=null;
+const VOICE_STALE_MS=2*60*1000;
+
+
 /* PIN */
 function updateDots(){ document.querySelectorAll(".pinDot").forEach((d,i)=>d.classList.toggle("on",i<pin.length)); }
 document.querySelectorAll(".key").forEach(k=>{
@@ -542,7 +635,9 @@ function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
   $("userLabel").textContent=`ID：${currentId}`;
   $("loginScreen").classList.add("hidden");$("appScreen").classList.remove("hidden");
-  listenMessages();listenReadStates();listenSolo();listenSchedules();listenLocations();
+  loadSettings();
+  updateNotificationUI();
+  listenMessages();listenReadStates();listenSolo();listenSchedules();listenLocations();listenVoiceRoom();
 }
 
 /* HEADER MENU */
@@ -560,7 +655,148 @@ $("menuDateFilter").onclick=()=>{
   $("dateFilterModal").classList.remove("hidden");
 };
 $("menuVoice").onclick=async()=>{$("headerMenu").classList.add("hidden");await openVoiceRoom()};
-$("menuSettings").onclick=()=>{$("headerMenu").classList.add("hidden");alert("通知・バッジ・プロフィール設定は Ver.3.2 で追加予定です。")};
+$("menuSettings").onclick=()=>{
+  $("headerMenu").classList.add("hidden");
+  syncSettingsControls();
+  $("settingsModal").classList.remove("hidden");
+};
+
+
+/* SETTINGS / OPEN-PAGE NOTIFICATIONS */
+function settingsKey(){return `pb.settings.${currentUID||"guest"}`}
+function loadSettings(){
+  try{
+    pbSettings={...DEFAULT_SETTINGS,...JSON.parse(localStorage.getItem(settingsKey())||"{}")};
+  }catch(e){pbSettings={...DEFAULT_SETTINGS}}
+}
+function saveSettings(){
+  localStorage.setItem(settingsKey(),JSON.stringify(pbSettings));
+  updateNotificationUI();
+}
+function syncSettingsControls(){
+  $("settingSound").checked=!!pbSettings.sound;
+  $("settingBadge").checked=!!pbSettings.badge;
+  $("settingTabFlash").checked=!!pbSettings.tabFlash;
+  $("settingTitle").checked=!!pbSettings.title;
+  $("settingVibrate").checked=!!pbSettings.vibrate;
+  $("settingBackgroundNotification").checked=!!pbSettings.backgroundNotification;
+}
+["Sound","Badge","TabFlash","Title","Vibrate"].forEach(name=>{
+  const el=$(`setting${name}`);
+  if(el)el.onchange=()=>{
+    const key=name.charAt(0).toLowerCase()+name.slice(1);
+    pbSettings[key]=el.checked;saveSettings();
+  };
+});
+$("settingBackgroundNotification").onchange=async()=>{
+  if($("settingBackgroundNotification").checked){
+    if(!("Notification" in window)){
+      alert("このブラウザでは通知に対応していません。");
+      $("settingBackgroundNotification").checked=false;
+      pbSettings.backgroundNotification=false;
+      saveSettings();return;
+    }
+    let permission=Notification.permission;
+    if(permission==="default"){
+      permission=await Notification.requestPermission();
+    }
+    if(permission!=="granted"){
+      alert("ブラウザ通知が許可されていません。");
+      $("settingBackgroundNotification").checked=false;
+      pbSettings.backgroundNotification=false;
+      saveSettings();return;
+    }
+  }
+  pbSettings.backgroundNotification=$("settingBackgroundNotification").checked;
+  saveSettings();
+};
+$("resetVoiceRoom").onclick=async()=>{
+  if(!confirm("ボイスルームの状態をリセットしますか？"))return;
+  await resetVoiceRoomState();
+  alert("ボイスルームをリセットしました。");
+};
+$("closeSettings").onclick=()=>$("settingsModal").classList.add("hidden");
+$("settingsModal").addEventListener("click",e=>{if(e.target===$("settingsModal"))$("settingsModal").classList.add("hidden")});
+
+function unlockAudio(){
+  try{
+    audioContext=audioContext||new (window.AudioContext||window.webkitAudioContext)();
+    if(audioContext.state==="suspended")audioContext.resume();
+  }catch(e){}
+}
+document.addEventListener("pointerdown",unlockAudio,{once:true});
+
+function playIncomingSound(){
+  if(!pbSettings.sound)return;
+  try{
+    unlockAudio();
+    if(!audioContext)return;
+    const now=audioContext.currentTime;
+    const gain=audioContext.createGain();
+    gain.gain.setValueAtTime(0.0001,now);
+    gain.gain.exponentialRampToValueAtTime(0.035,now+0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001,now+0.22);
+    gain.connect(audioContext.destination);
+    [660,880].forEach((freq,i)=>{
+      const osc=audioContext.createOscillator();
+      osc.type="sine";osc.frequency.value=freq;
+      osc.connect(gain);osc.start(now+i*0.07);osc.stop(now+0.18+i*0.07);
+    });
+  }catch(e){console.debug("sound",e)}
+}
+function updateNotificationUI(){
+  const b=$("talkUnreadBadge");
+  if(pbSettings.badge&&unreadTalkCount>0){
+    b.textContent=unreadTalkCount>99?"99+":String(unreadTalkCount);b.classList.remove("hidden");
+  }else b.classList.add("hidden");
+
+  if(pbSettings.title){
+    if(unreadTalkCount>0){
+      document.title=document.hidden?"● 新着メッセージ - PB":`(${unreadTalkCount}) PB`;
+    }else document.title="PB";
+  }else document.title="PB";
+
+  if("setAppBadge" in navigator){
+    if(pbSettings.badge&&unreadTalkCount>0)navigator.setAppBadge(unreadTalkCount).catch(()=>{});
+    else if("clearAppBadge" in navigator)navigator.clearAppBadge().catch(()=>{});
+  }
+}
+function clearUnreadTalk(){
+  if(unreadTalkCount===0)return;
+  unreadTalkCount=0;updateNotificationUI();
+}
+function handleIncomingMessage(data){
+  playIncomingSound();
+
+  const shouldCount=activePage()!=="talkPage" || !isNearBottom() || document.hidden;
+  if(shouldCount){
+    unreadTalkCount++;
+    updateNotificationUI();
+  }
+
+  if(pbSettings.tabFlash){
+    const tab=$("talkTab");
+    tab.classList.remove("flashNotice");
+    void tab.offsetWidth;
+    tab.classList.add("flashNotice");
+    setTimeout(()=>tab.classList.remove("flashNotice"),2400);
+  }
+
+  if(pbSettings.vibrate&&navigator.vibrate){
+    try{navigator.vibrate(80)}catch(e){}
+  }
+
+  if(pbSettings.backgroundNotification&&document.hidden&&"Notification" in window&&Notification.permission==="granted"){
+    try{
+      new Notification("PB",{
+        body:`${data.senderId||"相手"}：${(data.text||"新しいメッセージ").slice(0,80)}`,
+        tag:"pb-talk"
+      });
+    }catch(e){console.debug("notification",e)}
+  }
+}
+document.addEventListener("visibilitychange",updateNotificationUI);
+
 
 /* TABS */
 document.querySelectorAll(".tab").forEach(tab=>{
@@ -571,7 +807,7 @@ document.querySelectorAll(".tab").forEach(tab=>{
     if(tab.dataset.page==="talkPage"){
       requestAnimationFrame(()=>{
         if(firstMessageLoad)scrollToLatest(false);
-        else if(isNearBottom())markTalkRead();
+        else if(isNearBottom()){markTalkRead();clearUnreadTalk();}
       });
     }
   };
@@ -596,13 +832,14 @@ function scrollToLatest(smooth=false){
   requestAnimationFrame(()=>{
     b.scrollTo({top:b.scrollHeight,behavior:smooth?"smooth":"auto"});
     $("newMessageButton").classList.add("hidden");
+    clearUnreadTalk();
     setTimeout(()=>{if(isNearBottom())markTalkRead()},smooth?350:30);
   });
 }
 $("newMessageButton").onclick=()=>scrollToLatest(true);
 $("messages").addEventListener("scroll",()=>{
   if(adjustingMessageMenu) return;
-  if(isNearBottom()){$("newMessageButton").classList.add("hidden");markTalkRead()}
+  if(isNearBottom()){$("newMessageButton").classList.add("hidden");markTalkRead();clearUnreadTalk()}
 },{passive:true});
 
 
@@ -712,6 +949,11 @@ function listenMessages(){
     }else if(!talkDateFilter&&hasNew&&!wasNearBottom){
       $("newMessageButton").classList.remove("hidden");
     }
+
+    if(hasNew&&!newMine){
+      handleIncomingMessage(newestData||{});
+    }
+
     previousNewestMessageId=newestId;
   });
 }
@@ -867,7 +1109,7 @@ async function sendMessage(){
   $("messageInput").value="";replyTarget=null;$("replyBar").classList.add("hidden");
   scrollToLatest(true);
 }
-$("messageInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});
+/* Enterは改行。送信は送信ボタンのみ。 */
 
 /* LOAD 50 keeping scroll position */
 $("loadMore").onclick=async()=>{
@@ -949,6 +1191,23 @@ function filteredSchedules(){
   if(scheduleFilter==="others")return schedules.filter(s=>s.uid!==currentUID);
   return schedules;
 }
+
+function eventCoversDate(s,d){
+  if(!s.startsAt?.toDate)return false;
+  const target=dateId(d);
+  const start=s.startDate || dateId(s.startsAt.toDate());
+  const end=s.allDay ? (s.endDate || start) : start;
+  return target>=start && target<=end;
+}
+function scheduleRangeText(s){
+  if(!s.allDay)return s.startsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+  const start=s.startDate || dateId(s.startsAt.toDate());
+  const end=s.endDate || start;
+  if(start===end)return "終日";
+  const sd=new Date(`${start}T00:00:00`),ed=new Date(`${end}T00:00:00`);
+  return `終日 ${sd.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}〜${ed.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}`;
+}
+
 function renderCalendar(){
   $("calendarTitle").textContent=calendarDate.toLocaleDateString("ja-JP",{year:"numeric",month:"long"});
   const grid=$("calendarGrid");grid.innerHTML="";
@@ -963,7 +1222,7 @@ function renderCalendar(){
     if(dateId(d)===dateId(selectedDate))cell.classList.add("selected");
     if(dateId(d)===today)cell.classList.add("today");
     const n=document.createElement("div");n.className="dayNumber";n.textContent=d.getDate();cell.appendChild(n);
-    const events=list.filter(s=>s.startsAt?.toDate&&dateId(s.startsAt.toDate())===dateId(d));
+    const events=list.filter(s=>eventCoversDate(s,d));
     events.slice(0,3).forEach(s=>{const bar=document.createElement("div");bar.className="eventBar";bar.style.background=userColor(s.uid);cell.appendChild(bar)});
     if(events.length>3){const more=document.createElement("div");more.className="eventMore";more.textContent=`+${events.length-3}`;cell.appendChild(more)}
     cell.onclick=()=>{selectedDate=new Date(d);renderCalendar();renderSelectedDay()};
@@ -973,12 +1232,12 @@ function renderCalendar(){
 function renderSelectedDay(){
   $("selectedDateTitle").textContent=selectedDate.toLocaleDateString("ja-JP",{month:"long",day:"numeric",weekday:"short"});
   const box=$("selectedDateEvents");box.innerHTML="";
-  const events=filteredSchedules().filter(s=>s.startsAt?.toDate&&dateId(s.startsAt.toDate())===dateId(selectedDate));
+  const events=filteredSchedules().filter(s=>eventCoversDate(s,selectedDate));
   if(!events.length){box.innerHTML='<div class="small">予定はありません。</div>';return}
   events.forEach(s=>{
     const c=document.createElement("div");c.className="scheduleCard";c.style.borderLeftColor=userColor(s.uid);
     const t=document.createElement("div");t.className="scheduleTime";
-    t.textContent=s.allDay ? "終日" : s.startsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+    t.textContent=scheduleRangeText(s);
     const title=document.createElement("div");title.className="scheduleTitle";title.textContent=s.title||"";
     const memo=document.createElement("div");memo.className="scheduleMemo";memo.textContent=s.memo||"";
     const owner=document.createElement("div");owner.className="scheduleOwner";owner.textContent=`${s.uid===currentUID?"🔵":"🔴"} ${s.senderId}`;
@@ -993,6 +1252,13 @@ function renderSelectedDay(){
   });
 }
 $("prevMonth").onclick=()=>{calendarDate=new Date(calendarDate.getFullYear(),calendarDate.getMonth()-1,1);renderCalendar()};
+$("todayButton").onclick=()=>{
+  const now=new Date();
+  calendarDate=new Date(now.getFullYear(),now.getMonth(),1);
+  selectedDate=new Date(now);
+  renderCalendar();
+  renderSelectedDay();
+};
 $("nextMonth").onclick=()=>{calendarDate=new Date(calendarDate.getFullYear(),calendarDate.getMonth()+1,1);renderCalendar()};
 document.querySelectorAll(".filterBtn").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".filterBtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");scheduleFilter=b.dataset.filter;renderCalendar();renderSelectedDay();
@@ -1004,26 +1270,44 @@ function openScheduleEditor(s=null){
   $("scheduleTitleInput").value=s?.title||"";
   $("scheduleDateInput").value=dateId(d);
   $("scheduleAllDayInput").checked=!!s?.allDay;
+  $("scheduleEndDateInput").value=s?.endDate || dateId(d);
+  $("scheduleEndDateRow").classList.toggle("hidden",!$("scheduleAllDayInput").checked);
   $("scheduleTimeInput").value=s?.startsAt?.toDate?d.toTimeString().slice(0,5):"09:00";
   $("scheduleTimeInput").classList.toggle("hidden",$("scheduleAllDayInput").checked);
   $("scheduleMemoInput").value=s?.memo||"";
   $("scheduleModal").classList.remove("hidden");
 }
 $("scheduleAllDayInput").onchange=()=>{
-  $("scheduleTimeInput").classList.toggle("hidden",$("scheduleAllDayInput").checked);
+  const allDay=$("scheduleAllDayInput").checked;
+  $("scheduleTimeInput").classList.toggle("hidden",allDay);
+  $("scheduleEndDateRow").classList.toggle("hidden",!allDay);
+  if(allDay&&!$("scheduleEndDateInput").value){
+    $("scheduleEndDateInput").value=$("scheduleDateInput").value;
+  }
 };
 $("openScheduleModal").onclick=()=>openScheduleEditor();
+$("scheduleDateInput").onchange=()=>{
+  if($("scheduleAllDayInput").checked){
+    const start=$("scheduleDateInput").value;
+    if(!$("scheduleEndDateInput").value || $("scheduleEndDateInput").value<start){
+      $("scheduleEndDateInput").value=start;
+    }
+  }
+};
 $("cancelScheduleModal").onclick=()=>$("scheduleModal").classList.add("hidden");
 $("scheduleModal").addEventListener("click",e=>{if(e.target===$("scheduleModal"))$("scheduleModal").classList.add("hidden")});
 $("saveSchedule").onclick=async()=>{
   const title=$("scheduleTitleInput").value.trim(),date=$("scheduleDateInput").value,
         allDay=$("scheduleAllDayInput").checked,
+        endDate=allDay?($("scheduleEndDateInput").value||date):date,
         time=allDay?"12:00":($("scheduleTimeInput").value||"00:00"),
         memo=$("scheduleMemoInput").value.trim();
   if(!title||!date){alert("タイトルと日付を入力してください");return}
+  if(allDay&&endDate<date){alert("終了日は開始日以降にしてください");return}
   const startsAt=Timestamp.fromDate(new Date(`${date}T${time}:00`));
-  if(editingSchedule)await updateDoc(doc(db,"schedules",editingSchedule.id),{title,memo,startsAt,allDay});
-  else await addDoc(collection(db,"schedules"),{title,memo,startsAt,allDay,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
+  const payload={title,memo,startsAt,allDay,startDate:date,endDate};
+  if(editingSchedule)await updateDoc(doc(db,"schedules",editingSchedule.id),payload);
+  else await addDoc(collection(db,"schedules"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
   $("scheduleModal").classList.add("hidden");editingSchedule=null;
 };
 
@@ -1062,24 +1346,69 @@ let peerConnection=null,localStream=null,voiceRole=null,voiceJoined=false,voiceM
 let unsubscribeCallerIce=null,unsubscribeCalleeIce=null,answerListener=null;
 const rtcConfig={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]};
 
+function roomTimestampMs(data){
+  const ts=data?.updatedAt || data?.createdAt;
+  return ts?.toDate ? ts.toDate().getTime() : 0;
+}
+async function resetVoiceRoomState(){
+  try{
+    closeLocalVoice();
+    voiceJoined=false;voiceRole=null;voiceMuted=false;
+    stopVoiceHeartbeat();
+    await setDoc(voiceRoomRef,{
+      active:false,hostUID:null,hostId:null,participantUID:null,participantId:null,
+      offer:null,answer:null,updatedAt:serverTimestamp(),endedAt:serverTimestamp()
+    },{merge:true});
+    await clearCollection("callerCandidates");
+    await clearCollection("calleeCandidates");
+    $("voiceBar").classList.add("hidden");
+    $("menuVoice").classList.remove("hidden");
+  }catch(e){console.error("voice reset",e)}
+}
+async function resetStaleVoiceIfNeeded(data){
+  if(!data?.active || voiceJoined)return false;
+  const ms=roomTimestampMs(data);
+  if(!ms || Date.now()-ms>VOICE_STALE_MS){
+    await resetVoiceRoomState();
+    return true;
+  }
+  return false;
+}
+function startVoiceHeartbeat(){
+  stopVoiceHeartbeat();
+  voiceHeartbeatTimer=setInterval(async()=>{
+    if(!voiceJoined)return;
+    try{await setDoc(voiceRoomRef,{updatedAt:serverTimestamp()},{merge:true})}catch(e){}
+  },30000);
+}
+function stopVoiceHeartbeat(){
+  if(voiceHeartbeatTimer){clearInterval(voiceHeartbeatTimer);voiceHeartbeatTimer=null}
+}
 function listenVoiceRoom(){
   if(unsubscribeVoice)unsubscribeVoice();
-  unsubscribeVoice=onSnapshot(voiceRoomRef,snap=>{
+  unsubscribeVoice=onSnapshot(voiceRoomRef,async snap=>{
     if(!snap.exists()||!snap.data().active){
       if(!voiceJoined)$("voiceBar").classList.add("hidden");
       $("leaveVoice").textContent="退出";
-      $("menuVoice").classList.remove("hidden");return;
+      $("menuVoice").classList.remove("hidden");
+      return;
     }
-    const d=snap.data();$("menuVoice").classList.add("hidden");$("voiceBar").classList.remove("hidden");
+    const d=snap.data();
+    if(await resetStaleVoiceIfNeeded(d))return;
+
+    $("menuVoice").classList.add("hidden");
+    $("voiceBar").classList.remove("hidden");
     if(voiceJoined){
       $("voiceInfo").innerHTML='<span class="voiceDot"></span>ボイスルーム参加中';
       $("joinVoice").classList.add("hidden");
       $("muteVoice").classList.remove("hidden");
       $("leaveVoice").classList.remove("hidden");
-      $("leaveVoice").textContent = voiceRole==="host" ? "終了" : "退出";
+      $("leaveVoice").textContent=voiceRole==="host"?"終了":"退出";
     }else{
       $("voiceInfo").innerHTML=`<span class="voiceDot"></span>${escapeHtml(d.hostId||"誰か")} がボイスルームを開いています`;
-      $("joinVoice").classList.remove("hidden");$("muteVoice").classList.add("hidden");$("leaveVoice").classList.add("hidden");
+      $("joinVoice").classList.remove("hidden");
+      $("muteVoice").classList.add("hidden");
+      $("leaveVoice").classList.add("hidden");
     }
   });
 }
@@ -1106,7 +1435,8 @@ async function openVoiceRoom(){
     $("leaveVoice").textContent="終了";
     peerConnection.onicecandidate=async e=>{if(e.candidate)await addDoc(collection(db,"voiceRooms","main","callerCandidates"),e.candidate.toJSON())};
     const offer=await peerConnection.createOffer();await peerConnection.setLocalDescription(offer);
-    await setDoc(voiceRoomRef,{active:true,hostUID:currentUID,hostId:currentId,createdAt:serverTimestamp(),offer:{type:offer.type,sdp:offer.sdp},answer:null});
+    await setDoc(voiceRoomRef,{active:true,hostUID:currentUID,hostId:currentId,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),offer:{type:offer.type,sdp:offer.sdp},answer:null});
+    startVoiceHeartbeat();
     unsubscribeCalleeIce=onSnapshot(collection(db,"voiceRooms","main","calleeCandidates"),s=>s.docChanges().forEach(c=>{if(c.type==="added")peerConnection?.addIceCandidate(new RTCIceCandidate(c.doc.data())).catch(console.error)}));
     answerListener=onSnapshot(voiceRoomRef,async s=>{const d=s.data();if(peerConnection&&d?.answer&&!peerConnection.currentRemoteDescription)await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer))});
   }catch(e){console.error(e);closeLocalVoice();voiceJoined=false;alert("マイクを開始できませんでした。マイク許可を確認してください。")}
@@ -1124,7 +1454,8 @@ $("joinVoice").onclick=async()=>{
     peerConnection.onicecandidate=async e=>{if(e.candidate)await addDoc(collection(db,"voiceRooms","main","calleeCandidates"),e.candidate.toJSON())};
     await peerConnection.setRemoteDescription(new RTCSessionDescription(room.offer));
     const answer=await peerConnection.createAnswer();await peerConnection.setLocalDescription(answer);
-    await updateDoc(voiceRoomRef,{answer:{type:answer.type,sdp:answer.sdp},participantUID:currentUID,participantId:currentId});
+    await updateDoc(voiceRoomRef,{answer:{type:answer.type,sdp:answer.sdp},participantUID:currentUID,participantId:currentId,updatedAt:serverTimestamp()});
+    startVoiceHeartbeat();
     unsubscribeCallerIce=onSnapshot(collection(db,"voiceRooms","main","callerCandidates"),s=>s.docChanges().forEach(c=>{if(c.type==="added")peerConnection?.addIceCandidate(new RTCIceCandidate(c.doc.data())).catch(console.error)}));
   }catch(e){console.error(e);closeLocalVoice();voiceJoined=false;alert("ボイスルームに参加できませんでした。")}
 };
@@ -1138,6 +1469,7 @@ async function leaveVoiceRoom(updateFirestore=true){
   const wasHost = voiceRole==="host";
 
   closeLocalVoice();
+  stopVoiceHeartbeat();
   voiceJoined=false;
   voiceRole=null;
   voiceMuted=false;
@@ -1161,7 +1493,8 @@ async function leaveVoiceRoom(updateFirestore=true){
             participantId:null,
             offer:null,
             answer:null,
-            endedAt:serverTimestamp()
+            endedAt:serverTimestamp(),
+            updatedAt:serverTimestamp()
           },
           {merge:true}
         );
@@ -1174,7 +1507,8 @@ async function leaveVoiceRoom(updateFirestore=true){
           {
             participantUID:null,
             participantId:null,
-            answer:null
+            answer:null,
+            updatedAt:serverTimestamp()
           },
           {merge:true}
         );
