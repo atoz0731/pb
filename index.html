@@ -8,186 +8,565 @@
 
 <style>
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:#f3f3f3;color:#222;
+  background:#f3f3f3;
+  color:#222;
 }
 button,input,textarea{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 
-/* PIN */
+/* ===== PIN ===== */
+
 #pinScreen{
-  min-height:100dvh;background:#f7f7f7;
-  display:flex;align-items:center;justify-content:center;padding:25px;
+  min-height:100dvh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px;
+  background:#f7f7f7;
 }
-.pinBox{text-align:center;width:100%;max-width:360px}
-.pinTitle{font-size:17px;font-weight:600;margin-bottom:28px}
-.pinDots{display:flex;justify-content:center;gap:18px;margin-bottom:32px}
+.pinBox{
+  width:100%;
+  max-width:360px;
+  text-align:center;
+}
+.pinTitle{
+  font-weight:600;
+  font-size:17px;
+  margin-bottom:28px;
+}
+.pinDots{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  margin-bottom:34px;
+}
 .pinDot{
-  width:15px;height:15px;border:1.5px solid #555;
-  border-radius:50%;background:transparent;
+  width:15px;
+  height:15px;
+  border:1.5px solid #555;
+  border-radius:50%;
 }
 .pinDot.on{background:#222}
 .keypad{
-  display:grid;grid-template-columns:repeat(3,72px);
-  justify-content:center;gap:15px 20px;
+  display:grid;
+  grid-template-columns:repeat(3,72px);
+  gap:15px 20px;
+  justify-content:center;
 }
 .key{
-  width:72px;height:72px;border-radius:50%;
-  border:0;background:#e4e4e4;font-size:25px;
+  width:72px;
+  height:72px;
+  border:0;
+  border-radius:50%;
+  background:#e4e4e4;
+  font-size:25px;
 }
 .key:active{background:#ccc}
 .key.blank{visibility:hidden}
-#pinError{height:24px;margin-top:18px;color:#999;font-size:13px}
+#pinError{
+  height:22px;
+  margin-top:18px;
+  color:#999;
+  font-size:13px;
+}
 
-/* LOGIN */
+/* ===== LOGIN ===== */
+
 #loginScreen{
-  min-height:100dvh;background:#111;
-  display:flex;align-items:center;justify-content:center;padding:24px;
+  min-height:100dvh;
+  background:#111;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
 }
 .loginCard{
-  background:white;width:100%;max-width:420px;
-  border-radius:25px;padding:34px 24px;
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:25px;
+  padding:34px 24px;
 }
 .logo{text-align:center;margin-bottom:30px}
-.logo h1{font-size:52px;margin:0;letter-spacing:-3px}
-.logo p{color:#777;margin:3px 0}
+.logo h1{
+  margin:0;
+  font-size:52px;
+  letter-spacing:-3px;
+}
+.logo p{margin:4px 0;color:#777}
 .field{margin:16px 0}
-.field label{display:block;font-weight:600;margin-bottom:7px}
-.field input{
-  width:100%;padding:15px;border:1px solid #ccc;
-  border-radius:12px;font-size:16px;
+.field label{
+  display:block;
+  font-weight:600;
+  margin-bottom:7px;
+}
+.field input,
+.field textarea{
+  width:100%;
+  padding:14px 15px;
+  border:1px solid #ccc;
+  border-radius:12px;
+  font-size:16px;
 }
 .primary{
-  width:100%;padding:15px;border:0;border-radius:12px;
-  background:#111;color:white;font-weight:700;
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:12px;
+  background:#111;
+  color:white;
+  font-weight:700;
 }
-#loginError{text-align:center;color:#c33;margin-top:12px;min-height:20px}
+#loginError{
+  min-height:20px;
+  margin-top:12px;
+  text-align:center;
+  color:#c33;
+}
 
-/* APP */
-#appScreen{height:100dvh;display:flex;flex-direction:column}
+/* ===== APP ===== */
+
+#appScreen{
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+}
 header{
-  background:#111;color:white;
+  flex-shrink:0;
+  background:#111;
+  color:white;
   padding:calc(10px + env(safe-area-inset-top)) 15px 10px;
-  display:flex;justify-content:space-between;align-items:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 .brand{font-size:22px;font-weight:800}
 .userLabel{font-size:11px;opacity:.7}
-.headerButtons button{
-  background:none;border:0;color:white;font-size:13px;padding:8px;
+header button{
+  background:none;
+  color:white;
+  border:0;
+  font-size:13px;
 }
 
 .tabs{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  background:white;border-bottom:1px solid #ddd;
+  flex-shrink:0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  background:white;
+  border-bottom:1px solid #ddd;
 }
 .tab{
-  border:0;background:white;padding:13px 4px;
-  color:#777;font-weight:600;
+  padding:12px 2px 10px;
+  border:0;
+  background:white;
+  font-weight:600;
+  color:#888;
+  font-size:13px;
 }
-.tab.active{color:#111;border-bottom:3px solid #111}
+.tab.active{
+  color:#111;
+  border-bottom:3px solid #111;
+}
 
-.page{flex:1;min-height:0;display:flex;flex-direction:column}
+.page{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
 .scroll{
-  flex:1;overflow-y:auto;padding:14px;
+  flex:1;
+  overflow-y:auto;
   -webkit-overflow-scrolling:touch;
 }
 
-/* CHAT */
-#loadMore{
-  display:block;margin:0 auto 14px;border:0;
-  background:#ddd;border-radius:16px;padding:7px 14px;font-size:12px;
-}
-.messageRow{display:flex;flex-direction:column;align-items:flex-start;margin:8px 0}
-.messageRow.mine{align-items:flex-end}
-.sender{font-size:11px;color:#777;margin:0 8px 3px}
-.bubble{
-  max-width:80%;background:white;padding:10px 13px;
-  border-radius:17px;box-shadow:0 1px 2px #00000012;
-  word-break:break-word;
-}
-.mine .bubble{background:#222;color:white}
-.replyQuote{
-  border-left:3px solid #aaa;padding:5px 8px;
-  margin-bottom:7px;font-size:12px;opacity:.75;
-  max-width:100%;
-}
-.meta{font-size:10px;color:#999;margin:4px 7px}
-.actions{margin:3px 5px}
-.actions button{
-  border:0;background:none;color:#888;
-  padding:3px 5px;font-size:11px;
-}
-.deleted{font-style:italic;opacity:.55}
+/* ===== VOICE ROOM ===== */
 
-#replyBar{
-  background:#eee;border-top:1px solid #ddd;
-  padding:7px 12px;font-size:12px;
-  display:flex;justify-content:space-between;
+#voicePanel{
+  flex-shrink:0;
+  background:#fff;
+  border-bottom:1px solid #ddd;
+  padding:10px 13px;
 }
-#replyBar button{border:0;background:none;font-size:18px}
+.voiceInner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.voiceTitle{
+  font-size:13px;
+  font-weight:700;
+}
+.voiceStatus{
+  margin-top:3px;
+  font-size:11px;
+  color:#777;
+}
+.voiceButtons{
+  display:flex;
+  gap:7px;
+}
+.voiceBtn{
+  border:0;
+  border-radius:18px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:700;
+}
+.voiceJoin{
+  background:#111;
+  color:#fff;
+}
+.voiceSub{
+  background:#eee;
+  color:#222;
+}
+.voiceDanger{
+  background:#efefef;
+  color:#b00020;
+}
+.voiceLive{
+  color:#16833c;
+}
+.voiceDot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#1ca64c;
+  margin-right:5px;
+}
+
+/* ===== TALK ===== */
+
+#messages{
+  padding:12px 13px;
+}
+#loadMore{
+  display:block;
+  margin:0 auto 14px;
+  padding:7px 14px;
+  border:0;
+  border-radius:18px;
+  background:#ddd;
+  font-size:12px;
+}
+.messageRow{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  margin:8px 0 13px;
+}
+.messageRow.mine{
+  align-items:flex-end;
+}
+.sender{
+  margin:0 8px 3px;
+  font-size:11px;
+  color:#777;
+}
+.bubble{
+  max-width:80%;
+  background:#fff;
+  padding:10px 13px;
+  border-radius:17px;
+  word-break:break-word;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+}
+.mine .bubble{
+  background:#222;
+  color:white;
+}
+
+.replyQuote{
+  border-left:3px solid #aaa;
+  padding:5px 8px;
+  margin-bottom:7px;
+  font-size:12px;
+  opacity:.72;
+}
+.emojiBubble{
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:2px 4px!important;
+}
+.emojiText.one{font-size:64px;line-height:1.15}
+.emojiText.two{font-size:54px;line-height:1.15}
+.emojiText.three{font-size:46px;line-height:1.15}
+.deleted{
+  font-style:italic;
+  opacity:.55;
+}
+
+.meta{
+  display:flex;
+  gap:6px;
+  margin:4px 7px 0;
+  font-size:10px;
+  color:#999;
+}
+.readMark{
+  color:#777;
+}
+.reactionSummary{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin:4px 5px 0;
+}
+.reactionChip{
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:15px;
+  padding:3px 7px;
+  font-size:12px;
+}
+.reactionChip.mineReaction{
+  border-color:#777;
+  background:#f0f0f0;
+}
+.messageActions{
+  display:flex;
+  gap:3px;
+  margin:3px 5px 0;
+}
+.messageActions button{
+  border:0;
+  background:none;
+  color:#888;
+  font-size:11px;
+  padding:3px 4px;
+}
+
+.reactionPicker{
+  display:flex;
+  gap:6px;
+  margin:4px 5px;
+  padding:6px 8px;
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+.reactionPicker button{
+  border:0;
+  background:none;
+  font-size:22px;
+  padding:2px;
+}
+
+#replyBar,
+#editBar{
+  flex-shrink:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:7px 12px;
+  background:#eee;
+  border-top:1px solid #ddd;
+  font-size:12px;
+}
+#replyBar button,
+#editBar button{
+  border:0;
+  background:none;
+  font-size:18px;
+}
 
 .composer{
-  background:white;border-top:1px solid #ddd;
+  flex-shrink:0;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
   padding:9px 10px calc(9px + env(safe-area-inset-bottom));
-  display:flex;gap:8px;align-items:flex-end;
+  background:white;
+  border-top:1px solid #ddd;
 }
 .composer textarea{
-  resize:none;flex:1;min-height:43px;max-height:100px;
-  border:1px solid #ccc;border-radius:20px;
-  padding:10px 14px;font-size:16px;
+  flex:1;
+  resize:none;
+  min-height:43px;
+  max-height:100px;
+  border:1px solid #ccc;
+  border-radius:20px;
+  padding:10px 14px;
+  font-size:16px;
 }
 .send{
-  width:44px;height:44px;border:0;border-radius:50%;
-  background:#111;color:white;font-size:18px;
+  flex-shrink:0;
+  width:44px;
+  height:44px;
+  border:0;
+  border-radius:50%;
+  background:#111;
+  color:#fff;
+  font-size:18px;
 }
 
-/* MONOLOGUE */
+/* ===== SOLO ===== */
+
+#soloList{
+  padding:0 14px;
+}
 .post{
-  background:white;border-bottom:1px solid #eee;
-  padding:15px;margin:0 -14px;
+  background:white;
+  margin:0 -14px;
+  padding:15px;
+  border-bottom:1px solid #eee;
 }
-.postHead{display:flex;justify-content:space-between}
-.postUser{font-weight:700;font-size:14px}
-.postTime{font-size:11px;color:#999}
-.postText{white-space:pre-wrap;margin:9px 0;line-height:1.5}
-.postFooter{display:flex;gap:12px}
+.postHead{
+  display:flex;
+  justify-content:space-between;
+}
+.postUser{
+  font-weight:700;
+  font-size:14px;
+}
+.postTime{
+  color:#999;
+  font-size:11px;
+}
+.postText{
+  white-space:pre-wrap;
+  line-height:1.5;
+  margin:9px 0;
+}
+.postFooter{
+  display:flex;
+  gap:10px;
+}
 .postFooter button{
-  border:0;background:none;color:#777;padding:3px;font-size:13px;
-}
-.postMenu button{
-  border:0;background:none;color:#999;font-size:11px;margin-left:6px;
+  border:0;
+  background:none;
+  color:#777;
+  padding:3px;
+  font-size:13px;
 }
 
-/* LOCATION */
+/* ===== SCHEDULE ===== */
+
+.scheduleForm{
+  background:#fff;
+  padding:14px;
+  border-bottom:1px solid #ddd;
+}
+.scheduleForm input,
+.scheduleForm textarea{
+  width:100%;
+  margin:5px 0;
+  padding:11px;
+  border:1px solid #ccc;
+  border-radius:10px;
+}
+.scheduleForm textarea{resize:none}
+.scheduleAdd{
+  width:100%;
+  padding:11px;
+  margin-top:5px;
+  border:0;
+  border-radius:10px;
+  background:#111;
+  color:#fff;
+  font-weight:700;
+}
+#scheduleList{
+  padding:12px;
+}
+.scheduleCard{
+  background:#fff;
+  border-radius:15px;
+  padding:14px;
+  margin-bottom:10px;
+}
+.scheduleDate{
+  font-size:12px;
+  color:#777;
+}
+.scheduleTitle{
+  font-size:17px;
+  font-weight:700;
+  margin:5px 0;
+}
+.scheduleMemo{
+  white-space:pre-wrap;
+  font-size:13px;
+  color:#555;
+}
+.scheduleOwner{
+  margin-top:8px;
+  font-size:11px;
+  color:#999;
+}
+.scheduleActions{
+  margin-top:7px;
+}
+.scheduleActions button{
+  border:0;
+  background:none;
+  color:#777;
+  font-size:11px;
+  padding:3px 6px 3px 0;
+}
+
+/* ===== LOCATION ===== */
+
 .locationCard{
-  margin:16px;background:white;border-radius:18px;padding:20px;
+  margin:15px;
+  padding:19px;
+  background:#fff;
+  border-radius:18px;
 }
 .locationTop{
-  display:flex;justify-content:space-between;align-items:center;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.small{
+  margin-top:5px;
+  font-size:12px;
+  color:#888;
 }
 .switch{
-  position:relative;width:52px;height:31px;
-  background:#ccc;border-radius:20px;border:0;
+  position:relative;
+  width:52px;
+  height:31px;
+  border:0;
+  border-radius:20px;
+  background:#ccc;
 }
 .switch:after{
-  content:"";position:absolute;width:27px;height:27px;
-  left:2px;top:2px;background:white;border-radius:50%;
+  content:"";
+  position:absolute;
+  width:27px;
+  height:27px;
+  top:2px;
+  left:2px;
+  border-radius:50%;
+  background:#fff;
   transition:.2s;
 }
 .switch.on{background:#111}
 .switch.on:after{left:23px}
 .memberLocation{
-  padding:14px 0;border-bottom:1px solid #eee;
+  padding:14px 0;
+  border-bottom:1px solid #eee;
 }
 .memberLocation:last-child{border:0}
 .mapLink{
-  display:inline-block;margin-top:6px;font-size:13px;color:#1769aa;
+  display:inline-block;
+  margin-top:6px;
+  color:#1769aa;
+  font-size:13px;
   text-decoration:none;
 }
-.small{font-size:12px;color:#888;margin-top:5px}
+
+audio{display:none}
 </style>
 </head>
 
@@ -197,17 +576,32 @@ header{
 <section id="pinScreen">
   <div class="pinBox">
     <div class="pinTitle">PINを入力</div>
+
     <div class="pinDots">
-      <div class="pinDot"></div><div class="pinDot"></div>
-      <div class="pinDot"></div><div class="pinDot"></div>
+      <div class="pinDot"></div>
+      <div class="pinDot"></div>
+      <div class="pinDot"></div>
+      <div class="pinDot"></div>
     </div>
 
     <div class="keypad">
-      <button class="key">1</button><button class="key">2</button><button class="key">3</button>
-      <button class="key">4</button><button class="key">5</button><button class="key">6</button>
-      <button class="key">7</button><button class="key">8</button><button class="key">9</button>
-      <button class="key blank"></button><button class="key">0</button><button class="key" id="backKey">⌫</button>
+      <button class="key">1</button>
+      <button class="key">2</button>
+      <button class="key">3</button>
+
+      <button class="key">4</button>
+      <button class="key">5</button>
+      <button class="key">6</button>
+
+      <button class="key">7</button>
+      <button class="key">8</button>
+      <button class="key">9</button>
+
+      <button class="key blank"></button>
+      <button class="key">0</button>
+      <button class="key" id="backKey">⌫</button>
     </div>
+
     <div id="pinError"></div>
   </div>
 </section>
@@ -215,20 +609,31 @@ header{
 <!-- LOGIN -->
 <section id="loginScreen" class="hidden">
   <div class="loginCard">
-    <div class="logo"><h1>PB</h1><p>Private Message</p></div>
+
+    <div class="logo">
+      <h1>PB</h1>
+      <p>Private Message</p>
+    </div>
 
     <div class="field">
       <label>ID</label>
-      <input id="loginId" autocomplete="username" autocapitalize="none">
+      <input
+        id="loginId"
+        autocomplete="username"
+        autocapitalize="none">
     </div>
 
     <div class="field">
       <label>パスワード</label>
-      <input id="loginPassword" type="password" autocomplete="current-password">
+      <input
+        id="loginPassword"
+        type="password"
+        autocomplete="current-password">
     </div>
 
     <button id="loginButton" class="primary">ログイン</button>
     <div id="loginError"></div>
+
   </div>
 </section>
 
@@ -240,19 +645,50 @@ header{
     <div class="brand">PB</div>
     <div id="userLabel" class="userLabel"></div>
   </div>
-  <div class="headerButtons">
-    <button id="logoutButton">ログアウト</button>
-  </div>
+  <button id="logoutButton">ログアウト</button>
 </header>
 
 <nav class="tabs">
-  <button class="tab active" data-page="chatPage">メッセージ</button>
+  <button class="tab active" data-page="talkPage">トーク</button>
   <button class="tab" data-page="soloPage">ひとりごと</button>
+  <button class="tab" data-page="schedulePage">予定</button>
   <button class="tab" data-page="locationPage">位置情報</button>
 </nav>
 
-<!-- CHAT -->
-<div id="chatPage" class="page">
+<!-- TALK -->
+<div id="talkPage" class="page">
+
+  <div id="voicePanel">
+    <div class="voiceInner">
+
+      <div>
+        <div class="voiceTitle">🎙 ボイスルーム</div>
+        <div id="voiceStatus" class="voiceStatus">
+          ルームは開かれていません
+        </div>
+      </div>
+
+      <div id="voiceButtons" class="voiceButtons">
+        <button id="openVoice" class="voiceBtn voiceJoin">
+          ルームを開く
+        </button>
+
+        <button id="joinVoice" class="voiceBtn voiceJoin hidden">
+          参加
+        </button>
+
+        <button id="muteVoice" class="voiceBtn voiceSub hidden">
+          🎤 ミュート
+        </button>
+
+        <button id="leaveVoice" class="voiceBtn voiceDanger hidden">
+          退出
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <div id="messages" class="scroll">
     <button id="loadMore">過去のメッセージを読み込む</button>
     <div id="messageList"></div>
@@ -263,611 +699,2805 @@ header{
     <button id="cancelReply">×</button>
   </div>
 
+  <div id="editBar" class="hidden">
+    <span>メッセージを編集中</span>
+    <button id="cancelEdit">×</button>
+  </div>
+
   <div class="composer">
-    <textarea id="messageInput" rows="1" placeholder="メッセージ"></textarea>
+    <textarea
+      id="messageInput"
+      rows="1"
+      placeholder="メッセージ"></textarea>
+
     <button id="sendMessage" class="send">➤</button>
   </div>
+
 </div>
 
 <!-- SOLO -->
 <div id="soloPage" class="page hidden">
+
   <div id="soloList" class="scroll"></div>
+
   <div class="composer">
-    <textarea id="soloInput" rows="1" placeholder="ひとりごと"></textarea>
+    <textarea
+      id="soloInput"
+      rows="1"
+      placeholder="ひとりごと"></textarea>
+
     <button id="sendSolo" class="send">➤</button>
   </div>
+
+</div>
+
+<!-- SCHEDULE -->
+<div id="schedulePage" class="page hidden">
+
+  <div class="scheduleForm">
+    <input id="scheduleTitle" placeholder="予定のタイトル">
+    <input id="scheduleDate" type="datetime-local">
+    <textarea id="scheduleMemo" rows="2" placeholder="メモ（任意）"></textarea>
+    <button id="addSchedule" class="scheduleAdd">予定を追加</button>
+  </div>
+
+  <div id="scheduleList" class="scroll"></div>
+
 </div>
 
 <!-- LOCATION -->
 <div id="locationPage" class="page hidden">
+
   <div class="scroll">
+
     <div class="locationCard">
+
       <div class="locationTop">
+
         <div>
           <strong>現在地を共有</strong>
-          <div class="small">ONの間だけ最新位置を共有します</div>
+          <div class="small">
+            ONの間だけ最新位置を共有します
+          </div>
         </div>
+
         <button id="locationSwitch" class="switch"></button>
+
       </div>
+
     </div>
 
     <div class="locationCard">
       <strong>共有中のメンバー</strong>
       <div id="locations"></div>
     </div>
+
   </div>
+
 </div>
+
+<audio id="remoteAudio" autoplay playsinline></audio>
 
 </section>
 
+
 <script type="module">
-import {initializeApp} from
-"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
- getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 import {
- getFirestore,collection,addDoc,query,orderBy,limit,onSnapshot,
- serverTimestamp,doc,updateDoc,deleteDoc,setDoc,getDoc,
- startAfter,getDocs,increment
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  limit,
+  onSnapshot,
+  serverTimestamp,
+  doc,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  getDoc,
+  startAfter,
+  getDocs,
+  arrayUnion,
+  arrayRemove,
+  where,
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-const firebaseConfig={
- apiKey:"AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",
- authDomain:"message-57e2d.firebaseapp.com",
- projectId:"message-57e2d",
- storageBucket:"message-57e2d.firebasestorage.app",
- messagingSenderId:"560072908841",
- appId:"1:560072908841:web:a6d0e92a57a24c152a3c38"
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",
+  authDomain: "message-57e2d.firebaseapp.com",
+  projectId: "message-57e2d",
+  storageBucket: "message-57e2d.firebasestorage.app",
+  messagingSenderId: "560072908841",
+  appId: "1:560072908841:web:a6d0e92a57a24c152a3c38"
 };
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-let pin="";
-let pinPassed=false;
-let currentId="";
-let currentUID="";
-let replyTarget=null;
-let editingMessage=null;
-let editingSolo=null;
-let locationWatch=null;
-let oldestMessage=null;
-let messageDocs=new Map();
 
-/* ---------- PIN ---------- */
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+let pin = "";
+let pinPassed = false;
+
+let currentUID = "";
+let currentId = "";
+
+let replyTarget = null;
+let editingMessage = null;
+
+let oldestMessage = null;
+let messageDocs = new Map();
+
+let locationWatch = null;
+
+let unsubscribeMessages = null;
+let unsubscribeSolo = null;
+let unsubscribeSchedule = null;
+let unsubscribeLocations = null;
+let unsubscribeReads = null;
+let unsubscribeVoice = null;
+
+let readStates = {};
+
+const REACTIONS = ["👍","❤️","😂","😮","😢"];
+
+
+/* =====================================================
+   PIN
+===================================================== */
 
 function updateDots(){
- document.querySelectorAll(".pinDot").forEach((d,i)=>{
-   d.classList.toggle("on",i<pin.length);
- });
+  document.querySelectorAll(".pinDot").forEach((dot,i)=>{
+    dot.classList.toggle("on", i < pin.length);
+  });
 }
 
-document.querySelectorAll(".key").forEach(key=>{
- if(key.id==="backKey" || key.classList.contains("blank")) return;
+document.querySelectorAll(".key").forEach(key => {
 
- key.addEventListener("click",()=>{
-   if(pin.length>=4)return;
-   pin+=key.textContent;
-   updateDots();
+  if(
+    key.id === "backKey" ||
+    key.classList.contains("blank")
+  ) return;
 
-   if(pin.length===4){
-     setTimeout(checkPin,120);
-   }
- });
+  key.addEventListener("click",()=>{
+
+    if(pin.length >= 4) return;
+
+    pin += key.textContent;
+    updateDots();
+
+    if(pin.length === 4){
+      setTimeout(checkPin,120);
+    }
+
+  });
+
 });
 
-$("backKey").onclick=()=>{
- pin=pin.slice(0,-1);
- updateDots();
+$("backKey").onclick = () => {
+  pin = pin.slice(0,-1);
+  updateDots();
 };
 
 function checkPin(){
- if(pin==="0208"){
-   window.location.replace("https://www.google.com/");
-   return;
- }
 
- if(pin==="0814"){
-   pinPassed=true;
-   $("pinScreen").classList.add("hidden");
+  if(pin === "0208"){
+    window.location.replace("https://www.google.com/");
+    return;
+  }
 
-   if(auth.currentUser){
-     showApp(auth.currentUser);
-   }else{
-     $("loginScreen").classList.remove("hidden");
-   }
-   return;
- }
+  if(pin === "0814"){
 
- $("pinError").textContent="PINが違います";
- pin="";
- updateDots();
- setTimeout(()=>$("pinError").textContent="",1200);
+    pinPassed = true;
+
+    $("pinScreen").classList.add("hidden");
+
+    if(auth.currentUser){
+      showApp(auth.currentUser);
+    }else{
+      $("loginScreen").classList.remove("hidden");
+    }
+
+    return;
+  }
+
+  $("pinError").textContent = "PINが違います";
+
+  pin = "";
+  updateDots();
+
+  setTimeout(()=>{
+    $("pinError").textContent = "";
+  },1000);
 }
 
-/* ---------- LOGIN ---------- */
 
-$("loginButton").onclick=async()=>{
- const id=$("loginId").value.trim().toLowerCase();
- const pw=$("loginPassword").value;
+/* =====================================================
+   LOGIN
+===================================================== */
 
- if(!id||!pw)return;
+$("loginButton").onclick = async () => {
 
- try{
-   $("loginError").textContent="";
-   await signInWithEmailAndPassword(auth,`${id}@pb.local`,pw);
- }catch(e){
-   console.error(e);
-   $("loginError").textContent="IDまたはパスワードが違います";
- }
+  const id =
+    $("loginId").value.trim().toLowerCase();
+
+  const password =
+    $("loginPassword").value;
+
+  if(!id || !password) return;
+
+  try{
+
+    $("loginError").textContent = "";
+
+    await signInWithEmailAndPassword(
+      auth,
+      `${id}@pb.local`,
+      password
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    $("loginError").textContent =
+      "IDまたはパスワードが違います";
+
+  }
+
 };
 
-$("loginPassword").addEventListener("keydown",e=>{
- if(e.key==="Enter")$("loginButton").click();
+$("loginPassword").addEventListener("keydown", e => {
+  if(e.key === "Enter"){
+    $("loginButton").click();
+  }
 });
 
-$("logoutButton").onclick=async()=>{
- await signOut(auth);
- $("appScreen").classList.add("hidden");
- $("loginScreen").classList.remove("hidden");
+$("logoutButton").onclick = async () => {
+
+  await leaveVoiceRoom(false);
+
+  await signOut(auth);
+
+  $("appScreen").classList.add("hidden");
+  $("loginScreen").classList.remove("hidden");
+
 };
 
 onAuthStateChanged(auth,user=>{
- if(user && pinPassed){
-   showApp(user);
- }else if(!user && pinPassed){
-   $("appScreen").classList.add("hidden");
-   $("loginScreen").classList.remove("hidden");
- }
+
+  if(user && pinPassed){
+    showApp(user);
+  }
+
+  if(!user && pinPassed){
+    $("appScreen").classList.add("hidden");
+    $("loginScreen").classList.remove("hidden");
+  }
+
 });
 
 function showApp(user){
- currentUID=user.uid;
- currentId=(user.email||"").replace("@pb.local","");
 
- $("userLabel").textContent=`ID：${currentId}`;
- $("loginScreen").classList.add("hidden");
- $("appScreen").classList.remove("hidden");
+  currentUID = user.uid;
 
- listenMessages();
- listenSolo();
- listenLocations();
+  currentId =
+    (user.email || "")
+    .replace("@pb.local","");
+
+  $("userLabel").textContent =
+    `ID：${currentId}`;
+
+  $("loginScreen").classList.add("hidden");
+  $("appScreen").classList.remove("hidden");
+
+  listenMessages();
+  listenReadStates();
+  listenSolo();
+  listenSchedules();
+  listenLocations();
+  listenVoiceRoom();
+
 }
 
-/* ---------- TABS ---------- */
+
+/* =====================================================
+   TABS
+===================================================== */
 
 document.querySelectorAll(".tab").forEach(tab=>{
- tab.onclick=()=>{
-   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-   tab.classList.add("active");
 
-   ["chatPage","soloPage","locationPage"].forEach(p=>
-     $(p).classList.add("hidden")
-   );
+  tab.onclick = () => {
 
-   $(tab.dataset.page).classList.remove("hidden");
- };
+    document.querySelectorAll(".tab")
+      .forEach(t=>t.classList.remove("active"));
+
+    tab.classList.add("active");
+
+    [
+      "talkPage",
+      "soloPage",
+      "schedulePage",
+      "locationPage"
+    ].forEach(page=>{
+      $(page).classList.add("hidden");
+    });
+
+    $(tab.dataset.page).classList.remove("hidden");
+
+    if(tab.dataset.page === "talkPage"){
+      markTalkRead();
+    }
+
+  };
+
 });
 
-/* ---------- MESSAGES ---------- */
+
+/* =====================================================
+   EMOJI CHECK
+===================================================== */
+
+/*
+  絵文字だけのメッセージかを簡易判定。
+  1〜3個ならスタンプ風表示。
+*/
+
+function getEmojiCount(text){
+
+  const cleaned =
+    text
+    .replace(/\s/g,"")
+    .replace(/\uFE0F/g,"");
+
+  if(!cleaned) return 0;
+
+  const emojiRegex =
+    /(?:\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\uFE0E)?)?|\p{Regional_Indicator}{2})/gu;
+
+  const matches = cleaned.match(emojiRegex);
+
+  if(!matches) return 0;
+
+  const joined =
+    matches.join("")
+    .replace(/\uFE0F/g,"");
+
+  if(joined !== cleaned){
+    return 0;
+  }
+
+  return matches.length;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
 
 function listenMessages(){
- const q=query(
-   collection(db,"messages"),
-   orderBy("createdAt","desc"),
-   limit(50)
- );
 
- onSnapshot(q,snapshot=>{
-   const docs=[...snapshot.docs].reverse();
+  if(unsubscribeMessages){
+    unsubscribeMessages();
+  }
 
-   messageDocs.clear();
-   docs.forEach(d=>messageDocs.set(d.id,{id:d.id,...d.data()}));
+  const q = query(
+    collection(db,"messages"),
+    orderBy("createdAt","desc"),
+    limit(50)
+  );
 
-   oldestMessage=snapshot.docs[snapshot.docs.length-1]||null;
-   renderMessages([...messageDocs.values()]);
- });
+  unsubscribeMessages =
+    onSnapshot(q,snapshot=>{
+
+      const docs =
+        [...snapshot.docs].reverse();
+
+      messageDocs.clear();
+
+      docs.forEach(d=>{
+        messageDocs.set(
+          d.id,
+          { id:d.id, ...d.data() }
+        );
+      });
+
+      oldestMessage =
+        snapshot.docs[
+          snapshot.docs.length - 1
+        ] || null;
+
+      renderMessages();
+
+      markTalkRead();
+
+    });
+
 }
 
-function renderMessages(items){
- const list=$("messageList");
- list.innerHTML="";
 
- items.sort((a,b)=>{
-   const at=a.createdAt?.seconds||0;
-   const bt=b.createdAt?.seconds||0;
-   return at-bt;
- });
+function renderMessages(){
 
- items.forEach(data=>{
-   const row=document.createElement("div");
-   row.className="messageRow"+(data.uid===currentUID?" mine":"");
+  const list = $("messageList");
 
-   const sender=document.createElement("div");
-   sender.className="sender";
-   sender.textContent=data.uid===currentUID?"自分":data.senderId;
+  list.innerHTML = "";
 
-   const bubble=document.createElement("div");
-   bubble.className="bubble";
+  const items =
+    [...messageDocs.values()]
+    .sort((a,b)=>{
 
-   if(data.replyTo){
-     const quote=document.createElement("div");
-     quote.className="replyQuote";
-     quote.textContent=
-       `${data.replyTo.senderId}：${data.replyTo.text}`;
-     bubble.appendChild(quote);
-   }
+      const at =
+        a.createdAt?.seconds || 0;
 
-   const body=document.createElement("div");
+      const bt =
+        b.createdAt?.seconds || 0;
 
-   if(data.deleted){
-     body.textContent="このメッセージは削除されました";
-     body.className="deleted";
-   }else{
-     body.textContent=data.text||"";
-   }
+      return at - bt;
 
-   bubble.appendChild(body);
+    });
 
-   const meta=document.createElement("div");
-   meta.className="meta";
 
-   let time="";
-   if(data.createdAt?.toDate){
-     time=data.createdAt.toDate().toLocaleString("ja-JP",{
-       month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"
-     });
-   }
+  items.forEach(data=>{
 
-   meta.textContent=time+(data.edited?" ・ 編集済み":"");
+    const row =
+      document.createElement("div");
 
-   row.append(sender,bubble,meta);
+    row.className =
+      "messageRow" +
+      (data.uid === currentUID
+        ? " mine"
+        : "");
 
-   if(!data.deleted){
-     const actions=document.createElement("div");
-     actions.className="actions";
 
-     const reply=document.createElement("button");
-     reply.textContent="↩︎ 返信";
-     reply.onclick=()=>setReply(data);
-     actions.appendChild(reply);
+    const sender =
+      document.createElement("div");
 
-     if(data.uid===currentUID){
-       const edit=document.createElement("button");
-       edit.textContent="編集";
-       edit.onclick=()=>editMessage(data);
+    sender.className = "sender";
 
-       const del=document.createElement("button");
-       del.textContent="削除";
-       del.onclick=()=>removeMessage(data);
+    sender.textContent =
+      data.uid === currentUID
+      ? "自分"
+      : data.senderId;
 
-       actions.append(edit,del);
-     }
 
-     row.appendChild(actions);
-   }
+    const bubble =
+      document.createElement("div");
 
-   list.appendChild(row);
- });
+    bubble.className = "bubble";
+
+
+    /* REPLY QUOTE */
+
+    if(data.replyTo){
+
+      const quote =
+        document.createElement("div");
+
+      quote.className = "replyQuote";
+
+      quote.textContent =
+        `${data.replyTo.senderId}：${data.replyTo.text}`;
+
+      bubble.appendChild(quote);
+
+    }
+
+
+    /* BODY */
+
+    const body =
+      document.createElement("div");
+
+    if(data.deleted){
+
+      body.textContent =
+        "このメッセージは削除されました";
+
+      body.className = "deleted";
+
+    }else{
+
+      body.textContent =
+        data.text || "";
+
+      const emojiCount =
+        getEmojiCount(data.text || "");
+
+      if(
+        emojiCount >= 1 &&
+        emojiCount <= 3
+      ){
+
+        bubble.classList.add("emojiBubble");
+
+        body.className =
+          "emojiText " +
+          (
+            emojiCount === 1
+            ? "one"
+            : emojiCount === 2
+            ? "two"
+            : "three"
+          );
+
+      }
+
+    }
+
+    bubble.appendChild(body);
+
+
+    /* META */
+
+    const meta =
+      document.createElement("div");
+
+    meta.className = "meta";
+
+    const timeSpan =
+      document.createElement("span");
+
+    if(data.createdAt?.toDate){
+
+      timeSpan.textContent =
+        data.createdAt
+        .toDate()
+        .toLocaleString(
+          "ja-JP",
+          {
+            month:"numeric",
+            day:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+          }
+        );
+
+    }
+
+    meta.appendChild(timeSpan);
+
+    if(data.edited){
+
+      const edited =
+        document.createElement("span");
+
+      edited.textContent =
+        "編集済み";
+
+      meta.appendChild(edited);
+
+    }
+
+    /* READ */
+
+    if(
+      data.uid === currentUID &&
+      !data.deleted &&
+      isReadByOther(data)
+    ){
+
+      const read =
+        document.createElement("span");
+
+      read.className = "readMark";
+
+      read.textContent = "既読";
+
+      meta.appendChild(read);
+
+    }
+
+
+    row.append(
+      sender,
+      bubble
+    );
+
+
+    /* REACTIONS */
+
+    if(!data.deleted){
+
+      const summary =
+        buildReactionSummary(data);
+
+      if(summary){
+        row.appendChild(summary);
+      }
+
+    }
+
+
+    row.appendChild(meta);
+
+
+    /* ACTIONS */
+
+    if(!data.deleted){
+
+      const actions =
+        document.createElement("div");
+
+      actions.className =
+        "messageActions";
+
+
+      const reaction =
+        document.createElement("button");
+
+      reaction.textContent =
+        "☺ リアクション";
+
+      reaction.onclick =
+        () => showReactionPicker(
+          row,
+          data
+        );
+
+
+      const reply =
+        document.createElement("button");
+
+      reply.textContent =
+        "↩︎ 返信";
+
+      reply.onclick =
+        () => setReply(data);
+
+
+      actions.append(
+        reaction,
+        reply
+      );
+
+
+      if(data.uid === currentUID){
+
+        const edit =
+          document.createElement("button");
+
+        edit.textContent = "編集";
+
+        edit.onclick =
+          () => editMessage(data);
+
+
+        const del =
+          document.createElement("button");
+
+        del.textContent = "削除";
+
+        del.onclick =
+          () => removeMessage(data);
+
+
+        actions.append(
+          edit,
+          del
+        );
+
+      }
+
+      row.appendChild(actions);
+
+    }
+
+
+    list.appendChild(row);
+
+  });
+
 }
+
+
+function buildReactionSummary(data){
+
+  const reactions =
+    data.reactions || {};
+
+  let hasAny = false;
+
+  const wrap =
+    document.createElement("div");
+
+  wrap.className =
+    "reactionSummary";
+
+  REACTIONS.forEach(emoji=>{
+
+    const users =
+      reactions[emoji] || [];
+
+    if(users.length === 0){
+      return;
+    }
+
+    hasAny = true;
+
+    const chip =
+      document.createElement("button");
+
+    chip.className =
+      "reactionChip";
+
+    if(users.includes(currentUID)){
+      chip.classList.add(
+        "mineReaction"
+      );
+    }
+
+    chip.textContent =
+      `${emoji} ${users.length}`;
+
+    chip.onclick =
+      () => toggleReaction(
+        data,
+        emoji
+      );
+
+    wrap.appendChild(chip);
+
+  });
+
+  return hasAny
+    ? wrap
+    : null;
+}
+
+
+function showReactionPicker(row,data){
+
+  document
+    .querySelectorAll(".reactionPicker")
+    .forEach(x=>x.remove());
+
+  const picker =
+    document.createElement("div");
+
+  picker.className =
+    "reactionPicker";
+
+  REACTIONS.forEach(emoji=>{
+
+    const button =
+      document.createElement("button");
+
+    button.textContent = emoji;
+
+    button.onclick = async () => {
+
+      await toggleReaction(
+        data,
+        emoji
+      );
+
+      picker.remove();
+
+    };
+
+    picker.appendChild(button);
+
+  });
+
+  row.appendChild(picker);
+
+}
+
+
+async function toggleReaction(data,emoji){
+
+  const reactions =
+    structuredClone(
+      data.reactions || {}
+    );
+
+  /*
+    1人1種類方式。
+    Teamsっぽく別のリアクションへ
+    切り替えられるようにする。
+  */
+
+  let sameReaction = false;
+
+  REACTIONS.forEach(key=>{
+
+    const users =
+      reactions[key] || [];
+
+    if(
+      key === emoji &&
+      users.includes(currentUID)
+    ){
+      sameReaction = true;
+    }
+
+    reactions[key] =
+      users.filter(
+        uid => uid !== currentUID
+      );
+
+  });
+
+  if(!sameReaction){
+
+    if(!reactions[emoji]){
+      reactions[emoji] = [];
+    }
+
+    reactions[emoji].push(
+      currentUID
+    );
+
+  }
+
+  await updateDoc(
+    doc(db,"messages",data.id),
+    { reactions }
+  );
+
+}
+
 
 function setReply(data){
- replyTarget=data;
- $("replyText").textContent=
-   `${data.senderId}「${(data.text||"").slice(0,40)}」に返信`;
- $("replyBar").classList.remove("hidden");
- $("messageInput").focus();
+
+  editingMessage = null;
+
+  $("editBar")
+    .classList.add("hidden");
+
+  replyTarget = data;
+
+  $("replyText").textContent =
+    `${data.senderId}「${(data.text || "").slice(0,40)}」に返信`;
+
+  $("replyBar")
+    .classList.remove("hidden");
+
+  $("messageInput").focus();
+
 }
 
-$("cancelReply").onclick=()=>{
- replyTarget=null;
- $("replyBar").classList.add("hidden");
+
+$("cancelReply").onclick = () => {
+
+  replyTarget = null;
+
+  $("replyBar")
+    .classList.add("hidden");
+
 };
+
 
 function editMessage(data){
- editingMessage=data;
- $("messageInput").value=data.text;
- $("messageInput").focus();
+
+  replyTarget = null;
+
+  $("replyBar")
+    .classList.add("hidden");
+
+  editingMessage = data;
+
+  $("messageInput").value =
+    data.text || "";
+
+  $("editBar")
+    .classList.remove("hidden");
+
+  $("messageInput").focus();
+
 }
+
+
+$("cancelEdit").onclick = () => {
+
+  editingMessage = null;
+
+  $("messageInput").value = "";
+
+  $("editBar")
+    .classList.add("hidden");
+
+};
+
 
 async function removeMessage(data){
- if(!confirm("このメッセージを削除しますか？"))return;
 
- await updateDoc(doc(db,"messages",data.id),{
-   text:"",
-   deleted:true,
-   edited:false
- });
+  if(
+    !confirm(
+      "このメッセージを削除しますか？"
+    )
+  ) return;
+
+  await updateDoc(
+    doc(db,"messages",data.id),
+    {
+      text:"",
+      deleted:true,
+      edited:false
+    }
+  );
+
 }
 
-$("sendMessage").onclick=sendMessage;
+
+$("sendMessage").onclick =
+  sendMessage;
+
 
 async function sendMessage(){
- const text=$("messageInput").value.trim();
- if(!text)return;
 
- if(editingMessage){
-   await updateDoc(doc(db,"messages",editingMessage.id),{
-     text,
-     edited:true
-   });
-   editingMessage=null;
- }else{
-   await addDoc(collection(db,"messages"),{
-     text,
-     senderId:currentId,
-     uid:currentUID,
-     createdAt:serverTimestamp(),
-     edited:false,
-     deleted:false,
-     replyTo:replyTarget?{
-       id:replyTarget.id,
-       senderId:replyTarget.senderId,
-       text:(replyTarget.text||"").slice(0,150)
-     }:null
-   });
- }
+  const text =
+    $("messageInput")
+    .value
+    .trim();
 
- $("messageInput").value="";
- replyTarget=null;
- $("replyBar").classList.add("hidden");
+  if(!text) return;
+
+
+  if(editingMessage){
+
+    await updateDoc(
+      doc(
+        db,
+        "messages",
+        editingMessage.id
+      ),
+      {
+        text,
+        edited:true,
+        editedAt:serverTimestamp()
+      }
+    );
+
+    editingMessage = null;
+
+    $("editBar")
+      .classList.add("hidden");
+
+  }else{
+
+    await addDoc(
+      collection(
+        db,
+        "messages"
+      ),
+      {
+        text,
+        senderId:currentId,
+        uid:currentUID,
+        createdAt:serverTimestamp(),
+        edited:false,
+        deleted:false,
+        reactions:{},
+
+        replyTo:
+          replyTarget
+          ? {
+              id:replyTarget.id,
+              senderId:
+                replyTarget.senderId,
+              text:
+                (replyTarget.text || "")
+                .slice(0,150)
+            }
+          : null
+      }
+    );
+
+  }
+
+  $("messageInput").value = "";
+
+  replyTarget = null;
+
+  $("replyBar")
+    .classList.add("hidden");
+
 }
 
-$("loadMore").onclick=async()=>{
- if(!oldestMessage)return;
 
- const q=query(
-   collection(db,"messages"),
-   orderBy("createdAt","desc"),
-   startAfter(oldestMessage),
-   limit(50)
- );
+$("messageInput")
+.addEventListener(
+  "keydown",
+  e=>{
 
- const snap=await getDocs(q);
- if(snap.empty){
-   $("loadMore").textContent="これより前のメッセージはありません";
-   return;
- }
+    if(
+      e.key === "Enter" &&
+      !e.shiftKey
+    ){
 
- snap.docs.forEach(d=>
-   messageDocs.set(d.id,{id:d.id,...d.data()})
- );
+      e.preventDefault();
+      sendMessage();
 
- oldestMessage=snap.docs[snap.docs.length-1];
- renderMessages([...messageDocs.values()]);
+    }
+
+  }
+);
+
+
+/* ===== LOAD PAST 50 ===== */
+
+$("loadMore").onclick =
+async () => {
+
+  if(!oldestMessage){
+    return;
+  }
+
+  const q = query(
+    collection(db,"messages"),
+    orderBy("createdAt","desc"),
+    startAfter(oldestMessage),
+    limit(50)
+  );
+
+  const snap =
+    await getDocs(q);
+
+  if(snap.empty){
+
+    $("loadMore").textContent =
+      "これより前のメッセージはありません";
+
+    return;
+  }
+
+  snap.docs.forEach(d=>{
+
+    messageDocs.set(
+      d.id,
+      {
+        id:d.id,
+        ...d.data()
+      }
+    );
+
+  });
+
+  oldestMessage =
+    snap.docs[
+      snap.docs.length - 1
+    ];
+
+  renderMessages();
+
 };
 
-/* ---------- SOLO ---------- */
+
+/* =====================================================
+   READ RECEIPTS
+===================================================== */
+
+function listenReadStates(){
+
+  if(unsubscribeReads){
+    unsubscribeReads();
+  }
+
+  unsubscribeReads =
+    onSnapshot(
+      collection(db,"readStates"),
+      snapshot=>{
+
+        readStates = {};
+
+        snapshot.forEach(d=>{
+          readStates[d.id] =
+            d.data();
+        });
+
+        renderMessages();
+
+      }
+    );
+
+}
+
+
+async function markTalkRead(){
+
+  if(!currentUID) return;
+
+  const activeTab =
+    document.querySelector(
+      ".tab.active"
+    );
+
+  if(
+    !activeTab ||
+    activeTab.dataset.page !== "talkPage"
+  ){
+    return;
+  }
+
+  await setDoc(
+    doc(
+      db,
+      "readStates",
+      currentUID
+    ),
+    {
+      uid:currentUID,
+      senderId:currentId,
+      lastReadAt:
+        serverTimestamp()
+    },
+    {
+      merge:true
+    }
+  );
+
+}
+
+
+function isReadByOther(message){
+
+  if(!message.createdAt){
+    return false;
+  }
+
+  return Object.values(
+    readStates
+  ).some(state=>{
+
+    if(
+      state.uid === currentUID
+    ){
+      return false;
+    }
+
+    if(
+      !state.lastReadAt
+    ){
+      return false;
+    }
+
+    return (
+      state.lastReadAt.seconds >=
+      message.createdAt.seconds
+    );
+
+  });
+
+}
+
+
+/* =====================================================
+   SOLO
+===================================================== */
 
 function listenSolo(){
- const q=query(
-   collection(db,"solo"),
-   orderBy("createdAt","desc"),
-   limit(50)
- );
 
- onSnapshot(q,snap=>{
-   const list=$("soloList");
-   list.innerHTML="";
+  if(unsubscribeSolo){
+    unsubscribeSolo();
+  }
 
-   snap.forEach(d=>{
-     const data={id:d.id,...d.data()};
-     const post=document.createElement("article");
-     post.className="post";
+  const q = query(
+    collection(db,"solo"),
+    orderBy("createdAt","desc"),
+    limit(50)
+  );
 
-     const head=document.createElement("div");
-     head.className="postHead";
+  unsubscribeSolo =
+    onSnapshot(q,snap=>{
 
-     const user=document.createElement("div");
-     user.className="postUser";
-     user.textContent=data.senderId;
+      const list =
+        $("soloList");
 
-     const time=document.createElement("div");
-     time.className="postTime";
-     if(data.createdAt?.toDate){
-       time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{
-         month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"
-       });
-     }
+      list.innerHTML = "";
 
-     head.append(user,time);
+      snap.forEach(d=>{
 
-     const text=document.createElement("div");
-     text.className="postText";
-     text.textContent=data.text||"";
+        const data =
+          {
+            id:d.id,
+            ...d.data()
+          };
 
-     const footer=document.createElement("div");
-     footer.className="postFooter";
+        const post =
+          document.createElement(
+            "article"
+          );
 
-     const heart=document.createElement("button");
-     const liked=(data.likedBy||[]).includes(currentUID);
-     heart.textContent=`${liked?"♥":"♡"} ${data.likes||0}`;
-     heart.onclick=()=>toggleLike(data,liked);
-     footer.appendChild(heart);
+        post.className = "post";
 
-     if(data.uid===currentUID){
-       const menu=document.createElement("span");
-       menu.className="postMenu";
 
-       const edit=document.createElement("button");
-       edit.textContent="編集";
-       edit.onclick=()=>{
-         editingSolo=data;
-         $("soloInput").value=data.text;
-         $("soloInput").focus();
-       };
+        const head =
+          document.createElement("div");
 
-       const del=document.createElement("button");
-       del.textContent="削除";
-       del.onclick=async()=>{
-         if(confirm("このひとりごとを削除しますか？")){
-           await deleteDoc(doc(db,"solo",data.id));
-         }
-       };
+        head.className =
+          "postHead";
 
-       menu.append(edit,del);
-       footer.appendChild(menu);
-     }
 
-     post.append(head,text,footer);
-     list.appendChild(post);
-   });
- });
+        const user =
+          document.createElement("div");
+
+        user.className =
+          "postUser";
+
+        user.textContent =
+          data.senderId;
+
+
+        const time =
+          document.createElement("div");
+
+        time.className =
+          "postTime";
+
+        if(data.createdAt?.toDate){
+
+          time.textContent =
+            data.createdAt
+            .toDate()
+            .toLocaleString(
+              "ja-JP",
+              {
+                month:"numeric",
+                day:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+              }
+            );
+
+        }
+
+        head.append(
+          user,
+          time
+        );
+
+
+        const text =
+          document.createElement("div");
+
+        text.className =
+          "postText";
+
+        text.textContent =
+          data.text || "";
+
+
+        const footer =
+          document.createElement("div");
+
+        footer.className =
+          "postFooter";
+
+
+        const likes =
+          data.likedBy || [];
+
+        const heart =
+          document.createElement("button");
+
+        heart.textContent =
+          `${
+            likes.includes(currentUID)
+            ? "♥"
+            : "♡"
+          } ${likes.length}`;
+
+        heart.onclick =
+          async () => {
+
+            if(
+              likes.includes(
+                currentUID
+              )
+            ){
+
+              await updateDoc(
+                doc(
+                  db,
+                  "solo",
+                  data.id
+                ),
+                {
+                  likedBy:
+                    arrayRemove(
+                      currentUID
+                    )
+                }
+              );
+
+            }else{
+
+              await updateDoc(
+                doc(
+                  db,
+                  "solo",
+                  data.id
+                ),
+                {
+                  likedBy:
+                    arrayUnion(
+                      currentUID
+                    )
+                }
+              );
+
+            }
+
+          };
+
+
+        footer.appendChild(
+          heart
+        );
+
+
+        if(
+          data.uid ===
+          currentUID
+        ){
+
+          const edit =
+            document.createElement(
+              "button"
+            );
+
+          edit.textContent =
+            "編集";
+
+          edit.onclick =
+            async () => {
+
+              const newText =
+                prompt(
+                  "ひとりごとを編集",
+                  data.text || ""
+                );
+
+              if(
+                newText === null ||
+                !newText.trim()
+              ) return;
+
+              await updateDoc(
+                doc(
+                  db,
+                  "solo",
+                  data.id
+                ),
+                {
+                  text:newText.trim(),
+                  edited:true
+                }
+              );
+
+            };
+
+
+          const del =
+            document.createElement(
+              "button"
+            );
+
+          del.textContent =
+            "削除";
+
+          del.onclick =
+            async () => {
+
+              if(
+                confirm(
+                  "削除しますか？"
+                )
+              ){
+
+                await deleteDoc(
+                  doc(
+                    db,
+                    "solo",
+                    data.id
+                  )
+                );
+
+              }
+
+            };
+
+          footer.append(
+            edit,
+            del
+          );
+
+        }
+
+        post.append(
+          head,
+          text,
+          footer
+        );
+
+        list.appendChild(post);
+
+      });
+
+    });
+
 }
 
-$("sendSolo").onclick=async()=>{
- const text=$("soloInput").value.trim();
- if(!text)return;
 
- if(editingSolo){
-   await updateDoc(doc(db,"solo",editingSolo.id),{
-     text,
-     edited:true
-   });
-   editingSolo=null;
- }else{
-   await addDoc(collection(db,"solo"),{
-     text,
-     senderId:currentId,
-     uid:currentUID,
-     createdAt:serverTimestamp(),
-     likes:0,
-     likedBy:[]
-   });
- }
+$("sendSolo").onclick =
+async () => {
 
- $("soloInput").value="";
+  const text =
+    $("soloInput")
+    .value
+    .trim();
+
+  if(!text) return;
+
+  await addDoc(
+    collection(db,"solo"),
+    {
+      text,
+      uid:currentUID,
+      senderId:currentId,
+      createdAt:
+        serverTimestamp(),
+      likedBy:[]
+    }
+  );
+
+  $("soloInput").value = "";
+
 };
 
-async function toggleLike(data,liked){
- let arr=[...(data.likedBy||[])];
 
- if(liked){
-   arr=arr.filter(x=>x!==currentUID);
- }else{
-   if(!arr.includes(currentUID))arr.push(currentUID);
- }
+/* =====================================================
+   SCHEDULE
+===================================================== */
 
- await updateDoc(doc(db,"solo",data.id),{
-   likedBy:arr,
-   likes:arr.length
- });
+$("addSchedule").onclick =
+async () => {
+
+  const title =
+    $("scheduleTitle")
+    .value
+    .trim();
+
+  const dateText =
+    $("scheduleDate")
+    .value;
+
+  const memo =
+    $("scheduleMemo")
+    .value
+    .trim();
+
+  if(!title || !dateText){
+
+    alert(
+      "タイトルと日時を入力してください"
+    );
+
+    return;
+  }
+
+  const date =
+    new Date(dateText);
+
+  await addDoc(
+    collection(db,"schedules"),
+    {
+      title,
+      memo,
+      startsAt:
+        Timestamp.fromDate(date),
+      uid:currentUID,
+      senderId:currentId,
+      createdAt:
+        serverTimestamp()
+    }
+  );
+
+  $("scheduleTitle").value = "";
+  $("scheduleDate").value = "";
+  $("scheduleMemo").value = "";
+
+};
+
+
+function listenSchedules(){
+
+  if(unsubscribeSchedule){
+    unsubscribeSchedule();
+  }
+
+  const q = query(
+    collection(db,"schedules"),
+    orderBy("startsAt","asc")
+  );
+
+  unsubscribeSchedule =
+    onSnapshot(q,snap=>{
+
+      const list =
+        $("scheduleList");
+
+      list.innerHTML = "";
+
+      snap.forEach(d=>{
+
+        const data =
+          {
+            id:d.id,
+            ...d.data()
+          };
+
+        const card =
+          document.createElement(
+            "div"
+          );
+
+        card.className =
+          "scheduleCard";
+
+
+        const date =
+          document.createElement(
+            "div"
+          );
+
+        date.className =
+          "scheduleDate";
+
+        if(data.startsAt?.toDate){
+
+          date.textContent =
+            data.startsAt
+            .toDate()
+            .toLocaleString(
+              "ja-JP",
+              {
+                year:"numeric",
+                month:"numeric",
+                day:"numeric",
+                weekday:"short",
+                hour:"2-digit",
+                minute:"2-digit"
+              }
+            );
+
+        }
+
+
+        const title =
+          document.createElement(
+            "div"
+          );
+
+        title.className =
+          "scheduleTitle";
+
+        title.textContent =
+          data.title;
+
+
+        const memo =
+          document.createElement(
+            "div"
+          );
+
+        memo.className =
+          "scheduleMemo";
+
+        memo.textContent =
+          data.memo || "";
+
+
+        const owner =
+          document.createElement(
+            "div"
+          );
+
+        owner.className =
+          "scheduleOwner";
+
+        owner.textContent =
+          `登録：${data.senderId}`;
+
+
+        card.append(
+          date,
+          title
+        );
+
+        if(data.memo){
+          card.appendChild(memo);
+        }
+
+        card.appendChild(owner);
+
+
+        if(
+          data.uid === currentUID
+        ){
+
+          const actions =
+            document.createElement(
+              "div"
+            );
+
+          actions.className =
+            "scheduleActions";
+
+
+          const edit =
+            document.createElement(
+              "button"
+            );
+
+          edit.textContent =
+            "編集";
+
+          edit.onclick =
+            () => editSchedule(data);
+
+
+          const del =
+            document.createElement(
+              "button"
+            );
+
+          del.textContent =
+            "削除";
+
+          del.onclick =
+            async () => {
+
+              if(
+                confirm(
+                  "この予定を削除しますか？"
+                )
+              ){
+
+                await deleteDoc(
+                  doc(
+                    db,
+                    "schedules",
+                    data.id
+                  )
+                );
+
+              }
+
+            };
+
+          actions.append(
+            edit,
+            del
+          );
+
+          card.appendChild(
+            actions
+          );
+
+        }
+
+        list.appendChild(card);
+
+      });
+
+    });
+
 }
 
-/* ---------- LOCATION ---------- */
 
-$("locationSwitch").onclick=async()=>{
- if(locationWatch!==null){
-   navigator.geolocation.clearWatch(locationWatch);
-   locationWatch=null;
-   $("locationSwitch").classList.remove("on");
+async function editSchedule(data){
 
-   await setDoc(doc(db,"locations",currentUID),{
-     uid:currentUID,
-     senderId:currentId,
-     sharing:false,
-     updatedAt:serverTimestamp()
-   },{merge:true});
+  const newTitle =
+    prompt(
+      "予定名",
+      data.title || ""
+    );
 
-   return;
- }
+  if(newTitle === null) return;
 
- if(!navigator.geolocation){
-   alert("この端末では位置情報を利用できません");
-   return;
- }
+  const newMemo =
+    prompt(
+      "メモ",
+      data.memo || ""
+    );
 
- $("locationSwitch").classList.add("on");
+  if(newMemo === null) return;
 
- locationWatch=navigator.geolocation.watchPosition(
-   async pos=>{
-     await setDoc(doc(db,"locations",currentUID),{
-       uid:currentUID,
-       senderId:currentId,
-       sharing:true,
-       latitude:pos.coords.latitude,
-       longitude:pos.coords.longitude,
-       accuracy:pos.coords.accuracy,
-       updatedAt:serverTimestamp()
-     },{merge:true});
-   },
-   err=>{
-     console.error(err);
-     alert("位置情報を取得できませんでした。位置情報の許可を確認してください。");
-     $("locationSwitch").classList.remove("on");
-     locationWatch=null;
-   },
-   {
-     enableHighAccuracy:true,
-     maximumAge:15000,
-     timeout:15000
-   }
- );
+  await updateDoc(
+    doc(
+      db,
+      "schedules",
+      data.id
+    ),
+    {
+      title:
+        newTitle.trim(),
+      memo:
+        newMemo.trim()
+    }
+  );
+
+}
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+$("locationSwitch").onclick =
+async () => {
+
+  if(
+    locationWatch !== null
+  ){
+
+    navigator
+      .geolocation
+      .clearWatch(
+        locationWatch
+      );
+
+    locationWatch = null;
+
+    $("locationSwitch")
+      .classList.remove("on");
+
+    await setDoc(
+      doc(
+        db,
+        "locations",
+        currentUID
+      ),
+      {
+        uid:currentUID,
+        senderId:currentId,
+        sharing:false,
+        updatedAt:
+          serverTimestamp()
+      },
+      {
+        merge:true
+      }
+    );
+
+    return;
+  }
+
+
+  if(
+    !navigator.geolocation
+  ){
+
+    alert(
+      "位置情報を利用できません"
+    );
+
+    return;
+  }
+
+
+  $("locationSwitch")
+    .classList.add("on");
+
+
+  locationWatch =
+    navigator
+    .geolocation
+    .watchPosition(
+
+      async position => {
+
+        await setDoc(
+          doc(
+            db,
+            "locations",
+            currentUID
+          ),
+          {
+            uid:currentUID,
+            senderId:currentId,
+            sharing:true,
+
+            latitude:
+              position.coords
+              .latitude,
+
+            longitude:
+              position.coords
+              .longitude,
+
+            accuracy:
+              position.coords
+              .accuracy,
+
+            updatedAt:
+              serverTimestamp()
+          },
+          {
+            merge:true
+          }
+        );
+
+      },
+
+      error => {
+
+        console.error(error);
+
+        alert(
+          "位置情報を取得できませんでした"
+        );
+
+        $("locationSwitch")
+          .classList.remove("on");
+
+        locationWatch = null;
+
+      },
+
+      {
+        enableHighAccuracy:true,
+        maximumAge:15000,
+        timeout:15000
+      }
+
+    );
+
 };
+
 
 function listenLocations(){
- onSnapshot(collection(db,"locations"),snap=>{
-   const box=$("locations");
-   box.innerHTML="";
 
-   let count=0;
+  if(unsubscribeLocations){
+    unsubscribeLocations();
+  }
 
-   snap.forEach(d=>{
-     const data=d.data();
-     if(!data.sharing)return;
-     count++;
+  unsubscribeLocations =
+    onSnapshot(
+      collection(
+        db,
+        "locations"
+      ),
+      snapshot=>{
 
-     const div=document.createElement("div");
-     div.className="memberLocation";
+        const box =
+          $("locations");
 
-     const name=document.createElement("strong");
-     name.textContent=data.uid===currentUID
-       ? `${data.senderId}（自分）`
-       : data.senderId;
+        box.innerHTML = "";
 
-     const status=document.createElement("div");
-     status.className="small";
+        let count = 0;
 
-     if(data.updatedAt?.toDate){
-       status.textContent=
-         `最終更新：${data.updatedAt.toDate().toLocaleString("ja-JP")}`;
-     }else{
-       status.textContent="位置情報を取得中";
-     }
+        snapshot.forEach(d=>{
 
-     const link=document.createElement("a");
-     link.className="mapLink";
-     link.target="_blank";
-     link.rel="noopener";
-     link.textContent="地図で見る";
+          const data =
+            d.data();
 
-     if(
-       typeof data.latitude==="number" &&
-       typeof data.longitude==="number"
-     ){
-       link.href=
-         `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
-     }
+          if(!data.sharing){
+            return;
+          }
 
-     div.append(name,status,link);
-     box.appendChild(div);
-   });
+          count++;
 
-   if(count===0){
-     box.innerHTML='<div class="small" style="margin-top:15px">現在、位置情報を共有している人はいません。</div>';
-   }
- });
+
+          const div =
+            document.createElement(
+              "div"
+            );
+
+          div.className =
+            "memberLocation";
+
+
+          const name =
+            document.createElement(
+              "strong"
+            );
+
+          name.textContent =
+            data.uid === currentUID
+            ? `${data.senderId}（自分）`
+            : data.senderId;
+
+
+          const updated =
+            document.createElement(
+              "div"
+            );
+
+          updated.className =
+            "small";
+
+          if(data.updatedAt?.toDate){
+
+            updated.textContent =
+              "最終更新：" +
+              data.updatedAt
+              .toDate()
+              .toLocaleString(
+                "ja-JP"
+              );
+
+          }else{
+
+            updated.textContent =
+              "位置情報を取得中";
+
+          }
+
+
+          const link =
+            document.createElement(
+              "a"
+            );
+
+          link.className =
+            "mapLink";
+
+          link.target = "_blank";
+          link.rel = "noopener";
+
+          link.textContent =
+            "地図で見る";
+
+
+          if(
+            typeof data.latitude ===
+              "number" &&
+            typeof data.longitude ===
+              "number"
+          ){
+
+            link.href =
+              `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
+
+          }
+
+
+          div.append(
+            name,
+            updated,
+            link
+          );
+
+          box.appendChild(div);
+
+        });
+
+
+        if(count === 0){
+
+          box.innerHTML =
+            '<div class="small" style="margin-top:14px">現在共有している人はいません。</div>';
+
+        }
+
+      }
+    );
+
 }
 
-/* 画面を閉じてもFirestore上の共有状態を
-   確実にOFFにできるわけではないため、
-   updatedAtも必ず表示して「現在地」と誤認しないようにする */
+
+/* =====================================================
+   VOICE ROOM
+   2人用 WebRTC
+===================================================== */
+
+const voiceRoomRef =
+  doc(
+    db,
+    "voiceRooms",
+    "main"
+  );
+
+let peerConnection = null;
+let localStream = null;
+let voiceRole = null;
+let voiceJoined = false;
+let voiceMuted = false;
+
+let unsubscribeCallerIce = null;
+let unsubscribeCalleeIce = null;
+
+const rtcConfig = {
+  iceServers:[
+    {
+      urls:
+        "stun:stun.l.google.com:19302"
+    },
+    {
+      urls:
+        "stun:stun1.l.google.com:19302"
+    }
+  ]
+};
+
+
+function listenVoiceRoom(){
+
+  if(unsubscribeVoice){
+    unsubscribeVoice();
+  }
+
+  unsubscribeVoice =
+    onSnapshot(
+      voiceRoomRef,
+      snap=>{
+
+        if(!snap.exists()){
+
+          if(!voiceJoined){
+
+            showVoiceClosed();
+
+          }
+
+          return;
+        }
+
+        const data =
+          snap.data();
+
+        if(!data.active){
+
+          if(!voiceJoined){
+            showVoiceClosed();
+          }
+
+          return;
+        }
+
+        if(voiceJoined){
+
+          $("voiceStatus")
+            .innerHTML =
+              `<span class="voiceDot"></span><span class="voiceLive">参加中</span>`;
+
+          return;
+        }
+
+        $("voiceStatus")
+          .textContent =
+            `${data.hostId || "誰か"} がルームを開いています`;
+
+        $("openVoice")
+          .classList.add("hidden");
+
+        $("joinVoice")
+          .classList.remove("hidden");
+
+        $("muteVoice")
+          .classList.add("hidden");
+
+        $("leaveVoice")
+          .classList.add("hidden");
+
+      }
+    );
+
+}
+
+
+function showVoiceClosed(){
+
+  $("voiceStatus")
+    .textContent =
+      "ルームは開かれていません";
+
+  $("openVoice")
+    .classList.remove("hidden");
+
+  $("joinVoice")
+    .classList.add("hidden");
+
+  $("muteVoice")
+    .classList.add("hidden");
+
+  $("leaveVoice")
+    .classList.add("hidden");
+
+}
+
+
+function showVoiceJoined(){
+
+  $("voiceStatus")
+    .innerHTML =
+      `<span class="voiceDot"></span><span class="voiceLive">ボイスルーム参加中</span>`;
+
+  $("openVoice")
+    .classList.add("hidden");
+
+  $("joinVoice")
+    .classList.add("hidden");
+
+  $("muteVoice")
+    .classList.remove("hidden");
+
+  $("leaveVoice")
+    .classList.remove("hidden");
+
+}
+
+
+async function prepareAudio(){
+
+  localStream =
+    await navigator
+    .mediaDevices
+    .getUserMedia({
+      audio:true,
+      video:false
+    });
+
+  peerConnection =
+    new RTCPeerConnection(
+      rtcConfig
+    );
+
+
+  localStream
+    .getTracks()
+    .forEach(track=>{
+
+      peerConnection
+        .addTrack(
+          track,
+          localStream
+        );
+
+    });
+
+
+  peerConnection.ontrack =
+    event=>{
+
+      const remoteAudio =
+        $("remoteAudio");
+
+      remoteAudio.srcObject =
+        event.streams[0];
+
+      remoteAudio
+        .play()
+        .catch(
+          ()=>{}
+        );
+
+    };
+
+}
+
+
+/* DELETE ICE COLLECTION */
+
+async function clearCollection(
+  name
+){
+
+  const snap =
+    await getDocs(
+      collection(
+        db,
+        "voiceRooms",
+        "main",
+        name
+      )
+    );
+
+  const deletes =
+    snap.docs.map(
+      d=>deleteDoc(d.ref)
+    );
+
+  await Promise.all(
+    deletes
+  );
+
+}
+
+
+/* HOST */
+
+$("openVoice").onclick =
+async () => {
+
+  try{
+
+    await clearCollection(
+      "callerCandidates"
+    );
+
+    await clearCollection(
+      "calleeCandidates"
+    );
+
+
+    const currentRoom =
+      await getDoc(
+        voiceRoomRef
+      );
+
+    if(
+      currentRoom.exists() &&
+      currentRoom.data().active
+    ){
+
+      alert(
+        "すでにルームが開かれています"
+      );
+
+      return;
+
+    }
+
+
+    await prepareAudio();
+
+    voiceRole = "host";
+    voiceJoined = true;
+
+    showVoiceJoined();
+
+
+    const callerCandidates =
+      collection(
+        db,
+        "voiceRooms",
+        "main",
+        "callerCandidates"
+      );
+
+
+    peerConnection
+      .onicecandidate =
+      async event=>{
+
+        if(event.candidate){
+
+          await addDoc(
+            callerCandidates,
+            event.candidate
+              .toJSON()
+          );
+
+        }
+
+      };
+
+
+    const offer =
+      await peerConnection
+      .createOffer();
+
+
+    await peerConnection
+      .setLocalDescription(
+        offer
+      );
+
+
+    await setDoc(
+      voiceRoomRef,
+      {
+        active:true,
+        hostUID:currentUID,
+        hostId:currentId,
+        createdAt:
+          serverTimestamp(),
+
+        offer:{
+          type:
+            offer.type,
+          sdp:
+            offer.sdp
+        },
+
+        answer:null
+      }
+    );
+
+
+    unsubscribeCalleeIce =
+      onSnapshot(
+        collection(
+          db,
+          "voiceRooms",
+          "main",
+          "calleeCandidates"
+        ),
+        snapshot=>{
+
+          snapshot
+          .docChanges()
+          .forEach(change=>{
+
+            if(
+              change.type ===
+              "added"
+            ){
+
+              const candidate =
+                new RTCIceCandidate(
+                  change.doc.data()
+                );
+
+              peerConnection
+                ?.addIceCandidate(
+                  candidate
+                )
+                .catch(
+                  console.error
+                );
+
+            }
+
+          });
+
+        }
+      );
+
+
+    const answerUnsub =
+      onSnapshot(
+        voiceRoomRef,
+        async snap=>{
+
+          const data =
+            snap.data();
+
+          if(
+            !peerConnection ||
+            !data?.answer
+          ){
+            return;
+          }
+
+          if(
+            !peerConnection
+            .currentRemoteDescription
+          ){
+
+            await peerConnection
+              .setRemoteDescription(
+                new RTCSessionDescription(
+                  data.answer
+                )
+              );
+
+          }
+
+        }
+      );
+
+
+    const oldLeave =
+      $("leaveVoice").onclick;
+
+    $("leaveVoice").onclick =
+      async () => {
+
+        answerUnsub();
+
+        if(oldLeave){
+          await oldLeave();
+        }else{
+          await leaveVoiceRoom(true);
+        }
+
+      };
+
+
+  }catch(error){
+
+    console.error(error);
+
+    voiceJoined = false;
+
+    closeLocalVoice();
+
+    alert(
+      "マイクを開始できませんでした。Safariのマイク許可を確認してください。"
+    );
+
+    showVoiceClosed();
+
+  }
+
+};
+
+
+/* JOINER */
+
+$("joinVoice").onclick =
+async () => {
+
+  try{
+
+    const snap =
+      await getDoc(
+        voiceRoomRef
+      );
+
+    if(
+      !snap.exists() ||
+      !snap.data().active
+    ){
+
+      alert(
+        "ルームは終了しています"
+      );
+
+      return;
+
+    }
+
+    const room =
+      snap.data();
+
+    if(!room.offer){
+
+      alert(
+        "接続情報を取得できません"
+      );
+
+      return;
+
+    }
+
+
+    await prepareAudio();
+
+    voiceRole =
+      "participant";
+
+    voiceJoined =
+      true;
+
+    showVoiceJoined();
+
+
+    const calleeCandidates =
+      collection(
+        db,
+        "voiceRooms",
+        "main",
+        "calleeCandidates"
+      );
+
+
+    peerConnection
+      .onicecandidate =
+      async event=>{
+
+        if(event.candidate){
+
+          await addDoc(
+            calleeCandidates,
+            event.candidate
+              .toJSON()
+          );
+
+        }
+
+      };
+
+
+    await peerConnection
+      .setRemoteDescription(
+        new RTCSessionDescription(
+          room.offer
+        )
+      );
+
+
+    const answer =
+      await peerConnection
+      .createAnswer();
+
+
+    await peerConnection
+      .setLocalDescription(
+        answer
+      );
+
+
+    await updateDoc(
+      voiceRoomRef,
+      {
+        answer:{
+          type:
+            answer.type,
+          sdp:
+            answer.sdp
+        },
+
+        participantUID:
+          currentUID,
+
+        participantId:
+          currentId
+      }
+    );
+
+
+    unsubscribeCallerIce =
+      onSnapshot(
+        collection(
+          db,
+          "voiceRooms",
+          "main",
+          "callerCandidates"
+        ),
+        snapshot=>{
+
+          snapshot
+          .docChanges()
+          .forEach(change=>{
+
+            if(
+              change.type ===
+              "added"
+            ){
+
+              const candidate =
+                new RTCIceCandidate(
+                  change.doc.data()
+                );
+
+              peerConnection
+                ?.addIceCandidate(
+                  candidate
+                )
+                .catch(
+                  console.error
+                );
+
+            }
+
+          });
+
+        }
+      );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    voiceJoined = false;
+
+    closeLocalVoice();
+
+    alert(
+      "ボイスルームに参加できませんでした。"
+    );
+
+  }
+
+};
+
+
+/* MUTE */
+
+$("muteVoice").onclick =
+() => {
+
+  if(!localStream){
+    return;
+  }
+
+  voiceMuted =
+    !voiceMuted;
+
+  localStream
+    .getAudioTracks()
+    .forEach(track=>{
+
+      track.enabled =
+        !voiceMuted;
+
+    });
+
+  $("muteVoice").textContent =
+    voiceMuted
+      ? "🔇 ミュート中"
+      : "🎤 ミュート";
+
+};
+
+
+/* LEAVE */
+
+$("leaveVoice").onclick =
+async () => {
+
+  await leaveVoiceRoom(true);
+
+};
+
+
+async function leaveVoiceRoom(
+  updateFirestore = true
+){
+
+  if(!voiceJoined){
+    return;
+  }
+
+  const wasHost =
+    voiceRole === "host";
+
+  closeLocalVoice();
+
+  voiceJoined = false;
+  voiceRole = null;
+  voiceMuted = false;
+
+
+  if(updateFirestore){
+
+    try{
+
+      if(wasHost){
+
+        await setDoc(
+          voiceRoomRef,
+          {
+            active:false,
+            hostUID:null,
+            hostId:null,
+            participantUID:null,
+            participantId:null,
+            offer:null,
+            answer:null,
+            endedAt:
+              serverTimestamp()
+          },
+          {
+            merge:true
+          }
+        );
+
+        await clearCollection(
+          "callerCandidates"
+        );
+
+        await clearCollection(
+          "calleeCandidates"
+        );
+
+      }else{
+
+        await setDoc(
+          voiceRoomRef,
+          {
+            participantUID:null,
+            participantId:null,
+            answer:null
+          },
+          {
+            merge:true
+          }
+        );
+
+        await clearCollection(
+          "calleeCandidates"
+        );
+
+      }
+
+    }catch(error){
+
+      console.error(error);
+
+    }
+
+  }
+
+
+  $("muteVoice")
+    .textContent =
+      "🎤 ミュート";
+
+  const room =
+    await getDoc(
+      voiceRoomRef
+    );
+
+  if(
+    room.exists() &&
+    room.data().active
+  ){
+
+    $("voiceStatus")
+      .textContent =
+        `${room.data().hostId || "誰か"} がルームを開いています`;
+
+    $("joinVoice")
+      .classList.remove("hidden");
+
+    $("openVoice")
+      .classList.add("hidden");
+
+    $("muteVoice")
+      .classList.add("hidden");
+
+    $("leaveVoice")
+      .classList.add("hidden");
+
+  }else{
+
+    showVoiceClosed();
+
+  }
+
+}
+
+
+function closeLocalVoice(){
+
+  if(unsubscribeCallerIce){
+    unsubscribeCallerIce();
+    unsubscribeCallerIce = null;
+  }
+
+  if(unsubscribeCalleeIce){
+    unsubscribeCalleeIce();
+    unsubscribeCalleeIce = null;
+  }
+
+  if(localStream){
+
+    localStream
+      .getTracks()
+      .forEach(
+        track=>track.stop()
+      );
+
+    localStream = null;
+
+  }
+
+  if(peerConnection){
+
+    peerConnection.close();
+    peerConnection = null;
+
+  }
+
+  $("remoteAudio")
+    .srcObject = null;
+
+}
+
+
+/* =====================================================
+   END
+===================================================== */
+
 </script>
 
 </body>
