@@ -265,6 +265,61 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .dangerButton{width:100%;margin-top:12px;border:0;border-radius:10px;padding:11px;background:#f3e6e6;color:#a1001a;font-weight:700}
 .endDateRow{margin-top:2px}
 
+
+/* v3.2.1 schedule/calendar refinements */
+.modalOverlay{
+  padding-top:env(safe-area-inset-top);
+}
+.modal{
+  max-height:calc(100dvh - env(safe-area-inset-top) - 10px);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.scheduleTimeRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.scheduleTimeField label{
+  display:block;
+  font-size:11px;
+  color:#777;
+  margin:4px 2px 2px;
+}
+.scheduleTimeField input{
+  margin-top:0;
+}
+.eventTitle{
+  display:block;
+  width:100%;
+  padding:2px 3px;
+  margin:1px 0;
+  border-radius:4px;
+  color:#fff;
+  font-size:8px;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-align:left;
+}
+.eventTitle.mine{background:#2f6fed}
+.eventTitle.other{background:#e24a4a}
+.calendarModeRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+}
+.calendarModeRow select{
+  border:1px solid #ccc;
+  border-radius:9px;
+  padding:7px 9px;
+  background:#fff;
+}
+
 /* SCHEDULE MODAL */
 .modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:200}
 .modal{width:100%;max-width:520px;background:#fff;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
@@ -325,7 +380,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.2.0</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.2.1</span></div>
   </div>
   <div class="headerRight">
     <button id="headerMenuButton" class="headerIcon" aria-label="メニュー">⋯</button>
@@ -337,13 +392,16 @@ audio{display:none}
     <button id="menuSettings">⚙️ 設定</button>
     <div style="padding:10px 14px;color:#777;font-size:12px;line-height:1.55;border-top:1px solid #eee">
       <div style="font-weight:700;color:#555;margin-bottom:3px">アップデート情報</div>
-      <div>v3.2.0</div>
+      <div>v3.2.1</div>
       <div>・複数日の終日予定に対応</div>
       <div>・トーク内の改行に対応</div>
       <div>・簡易通知を追加</div>
       <div>・ボイスルームを再開／古いルームを自動整理</div>
       <div>・カレンダーに「今日」を追加</div>
       <div>・ひとりごとの表示を圧縮</div>
+      <div>・予定に終了時刻を追加</div>
+      <div>・予定画面のはみ出しを改善</div>
+      <div>・カレンダー表示モードを追加</div>
     </div>
     <button id="logoutButton">ログアウト</button>
   </div>
@@ -519,6 +577,18 @@ audio{display:none}
       本格的なPush通知ではありません。PBのページが完全に閉じられている場合や、OSがブラウザを停止した場合は通知されません。
     </div>
 
+    <div class="settingsGroup">カレンダー</div>
+    <div class="calendarModeRow">
+      <div>
+        <div class="settingText">月表示</div>
+        <div class="settingSub">予定名を表示するか選べます</div>
+      </div>
+      <select id="settingCalendarMode">
+        <option value="titles">予定名を表示</option>
+        <option value="simple">シンプル</option>
+      </select>
+    </div>
+
     <div class="settingsGroup">ボイスルーム</div>
     <button id="resetVoiceRoom" class="dangerButton">ボイスルームをリセット</button>
     <div class="settingsNote">古い「開催中」表示が残った場合だけ使用してください。</div>
@@ -541,7 +611,18 @@ audio{display:none}
     <div id="scheduleEndDateRow" class="endDateRow hidden">
       <input id="scheduleEndDateInput" type="date" aria-label="終了日">
     </div>
-    <input id="scheduleTimeInput" type="time">
+
+    <div id="scheduleTimeRow" class="scheduleTimeRow">
+      <div class="scheduleTimeField">
+        <label for="scheduleTimeInput">開始時刻</label>
+        <input id="scheduleTimeInput" type="time">
+      </div>
+      <div class="scheduleTimeField">
+        <label for="scheduleEndTimeInput">終了時刻（任意）</label>
+        <input id="scheduleEndTimeInput" type="time">
+      </div>
+    </div>
+
     <textarea id="scheduleMemoInput" rows="3" placeholder="メモ（任意）"></textarea>
     <div class="modalBtns">
       <button id="cancelScheduleModal">キャンセル</button>
@@ -591,7 +672,8 @@ const DEFAULT_SETTINGS={
   tabFlash:true,
   title:true,
   vibrate:false,
-  backgroundNotification:false
+  backgroundNotification:false,
+  calendarMode:"titles"
 };
 let pbSettings={...DEFAULT_SETTINGS};
 let unreadTalkCount=0;
@@ -680,6 +762,7 @@ function syncSettingsControls(){
   $("settingTitle").checked=!!pbSettings.title;
   $("settingVibrate").checked=!!pbSettings.vibrate;
   $("settingBackgroundNotification").checked=!!pbSettings.backgroundNotification;
+  $("settingCalendarMode").value=pbSettings.calendarMode||"titles";
 }
 ["Sound","Badge","TabFlash","Title","Vibrate"].forEach(name=>{
   const el=$(`setting${name}`);
@@ -688,6 +771,11 @@ function syncSettingsControls(){
     pbSettings[key]=el.checked;saveSettings();
   };
 });
+$("settingCalendarMode").onchange=()=>{
+  pbSettings.calendarMode=$("settingCalendarMode").value;
+  saveSettings();
+  renderCalendar();
+};
 $("settingBackgroundNotification").onchange=async()=>{
   if($("settingBackgroundNotification").checked){
     if(!("Notification" in window)){
@@ -1200,7 +1288,14 @@ function eventCoversDate(s,d){
   return target>=start && target<=end;
 }
 function scheduleRangeText(s){
-  if(!s.allDay)return s.startsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+  if(!s.allDay){
+    const start=s.startsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+    if(s.endsAt?.toDate){
+      const end=s.endsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+      return `${start}〜${end}`;
+    }
+    return start;
+  }
   const start=s.startDate || dateId(s.startsAt.toDate());
   const end=s.endDate || start;
   if(start===end)return "終日";
@@ -1223,8 +1318,33 @@ function renderCalendar(){
     if(dateId(d)===today)cell.classList.add("today");
     const n=document.createElement("div");n.className="dayNumber";n.textContent=d.getDate();cell.appendChild(n);
     const events=list.filter(s=>eventCoversDate(s,d));
-    events.slice(0,3).forEach(s=>{const bar=document.createElement("div");bar.className="eventBar";bar.style.background=userColor(s.uid);cell.appendChild(bar)});
-    if(events.length>3){const more=document.createElement("div");more.className="eventMore";more.textContent=`+${events.length-3}`;cell.appendChild(more)}
+    if((pbSettings.calendarMode||"titles")==="simple"){
+      events.slice(0,3).forEach(s=>{
+        const bar=document.createElement("div");
+        bar.className="eventBar";
+        bar.style.background=userColor(s.uid);
+        cell.appendChild(bar);
+      });
+      if(events.length>3){
+        const more=document.createElement("div");
+        more.className="eventMore";
+        more.textContent=`+${events.length-3}`;
+        cell.appendChild(more);
+      }
+    }else{
+      events.slice(0,2).forEach(s=>{
+        const ev=document.createElement("div");
+        ev.className=`eventTitle ${s.uid===currentUID?"mine":"other"}`;
+        ev.textContent=s.title||"予定";
+        cell.appendChild(ev);
+      });
+      if(events.length>2){
+        const more=document.createElement("div");
+        more.className="eventMore";
+        more.textContent=`+${events.length-2}`;
+        cell.appendChild(more);
+      }
+    }
     cell.onclick=()=>{selectedDate=new Date(d);renderCalendar();renderSelectedDay()};
     grid.appendChild(cell);
   }
@@ -1273,13 +1393,14 @@ function openScheduleEditor(s=null){
   $("scheduleEndDateInput").value=s?.endDate || dateId(d);
   $("scheduleEndDateRow").classList.toggle("hidden",!$("scheduleAllDayInput").checked);
   $("scheduleTimeInput").value=s?.startsAt?.toDate?d.toTimeString().slice(0,5):"09:00";
-  $("scheduleTimeInput").classList.toggle("hidden",$("scheduleAllDayInput").checked);
+  $("scheduleEndTimeInput").value=s?.endsAt?.toDate?s.endsAt.toDate().toTimeString().slice(0,5):"";
+  $("scheduleTimeRow").classList.toggle("hidden",$("scheduleAllDayInput").checked);
   $("scheduleMemoInput").value=s?.memo||"";
   $("scheduleModal").classList.remove("hidden");
 }
 $("scheduleAllDayInput").onchange=()=>{
   const allDay=$("scheduleAllDayInput").checked;
-  $("scheduleTimeInput").classList.toggle("hidden",allDay);
+  $("scheduleTimeRow").classList.toggle("hidden",allDay);
   $("scheduleEndDateRow").classList.toggle("hidden",!allDay);
   if(allDay&&!$("scheduleEndDateInput").value){
     $("scheduleEndDateInput").value=$("scheduleDateInput").value;
@@ -1301,11 +1422,25 @@ $("saveSchedule").onclick=async()=>{
         allDay=$("scheduleAllDayInput").checked,
         endDate=allDay?($("scheduleEndDateInput").value||date):date,
         time=allDay?"12:00":($("scheduleTimeInput").value||"00:00"),
+        endTime=allDay?"":$("scheduleEndTimeInput").value,
         memo=$("scheduleMemoInput").value.trim();
+
   if(!title||!date){alert("タイトルと日付を入力してください");return}
   if(allDay&&endDate<date){alert("終了日は開始日以降にしてください");return}
+
   const startsAt=Timestamp.fromDate(new Date(`${date}T${time}:00`));
-  const payload={title,memo,startsAt,allDay,startDate:date,endDate};
+  let endsAt=null;
+
+  if(!allDay&&endTime){
+    const endDateTime=new Date(`${date}T${endTime}:00`);
+    if(endDateTime<startsAt.toDate()){
+      alert("終了時刻は開始時刻以降にしてください");
+      return;
+    }
+    endsAt=Timestamp.fromDate(endDateTime);
+  }
+
+  const payload={title,memo,startsAt,endsAt,allDay,startDate:date,endDate};
   if(editingSchedule)await updateDoc(doc(db,"schedules",editingSchedule.id),payload);
   else await addDoc(collection(db,"schedules"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
   $("scheduleModal").classList.add("hidden");editingSchedule=null;
