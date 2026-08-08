@@ -307,7 +307,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div id="userLabel" class="userLabel"></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.1.9</span></div>
   </div>
   <div class="headerRight">
     <button id="headerMenuButton" class="headerIcon" aria-label="メニュー">⋯</button>
@@ -315,8 +315,15 @@ audio{display:none}
   <div id="headerMenu" class="headerMenu hidden">
     <button id="menuSearch">🔍 メッセージを検索</button>
     <button id="menuDateFilter">📅 日付で見る</button>
-    <button id="menuVoice">🎙 ボイスルームを開く</button>
+    <button id="menuVoice" class="hidden">🎙 ボイスルームを開く</button>
     <button id="menuSettings">⚙️ 設定</button>
+    <div style="padding:10px 14px;color:#777;font-size:12px;line-height:1.6;border-top:1px solid #eee">
+      <div style="font-weight:700;color:#555;margin-bottom:3px">アップデート情報</div>
+      <div>v3.1.9</div>
+      <div>・メッセージメニュー表示を改善</div>
+      <div>・ボイスルームを一時停止</div>
+      <div>・終日予定に対応</div>
+    </div>
     <button id="logoutButton">ログアウト</button>
   </div>
 </header>
@@ -334,7 +341,7 @@ audio{display:none}
     <button id="clearTalkFilter">× 絞り込み解除</button>
   </div>
 
-  <div id="voiceBar" class="hidden">
+  <div id="voiceBar" class="hidden" style="display:none!important">
     <div class="voiceBarInner">
       <div id="voiceInfo" class="voiceInfo"><span class="voiceDot"></span>ボイスルーム開催中</div>
       <div class="voiceActions">
@@ -496,6 +503,7 @@ let messageDocs=new Map(), previousNewestMessageId=null, firstMessageLoad=true;
 let readStates={}, locationWatch=null;
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleFilter="all", editingSchedule=null;
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
+let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
 
@@ -534,7 +542,7 @@ function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
   $("userLabel").textContent=`ID：${currentId}`;
   $("loginScreen").classList.add("hidden");$("appScreen").classList.remove("hidden");
-  listenMessages();listenReadStates();listenSolo();listenSchedules();listenLocations();listenVoiceRoom();
+  listenMessages();listenReadStates();listenSolo();listenSchedules();listenLocations();
 }
 
 /* HEADER MENU */
@@ -593,6 +601,7 @@ function scrollToLatest(smooth=false){
 }
 $("newMessageButton").onclick=()=>scrollToLatest(true);
 $("messages").addEventListener("scroll",()=>{
+  if(adjustingMessageMenu) return;
   if(isNearBottom()){$("newMessageButton").classList.add("hidden");markTalkRead()}
 },{passive:true});
 
@@ -780,7 +789,8 @@ function toggleMessagePopup(row,data){
   row.appendChild(pop);
 
   // メニューは常にメッセージの下側に表示。
-  // トークの表示領域からはみ出した分だけ、スクロール領域そのものを上へ動かす。
+  // 下に入りきらない場合だけ、必要な分を一度だけ即時スクロールする。
+  // この間は既読更新による再描画を止め、メニューが一瞬で消えるのを防ぐ。
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
       const scroller = $("messages");
@@ -788,16 +798,16 @@ function toggleMessagePopup(row,data){
 
       const popRect = pop.getBoundingClientRect();
       const scrollRect = scroller.getBoundingClientRect();
-
-      // 入力欄の直前＝messages領域の下端より少し上を安全ラインにする
       const safeBottom = scrollRect.bottom - 12;
       const overflow = popRect.bottom - safeBottom;
 
       if(overflow > 0){
-        scroller.scrollBy({
-          top: overflow + 20,
-          behavior: "smooth"
-        });
+        adjustingMessageMenu = true;
+        scroller.scrollTop += overflow + 20;
+
+        setTimeout(()=>{
+          adjustingMessageMenu = false;
+        },250);
       }
     });
   });
@@ -875,7 +885,10 @@ $("loadMore").onclick=async()=>{
 function listenReadStates(){
   if(unsubscribeReads)unsubscribeReads();
   unsubscribeReads=onSnapshot(collection(db,"readStates"),snap=>{
-    readStates={};snap.forEach(d=>readStates[d.id]=d.data());renderMessages();
+    readStates={};snap.forEach(d=>readStates[d.id]=d.data());
+    if(!document.querySelector(".messagePopup")){
+      renderMessages();
+    }
   });
 }
 let readTimer=null;
