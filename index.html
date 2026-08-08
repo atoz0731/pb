@@ -1,589 +1,874 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#111111">
-  <title>PB</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>Private</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#f3f3f3;color:#222;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
 
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f4f4f4;
-      color: #222;
-    }
+/* PIN */
+#pinScreen{
+  min-height:100dvh;background:#f7f7f7;
+  display:flex;align-items:center;justify-content:center;padding:25px;
+}
+.pinBox{text-align:center;width:100%;max-width:360px}
+.pinTitle{font-size:17px;font-weight:600;margin-bottom:28px}
+.pinDots{display:flex;justify-content:center;gap:18px;margin-bottom:32px}
+.pinDot{
+  width:15px;height:15px;border:1.5px solid #555;
+  border-radius:50%;background:transparent;
+}
+.pinDot.on{background:#222}
+.keypad{
+  display:grid;grid-template-columns:repeat(3,72px);
+  justify-content:center;gap:15px 20px;
+}
+.key{
+  width:72px;height:72px;border-radius:50%;
+  border:0;background:#e4e4e4;font-size:25px;
+}
+.key:active{background:#ccc}
+.key.blank{visibility:hidden}
+#pinError{height:24px;margin-top:18px;color:#999;font-size:13px}
 
-    button,
-    input {
-      font: inherit;
-    }
+/* LOGIN */
+#loginScreen{
+  min-height:100dvh;background:#111;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.loginCard{
+  background:white;width:100%;max-width:420px;
+  border-radius:25px;padding:34px 24px;
+}
+.logo{text-align:center;margin-bottom:30px}
+.logo h1{font-size:52px;margin:0;letter-spacing:-3px}
+.logo p{color:#777;margin:3px 0}
+.field{margin:16px 0}
+.field label{display:block;font-weight:600;margin-bottom:7px}
+.field input{
+  width:100%;padding:15px;border:1px solid #ccc;
+  border-radius:12px;font-size:16px;
+}
+.primary{
+  width:100%;padding:15px;border:0;border-radius:12px;
+  background:#111;color:white;font-weight:700;
+}
+#loginError{text-align:center;color:#c33;margin-top:12px;min-height:20px}
 
-    .hidden {
-      display: none !important;
-    }
+/* APP */
+#appScreen{height:100dvh;display:flex;flex-direction:column}
+header{
+  background:#111;color:white;
+  padding:calc(10px + env(safe-area-inset-top)) 15px 10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.brand{font-size:22px;font-weight:800}
+.userLabel{font-size:11px;opacity:.7}
+.headerButtons button{
+  background:none;border:0;color:white;font-size:13px;padding:8px;
+}
 
-    /* ログイン */
-    #loginScreen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: #111;
-    }
+.tabs{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  background:white;border-bottom:1px solid #ddd;
+}
+.tab{
+  border:0;background:white;padding:13px 4px;
+  color:#777;font-weight:600;
+}
+.tab.active{color:#111;border-bottom:3px solid #111}
 
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      background: white;
-      border-radius: 24px;
-      padding: 34px 24px;
-    }
+.page{flex:1;min-height:0;display:flex;flex-direction:column}
+.scroll{
+  flex:1;overflow-y:auto;padding:14px;
+  -webkit-overflow-scrolling:touch;
+}
 
-    .logo {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+/* CHAT */
+#loadMore{
+  display:block;margin:0 auto 14px;border:0;
+  background:#ddd;border-radius:16px;padding:7px 14px;font-size:12px;
+}
+.messageRow{display:flex;flex-direction:column;align-items:flex-start;margin:8px 0}
+.messageRow.mine{align-items:flex-end}
+.sender{font-size:11px;color:#777;margin:0 8px 3px}
+.bubble{
+  max-width:80%;background:white;padding:10px 13px;
+  border-radius:17px;box-shadow:0 1px 2px #00000012;
+  word-break:break-word;
+}
+.mine .bubble{background:#222;color:white}
+.replyQuote{
+  border-left:3px solid #aaa;padding:5px 8px;
+  margin-bottom:7px;font-size:12px;opacity:.75;
+  max-width:100%;
+}
+.meta{font-size:10px;color:#999;margin:4px 7px}
+.actions{margin:3px 5px}
+.actions button{
+  border:0;background:none;color:#888;
+  padding:3px 5px;font-size:11px;
+}
+.deleted{font-style:italic;opacity:.55}
 
-    .logo h1 {
-      margin: 0;
-      font-size: 52px;
-      letter-spacing: -3px;
-    }
+#replyBar{
+  background:#eee;border-top:1px solid #ddd;
+  padding:7px 12px;font-size:12px;
+  display:flex;justify-content:space-between;
+}
+#replyBar button{border:0;background:none;font-size:18px}
 
-    .logo p {
-      margin: 4px 0 0;
-      color: #777;
-      font-size: 14px;
-    }
+.composer{
+  background:white;border-top:1px solid #ddd;
+  padding:9px 10px calc(9px + env(safe-area-inset-bottom));
+  display:flex;gap:8px;align-items:flex-end;
+}
+.composer textarea{
+  resize:none;flex:1;min-height:43px;max-height:100px;
+  border:1px solid #ccc;border-radius:20px;
+  padding:10px 14px;font-size:16px;
+}
+.send{
+  width:44px;height:44px;border:0;border-radius:50%;
+  background:#111;color:white;font-size:18px;
+}
 
-    .field {
-      margin-bottom: 18px;
-    }
+/* MONOLOGUE */
+.post{
+  background:white;border-bottom:1px solid #eee;
+  padding:15px;margin:0 -14px;
+}
+.postHead{display:flex;justify-content:space-between}
+.postUser{font-weight:700;font-size:14px}
+.postTime{font-size:11px;color:#999}
+.postText{white-space:pre-wrap;margin:9px 0;line-height:1.5}
+.postFooter{display:flex;gap:12px}
+.postFooter button{
+  border:0;background:none;color:#777;padding:3px;font-size:13px;
+}
+.postMenu button{
+  border:0;background:none;color:#999;font-size:11px;margin-left:6px;
+}
 
-    .field label {
-      display: block;
-      margin-bottom: 7px;
-      font-weight: 600;
-    }
-
-    .field input {
-      width: 100%;
-      padding: 15px 16px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      font-size: 16px;
-      outline: none;
-    }
-
-    .field input:focus {
-      border-color: #222;
-    }
-
-    #loginButton {
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      padding: 15px;
-      background: #111;
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    #loginError {
-      color: #d22;
-      font-size: 14px;
-      margin-top: 14px;
-      text-align: center;
-      min-height: 20px;
-    }
-
-    /* チャット */
-    #chatScreen {
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      background: #e9e9e9;
-    }
-
-    header {
-      height: 62px;
-      flex-shrink: 0;
-      background: #111;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: env(safe-area-inset-top) 16px 0;
-    }
-
-    .header-title {
-      font-weight: 800;
-      font-size: 22px;
-    }
-
-    .header-user {
-      font-size: 13px;
-      opacity: 0.8;
-    }
-
-    #logoutButton {
-      border: 0;
-      background: transparent;
-      color: white;
-      font-size: 14px;
-      padding: 10px;
-    }
-
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 18px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .message-row {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .message-row.mine {
-      align-items: flex-end;
-    }
-
-    .sender {
-      font-size: 11px;
-      color: #777;
-      margin: 0 8px 4px;
-    }
-
-    .bubble {
-      max-width: 78%;
-      background: white;
-      border-radius: 17px;
-      padding: 10px 13px;
-      line-height: 1.45;
-      word-break: break-word;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-
-    .mine .bubble {
-      background: #222;
-      color: white;
-    }
-
-    .time {
-      font-size: 10px;
-      color: #999;
-      margin: 4px 7px 0;
-    }
-
-    #composer {
-      display: flex;
-      align-items: flex-end;
-      gap: 9px;
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      background: white;
-      border-top: 1px solid #ddd;
-    }
-
-    #messageInput {
-      flex: 1;
-      min-height: 44px;
-      max-height: 120px;
-      border: 1px solid #ccc;
-      border-radius: 22px;
-      padding: 11px 16px;
-      font-size: 16px;
-      outline: none;
-    }
-
-    #sendButton {
-      width: 46px;
-      height: 46px;
-      flex-shrink: 0;
-      border: 0;
-      border-radius: 50%;
-      background: #111;
-      color: white;
-      font-size: 19px;
-      cursor: pointer;
-    }
-  </style>
+/* LOCATION */
+.locationCard{
+  margin:16px;background:white;border-radius:18px;padding:20px;
+}
+.locationTop{
+  display:flex;justify-content:space-between;align-items:center;
+}
+.switch{
+  position:relative;width:52px;height:31px;
+  background:#ccc;border-radius:20px;border:0;
+}
+.switch:after{
+  content:"";position:absolute;width:27px;height:27px;
+  left:2px;top:2px;background:white;border-radius:50%;
+  transition:.2s;
+}
+.switch.on{background:#111}
+.switch.on:after{left:23px}
+.memberLocation{
+  padding:14px 0;border-bottom:1px solid #eee;
+}
+.memberLocation:last-child{border:0}
+.mapLink{
+  display:inline-block;margin-top:6px;font-size:13px;color:#1769aa;
+  text-decoration:none;
+}
+.small{font-size:12px;color:#888;margin-top:5px}
+</style>
 </head>
 
 <body>
 
-  <!-- ログイン画面 -->
-  <section id="loginScreen">
-    <div class="login-card">
-
-      <div class="logo">
-        <h1>PB</h1>
-        <p>Private Message</p>
-      </div>
-
-      <div class="field">
-        <label for="loginId">ID</label>
-        <input
-          id="loginId"
-          type="text"
-          autocomplete="username"
-          autocapitalize="none"
-          placeholder="IDを入力">
-      </div>
-
-      <div class="field">
-        <label for="loginPassword">パスワード</label>
-        <input
-          id="loginPassword"
-          type="password"
-          autocomplete="current-password"
-          placeholder="パスワードを入力">
-      </div>
-
-      <button id="loginButton">ログイン</button>
-
-      <div id="loginError"></div>
-
-    </div>
-  </section>
-
-  <!-- チャット画面 -->
-  <section id="chatScreen" class="hidden">
-
-    <header>
-      <div>
-        <div class="header-title">PB</div>
-        <div id="currentUser" class="header-user"></div>
-      </div>
-
-      <button id="logoutButton">ログアウト</button>
-    </header>
-
-    <main id="messages"></main>
-
-    <div id="composer">
-      <input
-        id="messageInput"
-        type="text"
-        maxlength="1000"
-        placeholder="メッセージ">
-      <button id="sendButton">➤</button>
+<!-- PIN -->
+<section id="pinScreen">
+  <div class="pinBox">
+    <div class="pinTitle">PINを入力</div>
+    <div class="pinDots">
+      <div class="pinDot"></div><div class="pinDot"></div>
+      <div class="pinDot"></div><div class="pinDot"></div>
     </div>
 
-  </section>
-
-
-  <script type="module">
-
-    import { initializeApp } from
-      "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
-    } from
-      "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      query,
-      orderBy,
-      onSnapshot,
-      serverTimestamp
-    } from
-      "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",
-      authDomain: "message-57e2d.firebaseapp.com",
-      projectId: "message-57e2d",
-      storageBucket: "message-57e2d.firebasestorage.app",
-      messagingSenderId: "560072908841",
-      appId: "1:560072908841:web:a6d0e92a57a24c152a3c38"
-    };
-
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-
-    const loginScreen = document.getElementById("loginScreen");
-    const chatScreen = document.getElementById("chatScreen");
-
-    const loginId = document.getElementById("loginId");
-    const loginPassword = document.getElementById("loginPassword");
-    const loginButton = document.getElementById("loginButton");
-    const loginError = document.getElementById("loginError");
-
-    const currentUser = document.getElementById("currentUser");
-    const logoutButton = document.getElementById("logoutButton");
-
-    const messages = document.getElementById("messages");
-    const messageInput = document.getElementById("messageInput");
-    const sendButton = document.getElementById("sendButton");
-
-
-    let currentId = "";
-    let unsubscribeMessages = null;
-
-
-    // ログイン
-    loginButton.addEventListener("click", async () => {
-
-      const id = loginId.value.trim().toLowerCase();
-      const password = loginPassword.value;
-
-      loginError.textContent = "";
-
-      if (!id || !password) {
-        loginError.textContent = "IDとパスワードを入力してください";
-        return;
-      }
-
-      try {
-
-        // ユーザーには見せない内部認証用アドレス
-        const internalEmail = `${id}@pb.local`;
-
-        await signInWithEmailAndPassword(
-          auth,
-          internalEmail,
-          password
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        loginError.textContent =
-          "IDまたはパスワードが違います";
-      }
-
-    });
-
-
-    // Enterでもログイン
-    loginPassword.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        loginButton.click();
-      }
-    });
-
-
-    // ログアウト
-    logoutButton.addEventListener("click", async () => {
-      await signOut(auth);
-    });
-
-
-    // 認証状態
-    onAuthStateChanged(auth, user => {
-
-      if (unsubscribeMessages) {
-        unsubscribeMessages();
-        unsubscribeMessages = null;
-      }
-
-      if (user) {
-
-        currentId =
-          user.email.replace("@pb.local", "");
-
-        currentUser.textContent =
-          `ID：${currentId}`;
-
-        loginScreen.classList.add("hidden");
-        chatScreen.classList.remove("hidden");
-
-        startMessages();
-
-      } else {
-
-        currentId = "";
-
-        chatScreen.classList.add("hidden");
-        loginScreen.classList.remove("hidden");
-
-        messages.innerHTML = "";
-
-      }
-
-    });
-
-
-    // メッセージ監視
-    function startMessages() {
-
-      const messagesRef =
-        collection(db, "messages");
-
-      const q =
-        query(
-          messagesRef,
-          orderBy("createdAt", "asc")
-        );
-
-      unsubscribeMessages =
-        onSnapshot(q, snapshot => {
-
-          messages.innerHTML = "";
-
-          snapshot.forEach(doc => {
-
-            const data = doc.data();
-
-            const row =
-              document.createElement("div");
-
-            row.className =
-              "message-row" +
-              (data.senderId === currentId
-                ? " mine"
-                : "");
-
-            const sender =
-              document.createElement("div");
-
-            sender.className = "sender";
-
-            sender.textContent =
-              data.senderId === currentId
-                ? "自分"
-                : data.senderId;
-
-
-            const bubble =
-              document.createElement("div");
-
-            bubble.className = "bubble";
-
-            // textContentなのでHTMLは実行されない
-            bubble.textContent =
-              data.text || "";
-
-
-            const time =
-              document.createElement("div");
-
-            time.className = "time";
-
-            if (data.createdAt?.toDate) {
-
-              time.textContent =
-                data.createdAt
-                  .toDate()
-                  .toLocaleTimeString(
-                    "ja-JP",
-                    {
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    }
-                  );
-
-            }
-
-
-            row.appendChild(sender);
-            row.appendChild(bubble);
-            row.appendChild(time);
-
-            messages.appendChild(row);
-
-          });
-
-          messages.scrollTop =
-            messages.scrollHeight;
-
-        });
-
-    }
-
-
-    // メッセージ送信
-    async function sendMessage() {
-
-      const text =
-        messageInput.value.trim();
-
-      if (!text || !auth.currentUser) {
-        return;
-      }
-
-      sendButton.disabled = true;
-
-      try {
-
-        await addDoc(
-          collection(db, "messages"),
-          {
-            text: text,
-            senderId: currentId,
-            uid: auth.currentUser.uid,
-            createdAt: serverTimestamp()
-          }
-        );
-
-        messageInput.value = "";
-
-      } catch (error) {
-
-        console.error(error);
-
-        alert(
-          "メッセージの送信に失敗しました"
-        );
-
-      } finally {
-
-        sendButton.disabled = false;
-        messageInput.focus();
-
-      }
-
-    }
-
-
-    sendButton.addEventListener(
-      "click",
-      sendMessage
-    );
-
-
-    messageInput.addEventListener(
-      "keydown",
-      e => {
-
-        if (
-          e.key === "Enter" &&
-          !e.shiftKey
-        ) {
-
-          e.preventDefault();
-          sendMessage();
-
-        }
-
-      }
-    );
-
-  </script>
+    <div class="keypad">
+      <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+      <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+      <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+      <button class="key blank"></button><button class="key">0</button><button class="key" id="backKey">⌫</button>
+    </div>
+    <div id="pinError"></div>
+  </div>
+</section>
+
+<!-- LOGIN -->
+<section id="loginScreen" class="hidden">
+  <div class="loginCard">
+    <div class="logo"><h1>PB</h1><p>Private Message</p></div>
+
+    <div class="field">
+      <label>ID</label>
+      <input id="loginId" autocomplete="username" autocapitalize="none">
+    </div>
+
+    <div class="field">
+      <label>パスワード</label>
+      <input id="loginPassword" type="password" autocomplete="current-password">
+    </div>
+
+    <button id="loginButton" class="primary">ログイン</button>
+    <div id="loginError"></div>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="appScreen" class="hidden">
+
+<header>
+  <div>
+    <div class="brand">PB</div>
+    <div id="userLabel" class="userLabel"></div>
+  </div>
+  <div class="headerButtons">
+    <button id="logoutButton">ログアウト</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-page="chatPage">メッセージ</button>
+  <button class="tab" data-page="soloPage">ひとりごと</button>
+  <button class="tab" data-page="locationPage">位置情報</button>
+</nav>
+
+<!-- CHAT -->
+<div id="chatPage" class="page">
+  <div id="messages" class="scroll">
+    <button id="loadMore">過去のメッセージを読み込む</button>
+    <div id="messageList"></div>
+  </div>
+
+  <div id="replyBar" class="hidden">
+    <span id="replyText"></span>
+    <button id="cancelReply">×</button>
+  </div>
+
+  <div class="composer">
+    <textarea id="messageInput" rows="1" placeholder="メッセージ"></textarea>
+    <button id="sendMessage" class="send">➤</button>
+  </div>
+</div>
+
+<!-- SOLO -->
+<div id="soloPage" class="page hidden">
+  <div id="soloList" class="scroll"></div>
+  <div class="composer">
+    <textarea id="soloInput" rows="1" placeholder="ひとりごと"></textarea>
+    <button id="sendSolo" class="send">➤</button>
+  </div>
+</div>
+
+<!-- LOCATION -->
+<div id="locationPage" class="page hidden">
+  <div class="scroll">
+    <div class="locationCard">
+      <div class="locationTop">
+        <div>
+          <strong>現在地を共有</strong>
+          <div class="small">ONの間だけ最新位置を共有します</div>
+        </div>
+        <button id="locationSwitch" class="switch"></button>
+      </div>
+    </div>
+
+    <div class="locationCard">
+      <strong>共有中のメンバー</strong>
+      <div id="locations"></div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<script type="module">
+import {initializeApp} from
+"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+ getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+import {
+ getFirestore,collection,addDoc,query,orderBy,limit,onSnapshot,
+ serverTimestamp,doc,updateDoc,deleteDoc,setDoc,getDoc,
+ startAfter,getDocs,increment
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",
+ authDomain:"message-57e2d.firebaseapp.com",
+ projectId:"message-57e2d",
+ storageBucket:"message-57e2d.firebasestorage.app",
+ messagingSenderId:"560072908841",
+ appId:"1:560072908841:web:a6d0e92a57a24c152a3c38"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+const $=id=>document.getElementById(id);
+
+let pin="";
+let pinPassed=false;
+let currentId="";
+let currentUID="";
+let replyTarget=null;
+let editingMessage=null;
+let editingSolo=null;
+let locationWatch=null;
+let oldestMessage=null;
+let messageDocs=new Map();
+
+/* ---------- PIN ---------- */
+
+function updateDots(){
+ document.querySelectorAll(".pinDot").forEach((d,i)=>{
+   d.classList.toggle("on",i<pin.length);
+ });
+}
+
+document.querySelectorAll(".key").forEach(key=>{
+ if(key.id==="backKey" || key.classList.contains("blank")) return;
+
+ key.addEventListener("click",()=>{
+   if(pin.length>=4)return;
+   pin+=key.textContent;
+   updateDots();
+
+   if(pin.length===4){
+     setTimeout(checkPin,120);
+   }
+ });
+});
+
+$("backKey").onclick=()=>{
+ pin=pin.slice(0,-1);
+ updateDots();
+};
+
+function checkPin(){
+ if(pin==="0208"){
+   window.location.replace("https://www.google.com/");
+   return;
+ }
+
+ if(pin==="0814"){
+   pinPassed=true;
+   $("pinScreen").classList.add("hidden");
+
+   if(auth.currentUser){
+     showApp(auth.currentUser);
+   }else{
+     $("loginScreen").classList.remove("hidden");
+   }
+   return;
+ }
+
+ $("pinError").textContent="PINが違います";
+ pin="";
+ updateDots();
+ setTimeout(()=>$("pinError").textContent="",1200);
+}
+
+/* ---------- LOGIN ---------- */
+
+$("loginButton").onclick=async()=>{
+ const id=$("loginId").value.trim().toLowerCase();
+ const pw=$("loginPassword").value;
+
+ if(!id||!pw)return;
+
+ try{
+   $("loginError").textContent="";
+   await signInWithEmailAndPassword(auth,`${id}@pb.local`,pw);
+ }catch(e){
+   console.error(e);
+   $("loginError").textContent="IDまたはパスワードが違います";
+ }
+};
+
+$("loginPassword").addEventListener("keydown",e=>{
+ if(e.key==="Enter")$("loginButton").click();
+});
+
+$("logoutButton").onclick=async()=>{
+ await signOut(auth);
+ $("appScreen").classList.add("hidden");
+ $("loginScreen").classList.remove("hidden");
+};
+
+onAuthStateChanged(auth,user=>{
+ if(user && pinPassed){
+   showApp(user);
+ }else if(!user && pinPassed){
+   $("appScreen").classList.add("hidden");
+   $("loginScreen").classList.remove("hidden");
+ }
+});
+
+function showApp(user){
+ currentUID=user.uid;
+ currentId=(user.email||"").replace("@pb.local","");
+
+ $("userLabel").textContent=`ID：${currentId}`;
+ $("loginScreen").classList.add("hidden");
+ $("appScreen").classList.remove("hidden");
+
+ listenMessages();
+ listenSolo();
+ listenLocations();
+}
+
+/* ---------- TABS ---------- */
+
+document.querySelectorAll(".tab").forEach(tab=>{
+ tab.onclick=()=>{
+   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+   tab.classList.add("active");
+
+   ["chatPage","soloPage","locationPage"].forEach(p=>
+     $(p).classList.add("hidden")
+   );
+
+   $(tab.dataset.page).classList.remove("hidden");
+ };
+});
+
+/* ---------- MESSAGES ---------- */
+
+function listenMessages(){
+ const q=query(
+   collection(db,"messages"),
+   orderBy("createdAt","desc"),
+   limit(50)
+ );
+
+ onSnapshot(q,snapshot=>{
+   const docs=[...snapshot.docs].reverse();
+
+   messageDocs.clear();
+   docs.forEach(d=>messageDocs.set(d.id,{id:d.id,...d.data()}));
+
+   oldestMessage=snapshot.docs[snapshot.docs.length-1]||null;
+   renderMessages([...messageDocs.values()]);
+ });
+}
+
+function renderMessages(items){
+ const list=$("messageList");
+ list.innerHTML="";
+
+ items.sort((a,b)=>{
+   const at=a.createdAt?.seconds||0;
+   const bt=b.createdAt?.seconds||0;
+   return at-bt;
+ });
+
+ items.forEach(data=>{
+   const row=document.createElement("div");
+   row.className="messageRow"+(data.uid===currentUID?" mine":"");
+
+   const sender=document.createElement("div");
+   sender.className="sender";
+   sender.textContent=data.uid===currentUID?"自分":data.senderId;
+
+   const bubble=document.createElement("div");
+   bubble.className="bubble";
+
+   if(data.replyTo){
+     const quote=document.createElement("div");
+     quote.className="replyQuote";
+     quote.textContent=
+       `${data.replyTo.senderId}：${data.replyTo.text}`;
+     bubble.appendChild(quote);
+   }
+
+   const body=document.createElement("div");
+
+   if(data.deleted){
+     body.textContent="このメッセージは削除されました";
+     body.className="deleted";
+   }else{
+     body.textContent=data.text||"";
+   }
+
+   bubble.appendChild(body);
+
+   const meta=document.createElement("div");
+   meta.className="meta";
+
+   let time="";
+   if(data.createdAt?.toDate){
+     time=data.createdAt.toDate().toLocaleString("ja-JP",{
+       month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"
+     });
+   }
+
+   meta.textContent=time+(data.edited?" ・ 編集済み":"");
+
+   row.append(sender,bubble,meta);
+
+   if(!data.deleted){
+     const actions=document.createElement("div");
+     actions.className="actions";
+
+     const reply=document.createElement("button");
+     reply.textContent="↩︎ 返信";
+     reply.onclick=()=>setReply(data);
+     actions.appendChild(reply);
+
+     if(data.uid===currentUID){
+       const edit=document.createElement("button");
+       edit.textContent="編集";
+       edit.onclick=()=>editMessage(data);
+
+       const del=document.createElement("button");
+       del.textContent="削除";
+       del.onclick=()=>removeMessage(data);
+
+       actions.append(edit,del);
+     }
+
+     row.appendChild(actions);
+   }
+
+   list.appendChild(row);
+ });
+}
+
+function setReply(data){
+ replyTarget=data;
+ $("replyText").textContent=
+   `${data.senderId}「${(data.text||"").slice(0,40)}」に返信`;
+ $("replyBar").classList.remove("hidden");
+ $("messageInput").focus();
+}
+
+$("cancelReply").onclick=()=>{
+ replyTarget=null;
+ $("replyBar").classList.add("hidden");
+};
+
+function editMessage(data){
+ editingMessage=data;
+ $("messageInput").value=data.text;
+ $("messageInput").focus();
+}
+
+async function removeMessage(data){
+ if(!confirm("このメッセージを削除しますか？"))return;
+
+ await updateDoc(doc(db,"messages",data.id),{
+   text:"",
+   deleted:true,
+   edited:false
+ });
+}
+
+$("sendMessage").onclick=sendMessage;
+
+async function sendMessage(){
+ const text=$("messageInput").value.trim();
+ if(!text)return;
+
+ if(editingMessage){
+   await updateDoc(doc(db,"messages",editingMessage.id),{
+     text,
+     edited:true
+   });
+   editingMessage=null;
+ }else{
+   await addDoc(collection(db,"messages"),{
+     text,
+     senderId:currentId,
+     uid:currentUID,
+     createdAt:serverTimestamp(),
+     edited:false,
+     deleted:false,
+     replyTo:replyTarget?{
+       id:replyTarget.id,
+       senderId:replyTarget.senderId,
+       text:(replyTarget.text||"").slice(0,150)
+     }:null
+   });
+ }
+
+ $("messageInput").value="";
+ replyTarget=null;
+ $("replyBar").classList.add("hidden");
+}
+
+$("loadMore").onclick=async()=>{
+ if(!oldestMessage)return;
+
+ const q=query(
+   collection(db,"messages"),
+   orderBy("createdAt","desc"),
+   startAfter(oldestMessage),
+   limit(50)
+ );
+
+ const snap=await getDocs(q);
+ if(snap.empty){
+   $("loadMore").textContent="これより前のメッセージはありません";
+   return;
+ }
+
+ snap.docs.forEach(d=>
+   messageDocs.set(d.id,{id:d.id,...d.data()})
+ );
+
+ oldestMessage=snap.docs[snap.docs.length-1];
+ renderMessages([...messageDocs.values()]);
+};
+
+/* ---------- SOLO ---------- */
+
+function listenSolo(){
+ const q=query(
+   collection(db,"solo"),
+   orderBy("createdAt","desc"),
+   limit(50)
+ );
+
+ onSnapshot(q,snap=>{
+   const list=$("soloList");
+   list.innerHTML="";
+
+   snap.forEach(d=>{
+     const data={id:d.id,...d.data()};
+     const post=document.createElement("article");
+     post.className="post";
+
+     const head=document.createElement("div");
+     head.className="postHead";
+
+     const user=document.createElement("div");
+     user.className="postUser";
+     user.textContent=data.senderId;
+
+     const time=document.createElement("div");
+     time.className="postTime";
+     if(data.createdAt?.toDate){
+       time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{
+         month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"
+       });
+     }
+
+     head.append(user,time);
+
+     const text=document.createElement("div");
+     text.className="postText";
+     text.textContent=data.text||"";
+
+     const footer=document.createElement("div");
+     footer.className="postFooter";
+
+     const heart=document.createElement("button");
+     const liked=(data.likedBy||[]).includes(currentUID);
+     heart.textContent=`${liked?"♥":"♡"} ${data.likes||0}`;
+     heart.onclick=()=>toggleLike(data,liked);
+     footer.appendChild(heart);
+
+     if(data.uid===currentUID){
+       const menu=document.createElement("span");
+       menu.className="postMenu";
+
+       const edit=document.createElement("button");
+       edit.textContent="編集";
+       edit.onclick=()=>{
+         editingSolo=data;
+         $("soloInput").value=data.text;
+         $("soloInput").focus();
+       };
+
+       const del=document.createElement("button");
+       del.textContent="削除";
+       del.onclick=async()=>{
+         if(confirm("このひとりごとを削除しますか？")){
+           await deleteDoc(doc(db,"solo",data.id));
+         }
+       };
+
+       menu.append(edit,del);
+       footer.appendChild(menu);
+     }
+
+     post.append(head,text,footer);
+     list.appendChild(post);
+   });
+ });
+}
+
+$("sendSolo").onclick=async()=>{
+ const text=$("soloInput").value.trim();
+ if(!text)return;
+
+ if(editingSolo){
+   await updateDoc(doc(db,"solo",editingSolo.id),{
+     text,
+     edited:true
+   });
+   editingSolo=null;
+ }else{
+   await addDoc(collection(db,"solo"),{
+     text,
+     senderId:currentId,
+     uid:currentUID,
+     createdAt:serverTimestamp(),
+     likes:0,
+     likedBy:[]
+   });
+ }
+
+ $("soloInput").value="";
+};
+
+async function toggleLike(data,liked){
+ let arr=[...(data.likedBy||[])];
+
+ if(liked){
+   arr=arr.filter(x=>x!==currentUID);
+ }else{
+   if(!arr.includes(currentUID))arr.push(currentUID);
+ }
+
+ await updateDoc(doc(db,"solo",data.id),{
+   likedBy:arr,
+   likes:arr.length
+ });
+}
+
+/* ---------- LOCATION ---------- */
+
+$("locationSwitch").onclick=async()=>{
+ if(locationWatch!==null){
+   navigator.geolocation.clearWatch(locationWatch);
+   locationWatch=null;
+   $("locationSwitch").classList.remove("on");
+
+   await setDoc(doc(db,"locations",currentUID),{
+     uid:currentUID,
+     senderId:currentId,
+     sharing:false,
+     updatedAt:serverTimestamp()
+   },{merge:true});
+
+   return;
+ }
+
+ if(!navigator.geolocation){
+   alert("この端末では位置情報を利用できません");
+   return;
+ }
+
+ $("locationSwitch").classList.add("on");
+
+ locationWatch=navigator.geolocation.watchPosition(
+   async pos=>{
+     await setDoc(doc(db,"locations",currentUID),{
+       uid:currentUID,
+       senderId:currentId,
+       sharing:true,
+       latitude:pos.coords.latitude,
+       longitude:pos.coords.longitude,
+       accuracy:pos.coords.accuracy,
+       updatedAt:serverTimestamp()
+     },{merge:true});
+   },
+   err=>{
+     console.error(err);
+     alert("位置情報を取得できませんでした。位置情報の許可を確認してください。");
+     $("locationSwitch").classList.remove("on");
+     locationWatch=null;
+   },
+   {
+     enableHighAccuracy:true,
+     maximumAge:15000,
+     timeout:15000
+   }
+ );
+};
+
+function listenLocations(){
+ onSnapshot(collection(db,"locations"),snap=>{
+   const box=$("locations");
+   box.innerHTML="";
+
+   let count=0;
+
+   snap.forEach(d=>{
+     const data=d.data();
+     if(!data.sharing)return;
+     count++;
+
+     const div=document.createElement("div");
+     div.className="memberLocation";
+
+     const name=document.createElement("strong");
+     name.textContent=data.uid===currentUID
+       ? `${data.senderId}（自分）`
+       : data.senderId;
+
+     const status=document.createElement("div");
+     status.className="small";
+
+     if(data.updatedAt?.toDate){
+       status.textContent=
+         `最終更新：${data.updatedAt.toDate().toLocaleString("ja-JP")}`;
+     }else{
+       status.textContent="位置情報を取得中";
+     }
+
+     const link=document.createElement("a");
+     link.className="mapLink";
+     link.target="_blank";
+     link.rel="noopener";
+     link.textContent="地図で見る";
+
+     if(
+       typeof data.latitude==="number" &&
+       typeof data.longitude==="number"
+     ){
+       link.href=
+         `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
+     }
+
+     div.append(name,status,link);
+     box.appendChild(div);
+   });
+
+   if(count===0){
+     box.innerHTML='<div class="small" style="margin-top:15px">現在、位置情報を共有している人はいません。</div>';
+   }
+ });
+}
+
+/* 画面を閉じてもFirestore上の共有状態を
+   確実にOFFにできるわけではないため、
+   updatedAtも必ず表示して「現在地」と誤認しないようにする */
+</script>
 
 </body>
 </html>
