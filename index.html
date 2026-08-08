@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#111111">
+  <title>PB</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ログイン */
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #111;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 24px;
+      padding: 34px 24px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo h1 {
+      margin: 0;
+      font-size: 52px;
+      letter-spacing: -3px;
+    }
+
+    .logo p {
+      margin: 4px 0 0;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 600;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 15px 16px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: #222;
+    }
+
+    #loginButton {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 15px;
+      background: #111;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #loginError {
+      color: #d22;
+      font-size: 14px;
+      margin-top: 14px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* チャット */
+    #chatScreen {
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: #e9e9e9;
+    }
+
+    header {
+      height: 62px;
+      flex-shrink: 0;
+      background: #111;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: env(safe-area-inset-top) 16px 0;
+    }
+
+    .header-title {
+      font-weight: 800;
+      font-size: 22px;
+    }
+
+    .header-user {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    #logoutButton {
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 14px;
+      padding: 10px;
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .message-row.mine {
+      align-items: flex-end;
+    }
+
+    .sender {
+      font-size: 11px;
+      color: #777;
+      margin: 0 8px 4px;
+    }
+
+    .bubble {
+      max-width: 78%;
+      background: white;
+      border-radius: 17px;
+      padding: 10px 13px;
+      line-height: 1.45;
+      word-break: break-word;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .mine .bubble {
+      background: #222;
+      color: white;
+    }
+
+    .time {
+      font-size: 10px;
+      color: #999;
+      margin: 4px 7px 0;
+    }
+
+    #composer {
+      display: flex;
+      align-items: flex-end;
+      gap: 9px;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+
+    #messageInput {
+      flex: 1;
+      min-height: 44px;
+      max-height: 120px;
+      border: 1px solid #ccc;
+      border-radius: 22px;
+      padding: 11px 16px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #sendButton {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      border: 0;
+      border-radius: 50%;
+      background: #111;
+      color: white;
+      font-size: 19px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ログイン画面 -->
+  <section id="loginScreen">
+    <div class="login-card">
+
+      <div class="logo">
+        <h1>PB</h1>
+        <p>Private Message</p>
+      </div>
+
+      <div class="field">
+        <label for="loginId">ID</label>
+        <input
+          id="loginId"
+          type="text"
+          autocomplete="username"
+          autocapitalize="none"
+          placeholder="IDを入力">
+      </div>
+
+      <div class="field">
+        <label for="loginPassword">パスワード</label>
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="パスワードを入力">
+      </div>
+
+      <button id="loginButton">ログイン</button>
+
+      <div id="loginError"></div>
+
+    </div>
+  </section>
+
+  <!-- チャット画面 -->
+  <section id="chatScreen" class="hidden">
+
+    <header>
+      <div>
+        <div class="header-title">PB</div>
+        <div id="currentUser" class="header-user"></div>
+      </div>
+
+      <button id="logoutButton">ログアウト</button>
+    </header>
+
+    <main id="messages"></main>
+
+    <div id="composer">
+      <input
+        id="messageInput"
+        type="text"
+        maxlength="1000"
+        placeholder="メッセージ">
+      <button id="sendButton">➤</button>
+    </div>
+
+  </section>
+
+
+  <script type="module">
+
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from
+      "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      orderBy,
+      onSnapshot,
+      serverTimestamp
+    } from
+      "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",
+      authDomain: "message-57e2d.firebaseapp.com",
+      projectId: "message-57e2d",
+      storageBucket: "message-57e2d.firebasestorage.app",
+      messagingSenderId: "560072908841",
+      appId: "1:560072908841:web:a6d0e92a57a24c152a3c38"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+
+    const loginScreen = document.getElementById("loginScreen");
+    const chatScreen = document.getElementById("chatScreen");
+
+    const loginId = document.getElementById("loginId");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginButton = document.getElementById("loginButton");
+    const loginError = document.getElementById("loginError");
+
+    const currentUser = document.getElementById("currentUser");
+    const logoutButton = document.getElementById("logoutButton");
+
+    const messages = document.getElementById("messages");
+    const messageInput = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+
+
+    let currentId = "";
+    let unsubscribeMessages = null;
+
+
+    // ログイン
+    loginButton.addEventListener("click", async () => {
+
+      const id = loginId.value.trim().toLowerCase();
+      const password = loginPassword.value;
+
+      loginError.textContent = "";
+
+      if (!id || !password) {
+        loginError.textContent = "IDとパスワードを入力してください";
+        return;
+      }
+
+      try {
+
+        // ユーザーには見せない内部認証用アドレス
+        const internalEmail = `${id}@pb.local`;
+
+        await signInWithEmailAndPassword(
+          auth,
+          internalEmail,
+          password
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        loginError.textContent =
+          "IDまたはパスワードが違います";
+      }
+
+    });
+
+
+    // Enterでもログイン
+    loginPassword.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        loginButton.click();
+      }
+    });
+
+
+    // ログアウト
+    logoutButton.addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+
+    // 認証状態
+    onAuthStateChanged(auth, user => {
+
+      if (unsubscribeMessages) {
+        unsubscribeMessages();
+        unsubscribeMessages = null;
+      }
+
+      if (user) {
+
+        currentId =
+          user.email.replace("@pb.local", "");
+
+        currentUser.textContent =
+          `ID：${currentId}`;
+
+        loginScreen.classList.add("hidden");
+        chatScreen.classList.remove("hidden");
+
+        startMessages();
+
+      } else {
+
+        currentId = "";
+
+        chatScreen.classList.add("hidden");
+        loginScreen.classList.remove("hidden");
+
+        messages.innerHTML = "";
+
+      }
+
+    });
+
+
+    // メッセージ監視
+    function startMessages() {
+
+      const messagesRef =
+        collection(db, "messages");
+
+      const q =
+        query(
+          messagesRef,
+          orderBy("createdAt", "asc")
+        );
+
+      unsubscribeMessages =
+        onSnapshot(q, snapshot => {
+
+          messages.innerHTML = "";
+
+          snapshot.forEach(doc => {
+
+            const data = doc.data();
+
+            const row =
+              document.createElement("div");
+
+            row.className =
+              "message-row" +
+              (data.senderId === currentId
+                ? " mine"
+                : "");
+
+            const sender =
+              document.createElement("div");
+
+            sender.className = "sender";
+
+            sender.textContent =
+              data.senderId === currentId
+                ? "自分"
+                : data.senderId;
+
+
+            const bubble =
+              document.createElement("div");
+
+            bubble.className = "bubble";
+
+            // textContentなのでHTMLは実行されない
+            bubble.textContent =
+              data.text || "";
+
+
+            const time =
+              document.createElement("div");
+
+            time.className = "time";
+
+            if (data.createdAt?.toDate) {
+
+              time.textContent =
+                data.createdAt
+                  .toDate()
+                  .toLocaleTimeString(
+                    "ja-JP",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    }
+                  );
+
+            }
+
+
+            row.appendChild(sender);
+            row.appendChild(bubble);
+            row.appendChild(time);
+
+            messages.appendChild(row);
+
+          });
+
+          messages.scrollTop =
+            messages.scrollHeight;
+
+        });
+
+    }
+
+
+    // メッセージ送信
+    async function sendMessage() {
+
+      const text =
+        messageInput.value.trim();
+
+      if (!text || !auth.currentUser) {
+        return;
+      }
+
+      sendButton.disabled = true;
+
+      try {
+
+        await addDoc(
+          collection(db, "messages"),
+          {
+            text: text,
+            senderId: currentId,
+            uid: auth.currentUser.uid,
+            createdAt: serverTimestamp()
+          }
+        );
+
+        messageInput.value = "";
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "メッセージの送信に失敗しました"
+        );
+
+      } finally {
+
+        sendButton.disabled = false;
+        messageInput.focus();
+
+      }
+
+    }
+
+
+    sendButton.addEventListener(
+      "click",
+      sendMessage
+    );
+
+
+    messageInput.addEventListener(
+      "keydown",
+      e => {
+
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey
+        ) {
+
+          e.preventDefault();
+          sendMessage();
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
