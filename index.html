@@ -780,25 +780,26 @@ function toggleMessagePopup(row,data){
   row.appendChild(pop);
 
   // メニューは常にメッセージの下側に表示。
-  // 画面下に入りきらない場合だけ、必要な分だけトークを上へスクロールする。
+  // トークの表示領域からはみ出した分だけ、スクロール領域そのものを上へ動かす。
   requestAnimationFrame(()=>{
-    const composer = document.querySelector(".composer");
-    const composerTop = composer ? composer.getBoundingClientRect().top : window.innerHeight;
-    const rect = pop.getBoundingClientRect();
-    const safeBottom = composerTop - 10;
-    const overflow = rect.bottom - safeBottom;
+    requestAnimationFrame(()=>{
+      const scroller = $("messages");
+      if(!scroller) return;
 
-    if(overflow > 0){
-      const scroller = $("messageList");
-      if(scroller){
-        scroller.scrollTo({
-          top: scroller.scrollTop + overflow + 16,
-          behavior:"smooth"
+      const popRect = pop.getBoundingClientRect();
+      const scrollRect = scroller.getBoundingClientRect();
+
+      // 入力欄の直前＝messages領域の下端より少し上を安全ラインにする
+      const safeBottom = scrollRect.bottom - 12;
+      const overflow = popRect.bottom - safeBottom;
+
+      if(overflow > 0){
+        scroller.scrollBy({
+          top: overflow + 20,
+          behavior: "smooth"
         });
-      }else{
-        window.scrollBy({top:overflow + 16,behavior:"smooth"});
       }
-    }
+    });
   });
 }
 function buildReactionSummary(data){
