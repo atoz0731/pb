@@ -253,6 +253,9 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .modal h3{margin:0 0 12px}
 .modal input,.modal textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:10px;margin:5px 0}
 .modal textarea{resize:none}
+.allDayRow{display:flex;align-items:center;justify-content:space-between;padding:9px 2px;margin:2px 0}
+.allDayRow label{font-weight:600}
+.allDayCheck{width:22px!important;height:22px;margin:0!important}
 .modalBtns{display:flex;gap:8px;margin-top:8px}
 .modalBtns button{flex:1;border:0;border-radius:10px;padding:11px}
 .modalSave{background:#111;color:#fff;font-weight:700}
@@ -449,6 +452,10 @@ audio{display:none}
     <h3 id="scheduleModalTitle">予定を追加</h3>
     <input id="scheduleTitleInput" placeholder="予定のタイトル">
     <input id="scheduleDateInput" type="date">
+    <div class="allDayRow">
+      <label for="scheduleAllDayInput">終日</label>
+      <input id="scheduleAllDayInput" class="allDayCheck" type="checkbox">
+    </div>
     <input id="scheduleTimeInput" type="time">
     <textarea id="scheduleMemoInput" rows="3" placeholder="メモ（任意）"></textarea>
     <div class="modalBtns">
@@ -933,7 +940,8 @@ function renderSelectedDay(){
   if(!events.length){box.innerHTML='<div class="small">予定はありません。</div>';return}
   events.forEach(s=>{
     const c=document.createElement("div");c.className="scheduleCard";c.style.borderLeftColor=userColor(s.uid);
-    const t=document.createElement("div");t.className="scheduleTime";t.textContent=s.startsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+    const t=document.createElement("div");t.className="scheduleTime";
+    t.textContent=s.allDay ? "終日" : s.startsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
     const title=document.createElement("div");title.className="scheduleTitle";title.textContent=s.title||"";
     const memo=document.createElement("div");memo.className="scheduleMemo";memo.textContent=s.memo||"";
     const owner=document.createElement("div");owner.className="scheduleOwner";owner.textContent=`${s.uid===currentUID?"🔵":"🔴"} ${s.senderId}`;
@@ -958,19 +966,27 @@ function openScheduleEditor(s=null){
   const d=s?.startsAt?.toDate?s.startsAt.toDate():selectedDate;
   $("scheduleTitleInput").value=s?.title||"";
   $("scheduleDateInput").value=dateId(d);
+  $("scheduleAllDayInput").checked=!!s?.allDay;
   $("scheduleTimeInput").value=s?.startsAt?.toDate?d.toTimeString().slice(0,5):"09:00";
+  $("scheduleTimeInput").classList.toggle("hidden",$("scheduleAllDayInput").checked);
   $("scheduleMemoInput").value=s?.memo||"";
   $("scheduleModal").classList.remove("hidden");
 }
+$("scheduleAllDayInput").onchange=()=>{
+  $("scheduleTimeInput").classList.toggle("hidden",$("scheduleAllDayInput").checked);
+};
 $("openScheduleModal").onclick=()=>openScheduleEditor();
 $("cancelScheduleModal").onclick=()=>$("scheduleModal").classList.add("hidden");
 $("scheduleModal").addEventListener("click",e=>{if(e.target===$("scheduleModal"))$("scheduleModal").classList.add("hidden")});
 $("saveSchedule").onclick=async()=>{
-  const title=$("scheduleTitleInput").value.trim(),date=$("scheduleDateInput").value,time=$("scheduleTimeInput").value||"00:00",memo=$("scheduleMemoInput").value.trim();
+  const title=$("scheduleTitleInput").value.trim(),date=$("scheduleDateInput").value,
+        allDay=$("scheduleAllDayInput").checked,
+        time=allDay?"12:00":($("scheduleTimeInput").value||"00:00"),
+        memo=$("scheduleMemoInput").value.trim();
   if(!title||!date){alert("タイトルと日付を入力してください");return}
   const startsAt=Timestamp.fromDate(new Date(`${date}T${time}:00`));
-  if(editingSchedule)await updateDoc(doc(db,"schedules",editingSchedule.id),{title,memo,startsAt});
-  else await addDoc(collection(db,"schedules"),{title,memo,startsAt,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
+  if(editingSchedule)await updateDoc(doc(db,"schedules",editingSchedule.id),{title,memo,startsAt,allDay});
+  else await addDoc(collection(db,"schedules"),{title,memo,startsAt,allDay,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
   $("scheduleModal").classList.add("hidden");editingSchedule=null;
 };
 
