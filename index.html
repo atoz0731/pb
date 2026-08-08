@@ -292,7 +292,7 @@ audio{display:none}
 
 <section id="loginScreen" class="hidden">
   <div class="loginCard">
-    <div class="logo"><h1>PB</h1></div>
+    <div class="logo"><h1>PB</h1><p>Private Message</p></div>
     <div class="field"><label>ID</label><input id="loginId" autocomplete="username" autocapitalize="none"></div>
     <div class="field"><label>パスワード</label><input id="loginPassword" type="password" autocomplete="current-password"></div>
     <button id="loginButton" class="primary">ログイン</button>
@@ -1014,12 +1014,16 @@ function listenVoiceRoom(){
   unsubscribeVoice=onSnapshot(voiceRoomRef,snap=>{
     if(!snap.exists()||!snap.data().active){
       if(!voiceJoined)$("voiceBar").classList.add("hidden");
+      $("leaveVoice").textContent="退出";
       $("menuVoice").classList.remove("hidden");return;
     }
     const d=snap.data();$("menuVoice").classList.add("hidden");$("voiceBar").classList.remove("hidden");
     if(voiceJoined){
       $("voiceInfo").innerHTML='<span class="voiceDot"></span>ボイスルーム参加中';
-      $("joinVoice").classList.add("hidden");$("muteVoice").classList.remove("hidden");$("leaveVoice").classList.remove("hidden");
+      $("joinVoice").classList.add("hidden");
+      $("muteVoice").classList.remove("hidden");
+      $("leaveVoice").classList.remove("hidden");
+      $("leaveVoice").textContent = voiceRole==="host" ? "終了" : "退出";
     }else{
       $("voiceInfo").innerHTML=`<span class="voiceDot"></span>${escapeHtml(d.hostId||"誰か")} がボイスルームを開いています`;
       $("joinVoice").classList.remove("hidden");$("muteVoice").classList.add("hidden");$("leaveVoice").classList.add("hidden");
@@ -1040,7 +1044,13 @@ async function openVoiceRoom(){
   try{
     const cur=await getDoc(voiceRoomRef);if(cur.exists()&&cur.data().active){alert("すでにルームが開かれています");return}
     await clearCollection("callerCandidates");await clearCollection("calleeCandidates");await prepareAudio();
-    voiceRole="host";voiceJoined=true;$("voiceBar").classList.remove("hidden");
+    voiceRole="host";voiceJoined=true;
+    $("voiceBar").classList.remove("hidden");
+    $("voiceInfo").innerHTML='<span class="voiceDot"></span>ボイスルーム参加中';
+    $("joinVoice").classList.add("hidden");
+    $("muteVoice").classList.remove("hidden");
+    $("leaveVoice").classList.remove("hidden");
+    $("leaveVoice").textContent="終了";
     peerConnection.onicecandidate=async e=>{if(e.candidate)await addDoc(collection(db,"voiceRooms","main","callerCandidates"),e.candidate.toJSON())};
     const offer=await peerConnection.createOffer();await peerConnection.setLocalDescription(offer);
     await setDoc(voiceRoomRef,{active:true,hostUID:currentUID,hostId:currentId,createdAt:serverTimestamp(),offer:{type:offer.type,sdp:offer.sdp},answer:null});
@@ -1052,6 +1062,12 @@ $("joinVoice").onclick=async()=>{
   try{
     const snap=await getDoc(voiceRoomRef);if(!snap.exists()||!snap.data().active){alert("ルームは終了しています");return}
     const room=snap.data();await prepareAudio();voiceRole="participant";voiceJoined=true;
+    $("voiceBar").classList.remove("hidden");
+    $("voiceInfo").innerHTML='<span class="voiceDot"></span>ボイスルーム参加中';
+    $("joinVoice").classList.add("hidden");
+    $("muteVoice").classList.remove("hidden");
+    $("leaveVoice").classList.remove("hidden");
+    $("leaveVoice").textContent="退出";
     peerConnection.onicecandidate=async e=>{if(e.candidate)await addDoc(collection(db,"voiceRooms","main","calleeCandidates"),e.candidate.toJSON())};
     await peerConnection.setRemoteDescription(new RTCSessionDescription(room.offer));
     const answer=await peerConnection.createAnswer();await peerConnection.setLocalDescription(answer);
@@ -1064,16 +1080,68 @@ $("muteVoice").onclick=()=>{
 };
 $("leaveVoice").onclick=()=>leaveVoiceRoom(true);
 async function leaveVoiceRoom(updateFirestore=true){
-  if(!voiceJoined)return;const host=voiceRole==="host";closeLocalVoice();voiceJoined=false;voiceRole=null;voiceMuted=false;$("muteVoice").textContent="🎤";
+  if(!voiceJoined)return;
+
+  const wasHost = voiceRole==="host";
+
+  closeLocalVoice();
+  voiceJoined=false;
+  voiceRole=null;
+  voiceMuted=false;
+
+  $("muteVoice").textContent="🎤";
+  $("muteVoice").classList.add("hidden");
+  $("leaveVoice").classList.add("hidden");
+  $("leaveVoice").textContent="退出";
+
   if(updateFirestore){
-    if(host){
-      await setDoc(voiceRoomRef,{active:false,hostUID:null,hostId:null,participantUID:null,participantId:null,offer:null,answer:null,endedAt:serverTimestamp()},{merge:true});
-      await clearCollection("callerCandidates");await clearCollection("calleeCandidates");
-    }else{
-      await setDoc(voiceRoomRef,{participantUID:null,participantId:null,answer:null},{merge:true});await clearCollection("calleeCandidates");
+    try{
+      if(wasHost){
+        // 開催者が抜ける = ルーム自体を終了
+        await setDoc(
+          voiceRoomRef,
+          {
+            active:false,
+            hostUID:null,
+            hostId:null,
+            participantUID:null,
+            participantId:null,
+            offer:null,
+            answer:null,
+            endedAt:serverTimestamp()
+          },
+          {merge:true}
+        );
+        await clearCollection("callerCandidates");
+        await clearCollection("calleeCandidates");
+      }else{
+        // 参加者が抜ける = 参加者だけ退出
+        await setDoc(
+          voiceRoomRef,
+          {
+            participantUID:null,
+            participantId:null,
+            answer:null
+          },
+          {merge:true}
+        );
+        await clearCollection("calleeCandidates");
+      }
+    }catch(e){
+      console.error("ボイスルーム退出処理:",e);
     }
   }
-  const r=await getDoc(voiceRoomRef);if(!r.exists()||!r.data().active)$("voiceBar").classList.add("hidden");
+
+  const r=await getDoc(voiceRoomRef);
+
+  if(!r.exists()||!r.data().active){
+    $("voiceBar").classList.add("hidden");
+    $("menuVoice").classList.remove("hidden");
+  }else{
+    $("voiceBar").classList.remove("hidden");
+    $("voiceInfo").innerHTML=`<span class="voiceDot"></span>${escapeHtml(r.data().hostId||"誰か")} がボイスルームを開いています`;
+    $("joinVoice").classList.remove("hidden");
+  }
 }
 function closeLocalVoice(){
   if(unsubscribeCallerIce){unsubscribeCallerIce();unsubscribeCallerIce=null}
