@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.3.6 ===== */
+/* ===== v3.4.1 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -158,7 +158,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .voiceMini.danger{background:#eee;color:#a1001a}
 
 
-/* v3.3.6 solo overflow menu */
+/* v3.4.1 solo overflow menu */
 .post{position:relative}
 .postHead{align-items:flex-start}
 .soloPostTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
@@ -227,7 +227,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 
 
 
-/* v3.3.6 LINE-style compact talk */
+/* v3.4.1 LINE-style compact talk */
 .messageRow{margin:1px 0 2px}
 .messageRow.groupStart{margin-top:7px}
 .sender{margin:0 7px 1px;font-size:9px}
@@ -426,7 +426,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.3.6 schedule/calendar refinements */
+/* v3.4.1 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -517,7 +517,7 @@ audio{display:none}
   .scheduleTimeField label{font-size:10px}
 }
 
-/* v3.3.6 iPhone time-input overlap fix */
+/* v3.4.1 iPhone time-input overlap fix */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -552,7 +552,7 @@ audio{display:none}
 }
 
 
-/* v3.3.6 ひとりごと：投稿単位を見やすく */
+/* v3.4.1 ひとりごと：投稿単位を見やすく */
 #soloList{padding:9px 8px 18px;background:#f3f4f6}
 #soloList .post{
   position:relative;background:#fff;border:1px solid rgba(0,0,0,.045);
@@ -570,7 +570,7 @@ audio{display:none}
 #soloList .soloMetaSummary{margin-top:6px}
 
 
-/* v3.3.6 予定作成：開始/終了時刻レイアウト修正 */
+/* v3.4.1 予定作成：開始/終了時刻レイアウト修正 */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -627,6 +627,98 @@ audio{display:none}
   }
 }
 
+
+/* v3.4.1 9401 カモフラージュモード */
+#camoLoginScreen,#camoScreen{min-height:100dvh;background:#fff;color:#111}
+#camoLoginScreen{display:flex;align-items:center;justify-content:center;padding:24px}
+.camoLoginCard{width:100%;max-width:390px}
+.camoLoginTitle{text-align:center;font-size:22px;font-weight:700;margin-bottom:26px}
+.camoLoginCard input{width:100%;padding:14px 15px;margin:7px 0;border:1px solid #ddd;border-radius:12px;font-size:16px}
+.camoLoginCard button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:12px;background:#111;color:#fff;font-weight:700}
+#camoLoginError{min-height:20px;margin-top:10px;text-align:center;color:#c33;font-size:12px}
+#camoScreen{height:100dvh;display:flex;flex-direction:column}
+.camoTop{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top)) 14px 9px;border-bottom:1px solid #eee;background:#fff}
+.camoTopTitle{font-size:16px;font-weight:800}
+.camoTop button{border:0;background:none;font-size:20px;padding:5px}
+.camoFeed{flex:1;min-height:0;overflow-y:auto;padding:10px 14px 90px;-webkit-overflow-scrolling:touch}
+.camoComment{padding:9px 0 10px;border-bottom:1px solid #f1f1f1}
+.camoCommentHead{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.camoAvatar{width:30px;height:30px;border-radius:50%;background:#efefef;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.camoName{font-size:12px;font-weight:800}
+.camoText{margin-left:37px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.camoReplyQuote{margin:4px 0 5px 37px;padding-left:8px;border-left:2px solid #ddd;color:#888;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.camoMeta{margin:5px 0 0 37px;display:flex;gap:12px;color:#999;font-size:10px}
+.camoMeta button{border:0;background:none;color:#777;font-size:10px;padding:0}
+.camoReplyBar{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 11px;background:#fafafa;border-top:1px solid #eee;font-size:11px}
+.camoReplyBar button{border:0;background:none;font-size:18px}
+.camoComposer{flex-shrink:0;display:flex;align-items:flex-end;gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #eee;background:#fff}
+.camoComposer textarea{flex:1;min-height:40px;max-height:95px;resize:none;border:1px solid #ddd;border-radius:20px;padding:9px 13px;font-size:16px}
+.camoSend{width:40px;height:40px;border:0;border-radius:50%;background:#111;color:#fff;font-size:16px}
+
+
+/* v3.4.1 通常トーク：自分の時刻/既読は吹き出し左 */
+.messageRow.mine .bubbleLine{
+  flex-direction:row!important;
+  justify-content:flex-end;
+}
+.messageRow.mine .messageMenuButton{order:1!important}
+.messageRow.mine .metaSide{
+  order:2!important;
+  align-self:flex-end;
+  justify-content:flex-end;
+  margin:0 0 3px 1px;
+}
+.messageRow.mine .bubbleStack{order:3!important}
+.messageRow:not(.mine) .bubbleStack{order:1!important}
+.messageRow:not(.mine) .metaSide{order:2!important}
+.messageRow:not(.mine) .messageMenuButton{order:3!important}
+
+/* v3.4.1 予定作成：iPhoneでも見切れない縦1列 */
+.scheduleTimeRow{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:10px!important;
+  width:100%!important;
+}
+.scheduleTimeField{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  overflow:visible!important;
+}
+.scheduleTimeField label{
+  display:block!important;
+  margin:0 2px 5px!important;
+}
+.scheduleTimeField input[type="time"]{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:48px!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:0 12px!important;
+  -webkit-appearance:auto!important;
+  appearance:auto!important;
+}
+#scheduleModal input[type="date"]{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  padding-left:12px!important;
+  padding-right:12px!important;
+}
+#scheduleModal .modalCard,
+#scheduleModal .modalContent{
+  box-sizing:border-box!important;
+  max-width:calc(100vw - 24px)!important;
+}
+
 </style>
 </head>
 <body>
@@ -657,11 +749,38 @@ audio{display:none}
   </div>
 </section>
 
+
+<section id="camoLoginScreen" class="hidden">
+  <div class="camoLoginCard">
+    <div class="camoLoginTitle">ログイン</div>
+    <input id="camoLoginId" autocomplete="username" autocapitalize="none" placeholder="ID">
+    <input id="camoLoginPassword" type="password" autocomplete="current-password" placeholder="パスワード">
+    <button id="camoLoginButton">ログイン</button>
+    <div id="camoLoginError"></div>
+  </div>
+</section>
+
+<section id="camoScreen" class="hidden">
+  <div class="camoTop">
+    <div class="camoTopTitle">コメント</div>
+    <button id="camoExitButton">⋯</button>
+  </div>
+  <div id="camoFeed" class="camoFeed"></div>
+  <div id="camoReplyBar" class="camoReplyBar hidden">
+    <span id="camoReplyText"></span>
+    <button id="camoCancelReply">×</button>
+  </div>
+  <div class="camoComposer">
+    <textarea id="camoInput" rows="1" placeholder="コメントを追加…"></textarea>
+    <button id="camoSend" class="camoSend">➤</button>
+  </div>
+</section>
+
 <section id="appScreen" class="hidden">
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.6</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.1</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -793,30 +912,30 @@ audio{display:none}
 </div>
 
 <div id="updatesPage" class="page hidden">
-  <div class="scroll">
-    <div class="updateCard"><div class="updateVersion">v3.3.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+  <div class="scroll"><div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>通常トークで自分の時刻・既読・編集済みを吹き出し左側へ変更</li><li>予定作成画面の日付入力の見切れを修正</li><li>開始時刻・終了時刻を縦1列に変更しiPhoneでの表示崩れを改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN 9401 のカモフラージュモードを追加</li><li>トークをSNSコメント風UIで閲覧・返信・送信可能に</li><li>通常PBの名称やタブを表示しない専用画面を追加</li></ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>予定作成画面の開始・終了時刻欄の高さと幅を修正</li>
       <li>iPhone Safariで終了時刻欄が潰れる表示崩れを改善</li>
     </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>ひとりごとを投稿ごとのカード表示に変更</li>
       <li>自分／相手を左端の色で見分けやすく改善</li>
       <li>アップデート履歴をバージョン別表示に変更</li>
     </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.4</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>Safari／ホーム画面版のPIN再ロックを修正</li><li>PIN再ロック時間を設定から変更可能に</li>
     </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>既存のひとりごとが表示されない不具合を修正</li><li>アップデート情報を修正</li>
     </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.2</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>トークをLINE型コンパクトレイアウトに変更</li><li>時刻・既読・編集済みを吹き出し横へ移動</li>
       <li>ひとりごとの操作を「…」メニューへ集約</li><li>予定作成画面の開始・終了時刻欄を調整</li>
     </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>ひとりごと・ノートの表示処理を修正</li><li>カレンダーの既存予定表示を修正</li>
     </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.0</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>アップデートタブとNEW表示を追加</li><li>右上に再読み込みボタンを追加</li>
       <li>PIN再ロック機能を追加</li><li>ホーム画面版のオーバースクロールを抑制</li>
       <li>予定に「自分のみ表示」を追加</li><li>ひとりごとにフィルター・コメント・絵文字リアクションを追加</li><li>ノート機能を追加</li>
@@ -1024,6 +1143,7 @@ const db = getFirestore(app);
 const $ = id => document.getElementById(id);
 
 let pin="", pinPassed=false, currentUID="", currentId="";
+let camouflageMode=false, camoReplyTarget=null;
 let replyTarget=null, editingMessage=null, oldestMessage=null;
 let messageDocs=new Map(), previousNewestMessageId=null, firstMessageLoad=true;
 let readStates={}, locationWatch=null;
@@ -1034,7 +1154,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.3.6";
+const APP_VERSION="3.4.1";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -1063,8 +1183,18 @@ $("backKey").onclick=()=>{pin=pin.slice(0,-1);updateDots()};
 function checkPin(){
   if(pin==="0208"){window.location.replace("https://www.google.com/");return}
   if(pin==="0814"){
+    camouflageMode=false;
     pinPassed=true;clearHiddenStamp();$("pinScreen").classList.add("hidden");
     if(auth.currentUser)showApp(auth.currentUser);else $("loginScreen").classList.remove("hidden");
+    return;
+  }
+  if(pin==="9401"){
+    camouflageMode=true;
+    pinPassed=true;
+    if(typeof clearHiddenStamp==="function")clearHiddenStamp();
+    $("pinScreen").classList.add("hidden");
+    if(auth.currentUser)showApp(auth.currentUser);
+    else $("camoLoginScreen").classList.remove("hidden");
     return;
   }
   $("pinError").textContent="PINが違います";pin="";updateDots();
@@ -1144,15 +1274,30 @@ $("loginButton").onclick=async()=>{
   catch(e){console.error(e);$("loginError").textContent="IDまたはパスワードが違います"}
 };
 $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginButton").click()});
+
+$("camoLoginButton").onclick=async()=>{
+  const id=$("camoLoginId").value.trim().toLowerCase();
+  const pw=$("camoLoginPassword").value;
+  if(!id||!pw)return;
+  try{
+    $("camoLoginError").textContent="";
+    await signInWithEmailAndPassword(auth,`${id}@pb.local`,pw);
+  }catch(e){
+    $("camoLoginError").textContent="IDまたはパスワードが違います";
+  }
+};
+$("camoLoginPassword").addEventListener("keydown",e=>{
+  if(e.key==="Enter")$("camoLoginButton").click();
+});
 $("logoutButton").onclick=async()=>{await leaveVoiceRoom(false);await signOut(auth);$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")};
 onAuthStateChanged(auth,user=>{
   if(user&&pinPassed)showApp(user);
-  if(!user&&pinPassed){$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")}
+  if(!user&&pinPassed){$("appScreen").classList.add("hidden");$("camoScreen").classList.add("hidden");if(camouflageMode)$("camoLoginScreen").classList.remove("hidden");else $("loginScreen").classList.remove("hidden")}
 });
 function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
   $("userLabel").textContent=`ID：${currentId}`;
-  $("loginScreen").classList.add("hidden");$("pinScreen").classList.add("hidden");$("appScreen").classList.remove("hidden");
+  $("loginScreen").classList.add("hidden");$("camoLoginScreen").classList.add("hidden");$("pinScreen").classList.add("hidden");if(camouflageMode){$("appScreen").classList.add("hidden");$("camoScreen").classList.remove("hidden")}else{$("camoScreen").classList.add("hidden");$("appScreen").classList.remove("hidden")}
   loadSettings();
   updateNotificationUI();
   updateUpdateBadge();
@@ -1493,6 +1638,7 @@ function listenMessages(){
     snapshot.docs.forEach(d=>messageDocs.set(d.id,{id:d.id,...d.data()}));
     oldestMessage=snapshot.docs[snapshot.docs.length-1]||oldestMessage;
     renderMessages();
+    renderCamoMessages();
 
     if(firstMessageLoad){
       firstMessageLoad=false;
@@ -1730,6 +1876,55 @@ $("loadMore").onclick=async()=>{
   oldestMessage=snap.docs[snap.docs.length-1];renderMessages();
   requestAnimationFrame(()=>{box.scrollTop=oldTop+(box.scrollHeight-oldHeight)});
 };
+
+
+/* 9401 カモフラージュコメントUI */
+function renderCamoMessages(){
+  const feed=$("camoFeed");if(!feed)return;
+  const items=[...messageDocs.values()].filter(x=>x.text)
+    .sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+  feed.innerHTML="";
+  items.forEach(data=>{
+    const item=document.createElement("div");item.className="camoComment";
+    const head=document.createElement("div");head.className="camoCommentHead";
+    const avatar=document.createElement("div");avatar.className="camoAvatar";avatar.textContent=(data.senderId||"?").slice(0,1).toUpperCase();
+    const name=document.createElement("div");name.className="camoName";name.textContent=data.uid===currentUID?"自分":(data.senderId||"");
+    head.append(avatar,name);item.appendChild(head);
+
+    if(data.replyTo?.text){
+      const q=document.createElement("div");q.className="camoReplyQuote";
+      q.textContent=`${data.replyTo.senderId}：${data.replyTo.text}`;item.appendChild(q);
+    }
+
+    const body=document.createElement("div");body.className="camoText";body.textContent=data.text||"";item.appendChild(body);
+
+    const meta=document.createElement("div");meta.className="camoMeta";
+    const time=document.createElement("span");
+    time.textContent=data.createdAt?.toDate?data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):"";
+    const reply=document.createElement("button");reply.textContent="返信";
+    reply.onclick=()=>{
+      camoReplyTarget=data;
+      $("camoReplyText").textContent=`${data.senderId}「${(data.text||"").slice(0,35)}」に返信`;
+      $("camoReplyBar").classList.remove("hidden");$("camoInput").focus();
+    };
+    meta.append(time,reply);item.appendChild(meta);feed.appendChild(item);
+  });
+  if(camouflageMode)requestAnimationFrame(()=>feed.scrollTop=feed.scrollHeight);
+}
+$("camoCancelReply").onclick=()=>{camoReplyTarget=null;$("camoReplyBar").classList.add("hidden")};
+$("camoSend").onclick=async()=>{
+  const text=$("camoInput").value.trim();if(!text)return;
+  await addDoc(collection(db,"messages"),{
+    text,senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),edited:false,reactions:{},
+    replyTo:camoReplyTarget?{id:camoReplyTarget.id,senderId:camoReplyTarget.senderId,text:(camoReplyTarget.text||"").slice(0,150)}:null
+  });
+  $("camoInput").value="";camoReplyTarget=null;$("camoReplyBar").classList.add("hidden");
+};
+$("camoExitButton").onclick=()=>{
+  camouflageMode=false;pinPassed=false;pin="";updateDots();
+  $("camoScreen").classList.add("hidden");$("pinScreen").classList.remove("hidden");
+};
+
 
 /* READ: only when Talk active AND latest area visible */
 function listenReadStates(){
