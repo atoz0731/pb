@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.3.1 ===== */
+/* ===== v3.3.2 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -179,6 +179,37 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .voiceMini.sub{background:#e8e8e8;color:#222}
 .voiceMini.danger{background:#eee;color:#a1001a}
 
+
+/* v3.3.2 solo overflow menu */
+.post{position:relative}
+.postHead{align-items:flex-start}
+.soloPostTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.soloMenuButton{
+  border:0;background:none;color:#999;font-size:18px;line-height:1;
+  padding:3px 5px;flex-shrink:0
+}
+.soloPopup{
+  display:flex;flex-direction:column;gap:6px;
+  margin:3px 0 5px auto;padding:7px 9px;
+  width:max-content;max-width:95%;
+  background:#fff;border-radius:14px;
+  box-shadow:0 3px 14px rgba(0,0,0,.14);
+  position:relative;z-index:12
+}
+.soloPopupReactions{display:flex;gap:5px}
+.soloPopupReactions button{border:0;background:none;font-size:21px;padding:2px}
+.soloPopupActions{display:flex;align-items:center;gap:13px}
+.soloPopupActions button{
+  border:0;background:none;color:#555;font-size:16px;padding:3px 1px
+}
+.soloPopupActions .commentAction{font-size:12px}
+.soloReactionChip.mineReaction{background:#f0f0f0;border-color:#aaa}
+.soloMetaSummary{display:flex;align-items:center;gap:5px;margin-top:4px;min-height:0}
+.commentCountChip{
+  border:1px solid #ddd;background:#fff;border-radius:13px;
+  padding:2px 6px;font-size:11px;color:#666
+}
+
 /* TALK */
 #talkPage{position:relative}
 #messages{padding:8px 11px 6px}
@@ -216,6 +247,56 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .composer textarea{flex:1;resize:none;min-height:40px;max-height:95px;border:1px solid #ccc;border-radius:19px;padding:9px 13px;font-size:16px}
 .send{flex-shrink:0;width:41px;height:41px;border:0;border-radius:50%;background:#111;color:#fff;font-size:17px}
 
+
+
+/* v3.3.2 LINE-style compact talk */
+.messageRow{margin:1px 0 2px}
+.messageRow.groupStart{margin-top:7px}
+.sender{margin:0 7px 1px;font-size:9px}
+.bubbleLine{
+  display:flex;
+  align-items:flex-end;
+  gap:4px;
+  max-width:96%;
+}
+.bubbleStack{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  max-width:min(72vw,620px);
+}
+.bubble{padding:6px 9px;line-height:1.32}
+.messageRow:not(.mine) .bubbleStack{order:1}
+.messageRow:not(.mine) .metaSide{order:2}
+.messageRow:not(.mine) .messageMenuButton{order:3}
+.messageRow.mine .messageMenuButton{order:1}
+.messageRow.mine .metaSide{order:2}
+.messageRow.mine .bubbleStack{order:3}
+.metaSide{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  align-self:flex-end;
+  margin-bottom:2px;
+  color:#999;
+  font-size:9px;
+  white-space:nowrap;
+  line-height:1.15;
+}
+.messageRow.mine .metaSide{justify-content:flex-end}
+.reactionSummary{
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px;
+  margin:2px 3px 0;
+}
+.messageRow.mine .reactionSummary{justify-content:flex-end}
+.messageMenuButton{padding:4px 2px}
+.replyQuote{padding:3px 6px;margin-bottom:4px;font-size:10px}
+@media (max-width:390px){
+  .bubbleStack{max-width:70vw}
+  .metaSide{font-size:8px;gap:3px}
+}
 
 /* TALK SEARCH / DATE FILTER */
 #talkFilterBar{
@@ -367,7 +448,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.3.1 schedule/calendar refinements */
+/* v3.3.2 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -457,6 +538,41 @@ audio{display:none}
   .scheduleTimeRow{gap:6px}
   .scheduleTimeField label{font-size:10px}
 }
+
+/* v3.3.2 iPhone time-input overlap fix */
+.scheduleTimeRow{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:12px!important;
+  width:100%;
+  min-width:0;
+}
+.scheduleTimeField{
+  min-width:0!important;
+  max-width:100%;
+  overflow:hidden;
+}
+.scheduleTimeField input[type="time"]{
+  display:block;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  -webkit-appearance:none;
+  appearance:none;
+  padding-left:6px!important;
+  padding-right:6px!important;
+  text-align:center;
+}
+.scheduleTimeField input[type="time"]::-webkit-date-and-time-value{
+  text-align:center;
+  min-width:0;
+}
+@media (max-width:390px){
+  .scheduleTimeRow{gap:10px!important}
+  .scheduleTimeField input[type="time"]{font-size:15px;padding-left:3px!important;padding-right:3px!important}
+}
+
 </style>
 </head>
 <body>
@@ -491,7 +607,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.1</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.2</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -625,7 +741,7 @@ audio{display:none}
 <div id="updatesPage" class="page hidden">
   <div class="scroll">
     <div class="updateCard">
-      <div class="updateVersion">v3.3.1</div>
+      <div class="updateVersion">v3.3.2</div>
       <div class="updateDate">2026/08/09</div>
       <ul class="updateItems">
         <li>アップデートタブを追加</li>
@@ -1273,38 +1389,91 @@ function renderMessages(){
       return d>=talkDateFilter.start && d<talkDateFilter.end;
     });
   }
+
   let prev=null, prevDay="";
   items.forEach(data=>{
     const dk=dayKey(data.createdAt);
     if(dk&&dk!==prevDay){
-      const sep=document.createElement("div");sep.className="dateSeparator";sep.textContent=formatDay(data.createdAt);list.appendChild(sep);prevDay=dk;
+      const sep=document.createElement("div");
+      sep.className="dateSeparator";
+      sep.textContent=formatDay(data.createdAt);
+      list.appendChild(sep);
+      prevDay=dk;
     }
-    const sameSender=prev&&prev.uid===data.uid&&prevDay===dk&&Math.abs((data.createdAt?.seconds||0)-(prev.createdAt?.seconds||0))<=300;
-    const row=document.createElement("div");row.dataset.messageId=data.id;row.className="messageRow"+(data.uid===currentUID?" mine":"")+(!sameSender?" groupStart":"");
+
+    const sameSender=prev&&prev.uid===data.uid&&prevDay===dk&&
+      Math.abs((data.createdAt?.seconds||0)-(prev.createdAt?.seconds||0))<=300;
+
+    const row=document.createElement("div");
+    row.dataset.messageId=data.id;
+    row.className="messageRow"+(data.uid===currentUID?" mine":"")+(!sameSender?" groupStart":"");
+
     if(!sameSender){
-      const sender=document.createElement("div");sender.className="sender";sender.textContent=data.uid===currentUID?"自分":data.senderId;row.appendChild(sender);
+      const sender=document.createElement("div");
+      sender.className="sender";
+      sender.textContent=data.uid===currentUID?"自分":data.senderId;
+      row.appendChild(sender);
     }
-    const line=document.createElement("div");line.className="bubbleLine";
-    const bubble=document.createElement("div");bubble.className="bubble";
+
+    const line=document.createElement("div");
+    line.className="bubbleLine";
+
+    const stack=document.createElement("div");
+    stack.className="bubbleStack";
+
+    const bubble=document.createElement("div");
+    bubble.className="bubble";
+
     if(data.replyTo?.text){
-      const quote=document.createElement("div");quote.className="replyQuote";quote.textContent=`${data.replyTo.senderId}：${data.replyTo.text}`;bubble.appendChild(quote);
+      const quote=document.createElement("div");
+      quote.className="replyQuote";
+      quote.textContent=`${data.replyTo.senderId}：${data.replyTo.text}`;
+      bubble.appendChild(quote);
     }
-    const body=document.createElement("div");body.textContent=data.text||"";
+
+    const body=document.createElement("div");
+    body.textContent=data.text||"";
     const ec=getEmojiCount(data.text||"");
-    if(ec>=1&&ec<=3){bubble.classList.add("emojiBubble");body.className=`emojiText ${ec===1?"one":ec===2?"two":"three"}`}
-    bubble.appendChild(body);
-    const menu=document.createElement("button");menu.className="messageMenuButton";menu.textContent="⋯";menu.onclick=e=>{e.stopPropagation();toggleMessagePopup(row,data)};
-    line.append(bubble,menu);row.appendChild(line);
-
-    const reactions=buildReactionSummary(data);if(reactions)row.appendChild(reactions);
-
-    const meta=document.createElement("div");meta.className="meta";
-    if(data.createdAt?.toDate){
-      const t=document.createElement("span");t.textContent=data.createdAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});meta.appendChild(t);
+    if(ec>=1&&ec<=3){
+      bubble.classList.add("emojiBubble");
+      body.className=`emojiText ${ec===1?"one":ec===2?"two":"three"}`;
     }
-    if(data.edited){const e=document.createElement("span");e.textContent="編集済み";meta.appendChild(e)}
-    if(data.uid===currentUID&&isReadByOther(data)){const r=document.createElement("span");r.textContent="既読";meta.appendChild(r)}
-    row.appendChild(meta);list.appendChild(row);prev=data;
+    bubble.appendChild(body);
+    stack.appendChild(bubble);
+
+    const reactions=buildReactionSummary(data);
+    if(reactions)stack.appendChild(reactions);
+
+    const meta=document.createElement("div");
+    meta.className="metaSide";
+    if(data.createdAt?.toDate){
+      const t=document.createElement("span");
+      t.textContent=data.createdAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+      meta.appendChild(t);
+    }
+    if(data.edited){
+      const e=document.createElement("span");
+      e.textContent="編集済み";
+      meta.appendChild(e);
+    }
+    if(data.uid===currentUID&&isReadByOther(data)){
+      const r=document.createElement("span");
+      r.textContent="既読";
+      meta.appendChild(r);
+    }
+
+    const menu=document.createElement("button");
+    menu.className="messageMenuButton";
+    menu.textContent="⋯";
+    menu.onclick=e=>{
+      e.stopPropagation();
+      toggleMessagePopup(row,data);
+    };
+
+    line.append(stack,meta,menu);
+    row.appendChild(line);
+    list.appendChild(row);
+    prev=data;
   });
 }
 function toggleMessagePopup(row,data){
@@ -1454,54 +1623,150 @@ function listenSolo(){
   },e=>console.error("solo listen",e));
 }
 function renderSolo(){
-  const list=$("soloList");list.innerHTML="";
-  const posts=visibleSoloPosts();
+  const list=$("soloList");if(!list)return;
+  list.innerHTML="";
+  let posts=soloDocs.filter(x=>!x.privateOnly||x.uid===currentUID);
+  if(soloFilter==="mine")posts=posts.filter(x=>x.uid===currentUID);
+  if(soloFilter==="others")posts=posts.filter(x=>x.uid!==currentUID);
+
   if(!posts.length){
-    list.innerHTML='<div class="small" style="padding:14px">表示するひとりごとはありません。</div>';
+    list.innerHTML='<div class="small" style="padding:14px">ひとりごとはありません。</div>';
     return;
   }
+
   posts.forEach(data=>{
-    const post=document.createElement("article");post.className="post";
-    const head=document.createElement("div");head.className="postHead";
-    const user=document.createElement("div");user.className="postUser";user.textContent=data.uid===currentUID?"自分":(data.senderId||"");
-    const time=document.createElement("div");time.className="postTime";
-    if(data.createdAt?.toDate)time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    const post=document.createElement("article");
+    post.className="post";
+
+    const top=document.createElement("div");
+    top.className="soloPostTop";
+
+    const head=document.createElement("div");
+    head.className="postHead";
+    const user=document.createElement("div");
+    user.className="postUser";
+    user.textContent=data.uid===currentUID?"自分":(data.senderId||"");
+    const time=document.createElement("div");
+    time.className="postTime";
+    if(data.createdAt?.toDate){
+      time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    }
     head.append(user,time);
 
-    const body=document.createElement("div");body.className="postText";body.textContent=data.text||"";
-    const footer=document.createElement("div");footer.className="postFooter";
+    const menu=document.createElement("button");
+    menu.className="soloMenuButton";
+    menu.textContent="⋯";
+    menu.onclick=e=>{
+      e.stopPropagation();
+      toggleSoloPopup(post,data);
+    };
+    top.append(head,menu);
+
+    const body=document.createElement("div");
+    body.className="postText";
+    body.textContent=data.text||"";
+
+    const metaSummary=document.createElement("div");
+    metaSummary.className="soloMetaSummary";
 
     const reactions=data.reactions||{};
-    const summary=document.createElement("div");summary.className="soloReactionSummary";
+    const summary=document.createElement("div");
+    summary.className="soloReactionSummary";
     let hasReaction=false;
     REACTIONS.forEach(em=>{
       const users=reactions[em]||[];
       if(!users.length)return;
       hasReaction=true;
-      const chip=document.createElement("button");chip.className="soloReactionChip"+(users.includes(currentUID)?" mineReaction":"");
+      const chip=document.createElement("button");
+      chip.className="soloReactionChip"+(users.includes(currentUID)?" mineReaction":"");
       chip.textContent=`${em}${users.length>1?users.length:""}`;
       chip.onclick=()=>toggleSoloReaction(data,em);
       summary.appendChild(chip);
     });
-    if(hasReaction)footer.appendChild(summary);
+    if(hasReaction)metaSummary.appendChild(summary);
 
-    const react=document.createElement("button");react.textContent="☺";react.title="リアクション";
-    react.onclick=()=>toggleSoloReactionPicker(post,data);
     const comments=data.comments||[];
-    const commentsBtn=document.createElement("button");commentsBtn.className="commentToggle";commentsBtn.textContent=`💬 ${comments.length}`;
-    commentsBtn.onclick=()=>toggleComments(post,data);
-    footer.append(react,commentsBtn);
-
-    if(data.uid===currentUID){
-      const edit=document.createElement("button");edit.textContent="編集";
-      edit.onclick=async()=>{const n=prompt("ひとりごとを編集",data.text||"");if(n?.trim())await updateDoc(doc(db,"solo",data.id),{text:n.trim(),edited:true})};
-      const del=document.createElement("button");del.textContent="削除";
-      del.onclick=async()=>{if(confirm("削除しますか？"))await deleteDoc(doc(db,"solo",data.id))};
-      footer.append(edit,del);
+    if(comments.length){
+      const commentsBtn=document.createElement("button");
+      commentsBtn.className="commentCountChip";
+      commentsBtn.textContent=`💬 ${comments.length}`;
+      commentsBtn.onclick=()=>toggleComments(post,data);
+      metaSummary.appendChild(commentsBtn);
     }
-    post.append(head,body,footer);list.appendChild(post);
+
+    post.append(top,body);
+    if(hasReaction||comments.length)post.appendChild(metaSummary);
+    list.appendChild(post);
   });
 }
+
+function toggleSoloPopup(post,data){
+  document.querySelectorAll(".soloPopup").forEach(p=>{
+    if(p.parentElement!==post)p.remove();
+  });
+  const old=post.querySelector(".soloPopup");
+  if(old){old.remove();return}
+
+  const pop=document.createElement("div");
+  pop.className="soloPopup";
+
+  const reactions=document.createElement("div");
+  reactions.className="soloPopupReactions";
+  REACTIONS.forEach(em=>{
+    const b=document.createElement("button");
+    b.textContent=em;
+    b.onclick=async()=>{
+      await toggleSoloReaction(data,em);
+      pop.remove();
+    };
+    reactions.appendChild(b);
+  });
+
+  const actions=document.createElement("div");
+  actions.className="soloPopupActions";
+
+  const comment=document.createElement("button");
+  comment.className="commentAction";
+  comment.textContent="💬 コメント";
+  comment.onclick=()=>{
+    pop.remove();
+    toggleComments(post,data);
+  };
+  actions.appendChild(comment);
+
+  if(data.uid===currentUID){
+    const edit=document.createElement("button");
+    edit.textContent="📝";
+    edit.title="編集";
+    edit.onclick=async()=>{
+      pop.remove();
+      const n=prompt("ひとりごとを編集",data.text||"");
+      if(n?.trim())await updateDoc(doc(db,"solo",data.id),{text:n.trim(),edited:true});
+    };
+
+    const del=document.createElement("button");
+    del.textContent="🗑️";
+    del.title="削除";
+    del.onclick=async()=>{
+      pop.remove();
+      if(confirm("削除しますか？"))await deleteDoc(doc(db,"solo",data.id));
+    };
+    actions.append(edit,del);
+  }
+
+  pop.append(reactions,actions);
+  post.appendChild(pop);
+
+  requestAnimationFrame(()=>{
+    const scroller=$("soloList");
+    if(!scroller)return;
+    const pr=pop.getBoundingClientRect();
+    const sr=scroller.getBoundingClientRect();
+    const overflow=pr.bottom-(sr.bottom-10);
+    if(overflow>0)scroller.scrollTop+=overflow+16;
+  });
+}
+
 function toggleSoloReactionPicker(post,data){
   document.querySelectorAll(".soloReactionPicker").forEach(x=>x.remove());
   const p=document.createElement("div");p.className="soloReactionPicker";
