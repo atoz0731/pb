@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Private</title>
 <style>
 :root{
@@ -17,6 +20,91 @@ button,input,textarea{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 
+
+/* ===== v3.3.0 ===== */
+html{background:#111}
+@media (display-mode: standalone){
+  html,body{
+    width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#111;
+  }
+  body{position:fixed;inset:0}
+  #appScreen{height:100dvh;overflow:hidden;background:var(--bg)}
+  .page{min-height:0;overflow:hidden}
+  .scroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+}
+.scheduleTimeField{min-width:0}
+.scheduleTimeField input{width:100%;min-width:0}
+.privateRow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 2px;margin:2px 0;border-top:1px solid #eee
+}
+.privateRow label{font-weight:600}
+.privateCheck{width:22px!important;height:22px!important;margin:0!important}
+.reloadIcon{border:0;background:none;color:#fff;font-size:19px;line-height:1;padding:7px 5px}
+.tabs{grid-template-columns:repeat(5,1fr)}
+.tab{font-size:11px}
+.updateTabWrap{display:inline-flex;align-items:center;gap:3px;justify-content:center}
+.updateNew{
+  background:#d7263d;color:#fff;border-radius:8px;padding:1px 4px;
+  font-size:7px;font-weight:800;line-height:1.4
+}
+
+/* ひとりごと / ノート */
+.soloSubnav{
+  flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;
+  background:#fff;border-bottom:1px solid #ddd;padding:6px 10px;gap:6px
+}
+.soloSubBtn{
+  border:0;border-radius:16px;background:#f0f0f0;padding:7px;font-size:12px;font-weight:700;color:#777
+}
+.soloSubBtn.active{background:#111;color:#fff}
+.soloFilters{
+  flex-shrink:0;display:flex;gap:6px;padding:7px 10px;background:#fff;border-bottom:1px solid #eee
+}
+.soloFilterBtn{
+  border:1px solid #ddd;background:#fff;border-radius:15px;padding:5px 10px;font-size:10px
+}
+.soloFilterBtn.active{background:#111;color:#fff;border-color:#111}
+.soloReactionSummary{display:flex;gap:4px;flex-wrap:wrap}
+.soloReactionChip{
+  border:1px solid #ddd;background:#fff;border-radius:13px;padding:2px 6px;font-size:11px
+}
+.soloReactionPicker{display:flex;gap:5px;margin:5px 0}
+.soloReactionPicker button{border:0;background:#f3f3f3;border-radius:14px;padding:4px 7px;font-size:18px}
+.commentToggle{border:0;background:none;color:#666;font-size:11px;padding:3px}
+.commentsBox{margin-top:5px;padding-top:5px;border-top:1px solid #eee}
+.comment{padding:5px 0;border-bottom:1px solid #f2f2f2}
+.comment:last-child{border-bottom:0}
+.commentMeta{font-size:9px;color:#999;margin-bottom:2px}
+.commentText{font-size:12px;white-space:pre-wrap;line-height:1.35}
+.commentDelete{border:0;background:none;color:#999;font-size:9px;padding:2px 0}
+.commentComposer{display:flex;gap:5px;margin-top:6px}
+.commentComposer input{flex:1;min-width:0;border:1px solid #ccc;border-radius:15px;padding:7px 9px;font-size:12px}
+.commentComposer button{border:0;border-radius:14px;background:#111;color:#fff;padding:6px 10px;font-size:10px}
+
+#notesView{flex:1;min-height:0;display:flex;flex-direction:column}
+.notesToolbar{flex-shrink:0;padding:7px 10px;background:#fff;border-bottom:1px solid #eee;display:flex;justify-content:flex-end}
+.noteAddBtn{border:0;border-radius:15px;background:#111;color:#fff;padding:7px 11px;font-size:11px}
+#noteList{padding:9px}
+.noteCard{background:#fff;border-radius:13px;padding:11px;margin-bottom:8px}
+.noteHead{display:flex;justify-content:space-between;gap:8px}
+.noteTitle{font-weight:800;font-size:14px}
+.notePin{font-size:13px}
+.noteBody{font-size:12px;white-space:pre-wrap;line-height:1.4;margin:5px 0;color:#444}
+.noteMeta{font-size:9px;color:#999}
+.noteActions{display:flex;gap:7px;margin-top:5px}
+.noteActions button{border:0;background:none;color:#777;font-size:10px;padding:2px 0}
+
+/* 更新 */
+#updatesPage .scroll{padding:12px}
+.updateCard{background:#fff;border-radius:14px;padding:13px;margin-bottom:10px}
+.updateVersion{font-weight:800;font-size:15px}
+.updateDate{font-size:10px;color:#999;margin:2px 0 8px}
+.updateItems{margin:0;padding-left:18px;font-size:12px;line-height:1.65}
+
+/* note modal */
+.notePrivateRow{display:flex;align-items:center;justify-content:space-between;padding:8px 2px}
+
 /* PIN */
 #pinScreen{min-height:100dvh;display:flex;align-items:center;justify-content:center;background:#f7f7f7;padding:24px}
 .pinBox{width:100%;max-width:360px;text-align:center}
@@ -29,6 +117,29 @@ button{cursor:pointer}
 .key:active{background:#ccc}
 .key.blank{visibility:hidden}
 #pinError{height:22px;margin-top:18px;color:#999;font-size:13px}
+
+
+/* 10秒PIN再ロック（Safari / ホーム画面版共通） */
+function lockToPin(){
+  if(!auth.currentUser || !pinPassed)return;
+  pinPassed=false;pin="";updateDots();$("pinError").textContent="";
+  $("appScreen").classList.add("hidden");$("loginScreen").classList.add("hidden");$("pinScreen").classList.remove("hidden");
+}
+function rememberHiddenTime(){
+  hiddenAt=Date.now();
+  try{sessionStorage.setItem("pb.hiddenAt",String(hiddenAt))}catch(e){}
+}
+function checkRelock(){
+  let t=hiddenAt;
+  try{t=Math.max(t,Number(sessionStorage.getItem("pb.hiddenAt")||0))}catch(e){}
+  if(pinPassed&&t&&Date.now()-t>=RELOCK_MS)lockToPin();
+}
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)rememberHiddenTime();
+  else checkRelock();
+});
+window.addEventListener("pagehide",rememberHiddenTime);
+window.addEventListener("pageshow",checkRelock);
 
 /* LOGIN */
 #loginScreen{min-height:100dvh;background:#111;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -207,15 +318,170 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
   flex:1;
 }
 
-/* SOLO */
-#soloList{padding:0 14px}
-.post{background:#fff;margin:0 -14px;padding:9px 12px;border-bottom:1px solid #eee}
-.postHead{display:flex;justify-content:space-between}
-.postUser{font-weight:700;font-size:14px}
-.postTime{color:#999;font-size:10px}
-.postText{white-space:pre-wrap;line-height:1.35;margin:5px 0}
-.postFooter{display:flex;gap:8px;margin-top:1px}
-.postFooter button{border:0;background:none;color:#777;padding:3px;font-size:12px}
+/* SOLO / NOTES */
+function visibleSoloPosts(){
+  if(soloFilter==="mine")return soloPosts.filter(x=>x.uid===currentUID);
+  if(soloFilter==="others")return soloPosts.filter(x=>x.uid!==currentUID);
+  return soloPosts;
+}
+function listenSolo(){
+  if(unsubscribeSolo)unsubscribeSolo();
+  const q=query(collection(db,"solo"),orderBy("createdAt","desc"),limit(50));
+  unsubscribeSolo=onSnapshot(q,snap=>{
+    soloPosts=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderSolo();
+  });
+}
+function renderSolo(){
+  const list=$("soloList");list.innerHTML="";
+  visibleSoloPosts().forEach(data=>{
+    const post=document.createElement("article");post.className="post";
+    const head=document.createElement("div");head.className="postHead";
+    const user=document.createElement("div");user.className="postUser";user.textContent=data.senderId;
+    const time=document.createElement("div");time.className="postTime";
+    if(data.createdAt?.toDate)time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    head.append(user,time);
+
+    const body=document.createElement("div");body.className="postText";body.textContent=data.text||"";
+
+    const footer=document.createElement("div");footer.className="postFooter";
+    const reactions=data.reactions||{};
+    const summary=document.createElement("div");summary.className="soloReactionSummary";
+    let hasReaction=false;
+    REACTIONS.forEach(em=>{
+      const users=reactions[em]||[];if(!users.length)return;hasReaction=true;
+      const chip=document.createElement("button");chip.className="soloReactionChip";chip.textContent=`${em}${users.length>1?users.length:""}`;
+      chip.onclick=()=>toggleSoloReaction(data,em);summary.appendChild(chip);
+    });
+    if(hasReaction)footer.appendChild(summary);
+
+    const react=document.createElement("button");react.textContent="☺";react.onclick=()=>toggleSoloReactionPicker(post,data);
+    const comments=data.comments||[];
+    const commentsBtn=document.createElement("button");commentsBtn.className="commentToggle";commentsBtn.textContent=`💬 ${comments.length}`;
+    commentsBtn.onclick=()=>toggleComments(post,data);
+    footer.append(react,commentsBtn);
+
+    if(data.uid===currentUID){
+      const edit=document.createElement("button");edit.textContent="編集";
+      edit.onclick=async()=>{const n=prompt("ひとりごとを編集",data.text||"");if(n?.trim())await updateDoc(doc(db,"solo",data.id),{text:n.trim(),edited:true})};
+      const del=document.createElement("button");del.textContent="削除";
+      del.onclick=async()=>{if(confirm("削除しますか？"))await deleteDoc(doc(db,"solo",data.id))};
+      footer.append(edit,del);
+    }
+    post.append(head,body,footer);list.appendChild(post);
+  });
+}
+function toggleSoloReactionPicker(post,data){
+  document.querySelectorAll(".soloReactionPicker").forEach(x=>x.remove());
+  const p=document.createElement("div");p.className="soloReactionPicker";
+  REACTIONS.forEach(em=>{
+    const b=document.createElement("button");b.textContent=em;
+    b.onclick=async()=>{await toggleSoloReaction(data,em);p.remove()};
+    p.appendChild(b);
+  });
+  post.appendChild(p);
+}
+async function toggleSoloReaction(data,emoji){
+  const reactions=JSON.parse(JSON.stringify(data.reactions||{}));let same=false;
+  REACTIONS.forEach(k=>{
+    const users=reactions[k]||[];
+    if(k===emoji&&users.includes(currentUID))same=true;
+    reactions[k]=users.filter(u=>u!==currentUID);
+  });
+  if(!same){reactions[emoji]=reactions[emoji]||[];reactions[emoji].push(currentUID)}
+  await updateDoc(doc(db,"solo",data.id),{reactions});
+}
+function toggleComments(post,data){
+  const old=post.querySelector(".commentsBox");if(old){old.remove();return}
+  const box=document.createElement("div");box.className="commentsBox";
+  (data.comments||[]).forEach(c=>{
+    const row=document.createElement("div");row.className="comment";
+    const meta=document.createElement("div");meta.className="commentMeta";
+    const dt=c.createdAt?new Date(c.createdAt):null;
+    meta.textContent=`${c.senderId}${dt?`　${dt.toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
+    const t=document.createElement("div");t.className="commentText";t.textContent=c.text||"";
+    row.append(meta,t);
+    if(c.uid===currentUID){
+      const del=document.createElement("button");del.className="commentDelete";del.textContent="削除";
+      del.onclick=async()=>{await updateDoc(doc(db,"solo",data.id),{comments:(data.comments||[]).filter(x=>x.id!==c.id)})};
+      row.appendChild(del);
+    }
+    box.appendChild(row);
+  });
+  const comp=document.createElement("div");comp.className="commentComposer";
+  const input=document.createElement("input");input.placeholder="コメントを書く…";
+  const send=document.createElement("button");send.textContent="送信";
+  send.onclick=async()=>{
+    const t=input.value.trim();if(!t)return;
+    const comments=[...(data.comments||[]),{id:`${currentUID}-${Date.now()}`,uid:currentUID,senderId:currentId,text:t,createdAt:Date.now()}];
+    await updateDoc(doc(db,"solo",data.id),{comments});
+  };
+  comp.append(input,send);box.appendChild(comp);post.appendChild(box);
+}
+$("sendSolo").onclick=async()=>{
+  const text=$("soloInput").value.trim();if(!text)return;
+  await addDoc(collection(db,"solo"),{text,uid:currentUID,senderId:currentId,createdAt:serverTimestamp(),reactions:{},comments:[]});
+  $("soloInput").value="";
+};
+document.querySelectorAll(".soloFilterBtn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".soloFilterBtn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");soloFilter=b.dataset.solofilter;renderSolo();
+});
+$("soloModeButton").onclick=()=>{
+  $("soloModeButton").classList.add("active");$("notesModeButton").classList.remove("active");
+  $("soloView").classList.remove("hidden");$("notesView").classList.add("hidden");
+};
+$("notesModeButton").onclick=()=>{
+  $("notesModeButton").classList.add("active");$("soloModeButton").classList.remove("active");
+  $("notesView").classList.remove("hidden");$("soloView").classList.add("hidden");
+};
+
+function listenNotes(){
+  if(unsubscribeNotes)unsubscribeNotes();
+  const q=query(collection(db,"notes"),orderBy("updatedAt","desc"),limit(100));
+  unsubscribeNotes=onSnapshot(q,snap=>{
+    notes=snap.docs.map(d=>({id:d.id,...d.data()})).filter(n=>!n.privateOnly||n.uid===currentUID);
+    renderNotes();
+  });
+}
+function renderNotes(){
+  const list=$("noteList");list.innerHTML="";
+  [...notes].sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0))).forEach(n=>{
+    const card=document.createElement("div");card.className="noteCard";
+    const head=document.createElement("div");head.className="noteHead";
+    const title=document.createElement("div");title.className="noteTitle";title.textContent=n.title||"無題";
+    const pin=document.createElement("div");pin.className="notePin";pin.textContent=n.pinned?"📌":"";
+    head.append(title,pin);
+    const body=document.createElement("div");body.className="noteBody";body.textContent=n.body||"";
+    const meta=document.createElement("div");meta.className="noteMeta";
+    meta.textContent=`${n.senderId||""}${n.privateOnly?"　🔒自分のみ":""}${n.updatedAt?.toDate?`　更新 ${n.updatedAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
+    card.append(head,body,meta);
+    if(n.uid===currentUID){
+      const acts=document.createElement("div");acts.className="noteActions";
+      const edit=document.createElement("button");edit.textContent="編集";edit.onclick=()=>openNoteEditor(n);
+      const del=document.createElement("button");del.textContent="削除";del.onclick=async()=>{if(confirm("このノートを削除しますか？"))await deleteDoc(doc(db,"notes",n.id))};
+      acts.append(edit,del);card.appendChild(acts);
+    }
+    list.appendChild(card);
+  });
+}
+function openNoteEditor(n=null){
+  editingNote=n;$("noteModalTitle").textContent=n?"ノートを編集":"ノートを追加";
+  $("noteTitleInput").value=n?.title||"";$("noteBodyInput").value=n?.body||"";
+  $("notePrivateInput").checked=!!n?.privateOnly;$("notePinnedInput").checked=!!n?.pinned;
+  $("noteModal").classList.remove("hidden");
+}
+$("openNoteModal").onclick=()=>openNoteEditor();
+$("cancelNoteModal").onclick=()=>$("noteModal").classList.add("hidden");
+$("noteModal").addEventListener("click",e=>{if(e.target===$("noteModal"))$("noteModal").classList.add("hidden")});
+$("saveNote").onclick=async()=>{
+  const title=$("noteTitleInput").value.trim(),body=$("noteBodyInput").value.trim();
+  if(!title&&!body){alert("タイトルか本文を入力してください");return}
+  const payload={title,body,privateOnly:$("notePrivateInput").checked,pinned:$("notePinnedInput").checked,updatedAt:serverTimestamp()};
+  if(editingNote)await updateDoc(doc(db,"notes",editingNote.id),payload);
+  else await addDoc(collection(db,"notes"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
+  editingNote=null;$("noteModal").classList.add("hidden");
+};
 
 /* CALENDAR */
 .calendarToolbar{background:#fff;padding:10px 11px 8px;border-bottom:1px solid #ddd}
@@ -266,7 +532,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.2.1 schedule/calendar refinements */
+/* v3.3.0 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -346,6 +612,16 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .mapLink{display:inline-block;margin-top:6px;color:#1769aa;font-size:12px;text-decoration:none}
 
 audio{display:none}
+
+
+/* v3.3 final overrides */
+.tabs{grid-template-columns:repeat(5,1fr)}
+.scheduleTimeField{min-width:0}
+.scheduleTimeField input{width:100%;min-width:0;box-sizing:border-box}
+@media (max-width:380px){
+  .scheduleTimeRow{gap:6px}
+  .scheduleTimeField label{font-size:10px}
+}
 </style>
 </head>
 <body>
@@ -380,9 +656,10 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.2.1</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.0</span></div>
   </div>
   <div class="headerRight">
+    <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
     <button id="headerMenuButton" class="headerIcon" aria-label="メニュー">⋯</button>
   </div>
   <div id="headerMenu" class="headerMenu hidden">
@@ -390,19 +667,6 @@ audio{display:none}
     <button id="menuDateFilter">📅 日付で見る</button>
     <button id="menuVoice">🎙 ボイスルームを開く</button>
     <button id="menuSettings">⚙️ 設定</button>
-    <div style="padding:10px 14px;color:#777;font-size:12px;line-height:1.55;border-top:1px solid #eee">
-      <div style="font-weight:700;color:#555;margin-bottom:3px">アップデート情報</div>
-      <div>v3.2.1</div>
-      <div>・複数日の終日予定に対応</div>
-      <div>・トーク内の改行に対応</div>
-      <div>・簡易通知を追加</div>
-      <div>・ボイスルームを再開／古いルームを自動整理</div>
-      <div>・カレンダーに「今日」を追加</div>
-      <div>・ひとりごとの表示を圧縮</div>
-      <div>・予定に終了時刻を追加</div>
-      <div>・予定画面のはみ出しを改善</div>
-      <div>・カレンダー表示モードを追加</div>
-    </div>
     <button id="logoutButton">ログアウト</button>
   </div>
 </header>
@@ -412,6 +676,7 @@ audio{display:none}
   <button class="tab" data-page="soloPage">ひとりごと</button>
   <button class="tab" data-page="schedulePage">予定</button>
   <button class="tab" data-page="locationPage">位置情報</button>
+  <button id="updatesTab" class="tab" data-page="updatesPage"><span class="updateTabWrap">アップデート<span id="updateNewBadge" class="updateNew">NEW</span></span></button>
 </nav>
 
 <div id="talkPage" class="page">
@@ -448,10 +713,27 @@ audio{display:none}
 </div>
 
 <div id="soloPage" class="page hidden">
-  <div id="soloList" class="scroll"></div>
-  <div class="composer">
-    <textarea id="soloInput" rows="1" placeholder="ひとりごと"></textarea>
-    <button id="sendSolo" class="send">➤</button>
+  <div class="soloSubnav">
+    <button id="soloModeButton" class="soloSubBtn active">ひとりごと</button>
+    <button id="notesModeButton" class="soloSubBtn">ノート</button>
+  </div>
+
+  <div id="soloView" class="page">
+    <div class="soloFilters">
+      <button class="soloFilterBtn active" data-solofilter="all">全員</button>
+      <button class="soloFilterBtn" data-solofilter="mine">自分</button>
+      <button class="soloFilterBtn" data-solofilter="others">相手</button>
+    </div>
+    <div id="soloList" class="scroll"></div>
+    <div class="composer">
+      <textarea id="soloInput" rows="1" placeholder="ひとりごと"></textarea>
+      <button id="sendSolo" class="send">➤</button>
+    </div>
+  </div>
+
+  <div id="notesView" class="hidden">
+    <div class="notesToolbar"><button id="openNoteModal" class="noteAddBtn">＋ ノート</button></div>
+    <div id="noteList" class="scroll"></div>
   </div>
 </div>
 
@@ -501,6 +783,42 @@ audio{display:none}
     <div class="locationCard">
       <strong>共有中のメンバー</strong>
       <div id="locations"></div>
+    </div>
+  </div>
+</div>
+
+<div id="updatesPage" class="page hidden">
+  <div class="scroll">
+    <div class="updateCard">
+      <div class="updateVersion">v3.3.0</div>
+      <div class="updateDate">2026/08/09</div>
+      <ul class="updateItems">
+        <li>アップデートタブを追加</li>
+        <li>右上に再読み込みボタンを追加</li>
+        <li>10秒後のPIN再ロックに対応</li>
+        <li>ホーム画面版のオーバースクロールを抑制</li>
+        <li>予定に「自分のみ表示」を追加</li>
+        <li>ひとりごとにフィルター・コメント・絵文字リアクションを追加</li>
+        <li>ノート機能を追加</li>
+      </ul>
+    </div>
+    <div class="updateCard">
+      <div class="updateVersion">v3.2.1</div>
+      <ul class="updateItems">
+        <li>予定に終了時刻を追加</li>
+        <li>予定画面のはみ出しを改善</li>
+        <li>カレンダー表示モードを追加</li>
+      </ul>
+    </div>
+    <div class="updateCard">
+      <div class="updateVersion">v3.2.0</div>
+      <ul class="updateItems">
+        <li>複数日の終日予定に対応</li>
+        <li>トーク内の改行に対応</li>
+        <li>簡易通知を追加</li>
+        <li>カレンダーに「今日」を追加</li>
+        <li>ひとりごとの表示を圧縮</li>
+      </ul>
     </div>
   </div>
 </div>
@@ -599,6 +917,26 @@ audio{display:none}
   </div>
 </div>
 
+<div id="noteModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3 id="noteModalTitle">ノートを追加</h3>
+    <input id="noteTitleInput" placeholder="タイトル">
+    <textarea id="noteBodyInput" rows="8" placeholder="本文"></textarea>
+    <div class="notePrivateRow">
+      <label for="notePrivateInput">自分のみに表示</label>
+      <input id="notePrivateInput" class="privateCheck" type="checkbox">
+    </div>
+    <div class="notePrivateRow">
+      <label for="notePinnedInput">ピン留め</label>
+      <input id="notePinnedInput" class="privateCheck" type="checkbox">
+    </div>
+    <div class="modalBtns">
+      <button id="cancelNoteModal">キャンセル</button>
+      <button id="saveNote" class="modalSave">保存</button>
+    </div>
+  </div>
+</div>
+
 <div id="scheduleModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="scheduleModalTitle">予定を追加</h3>
@@ -623,6 +961,10 @@ audio{display:none}
       </div>
     </div>
 
+    <div class="privateRow">
+      <label for="schedulePrivateInput">自分のみに表示</label>
+      <input id="schedulePrivateInput" class="privateCheck" type="checkbox">
+    </div>
     <textarea id="scheduleMemoInput" rows="3" placeholder="メモ（任意）"></textarea>
     <div class="modalBtns">
       <button id="cancelScheduleModal">キャンセル</button>
@@ -661,10 +1003,14 @@ let replyTarget=null, editingMessage=null, oldestMessage=null;
 let messageDocs=new Map(), previousNewestMessageId=null, firstMessageLoad=true;
 let readStates={}, locationWatch=null;
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleFilter="all", editingSchedule=null;
+let soloPosts=[], soloFilter="all", notes=[], editingNote=null;
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
-let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
+let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
+let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
+const APP_VERSION="3.3.0";
+const RELOCK_MS=10000;
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -716,15 +1062,24 @@ onAuthStateChanged(auth,user=>{
 function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
   $("userLabel").textContent=`ID：${currentId}`;
-  $("loginScreen").classList.add("hidden");$("appScreen").classList.remove("hidden");
+  $("loginScreen").classList.add("hidden");$("pinScreen").classList.add("hidden");$("appScreen").classList.remove("hidden");
   loadSettings();
   updateNotificationUI();
-  listenMessages();listenReadStates();listenSolo();listenSchedules();listenLocations();listenVoiceRoom();
+  updateUpdateBadge();
+  if(!appInitialized){
+    appInitialized=true;
+    listenMessages();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();
+  }
 }
 
 /* HEADER MENU */
 $("headerMenuButton").onclick=e=>{e.stopPropagation();$("headerMenu").classList.toggle("hidden")};
 document.addEventListener("click",e=>{if(!$("headerMenu").contains(e.target)&&e.target!==$("headerMenuButton"))$("headerMenu").classList.add("hidden")});
+$("reloadButton").onclick=()=>{
+  const hasDraft=($("messageInput")?.value||"").trim()||($("soloInput")?.value||"").trim()||($("noteBodyInput")?.value||"").trim();
+  if(hasDraft&&!confirm("入力途中の内容があります。再読み込みしますか？"))return;
+  location.reload();
+};
 $("menuSearch").onclick=()=>{
   $("headerMenu").classList.add("hidden");
   $("messageSearchPanel").classList.remove("hidden");
@@ -856,7 +1211,7 @@ function clearUnreadTalk(){
 function handleIncomingMessage(data){
   playIncomingSound();
 
-  const shouldCount=activePage()!=="talkPage" || !isNearBottom() || document.hidden;
+  const shouldCount=!pinPassed || activePage()!=="talkPage" || !isNearBottom() || document.hidden;
   if(shouldCount){
     unreadTalkCount++;
     updateNotificationUI();
@@ -886,17 +1241,32 @@ function handleIncomingMessage(data){
 document.addEventListener("visibilitychange",updateNotificationUI);
 
 
+
+/* UPDATE TAB */
+function updateSeenKey(){return "pb.lastSeenVersion"}
+function updateUpdateBadge(){
+  const seen=localStorage.getItem(updateSeenKey())||"";
+  $("updateNewBadge").classList.toggle("hidden",seen===APP_VERSION);
+}
+function markUpdatesSeen(){
+  localStorage.setItem(updateSeenKey(),APP_VERSION);
+  updateUpdateBadge();
+}
+
 /* TABS */
 document.querySelectorAll(".tab").forEach(tab=>{
   tab.onclick=()=>{
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));tab.classList.add("active");
-    ["talkPage","soloPage","schedulePage","locationPage"].forEach(p=>$(p).classList.add("hidden"));
+    ["talkPage","soloPage","schedulePage","locationPage","updatesPage"].forEach(p=>$(p).classList.add("hidden"));
     $(tab.dataset.page).classList.remove("hidden");
     if(tab.dataset.page==="talkPage"){
       requestAnimationFrame(()=>{
         if(firstMessageLoad)scrollToLatest(false);
         else if(isNearBottom()){markTalkRead();clearUnreadTalk();}
       });
+    }
+    if(tab.dataset.page==="updatesPage"){
+      markUpdatesSeen();
     }
   };
 });
@@ -1017,7 +1387,7 @@ function listenMessages(){
   if(unsubscribeMessages)unsubscribeMessages();
   const q=query(collection(db,"messages"),orderBy("createdAt","desc"),limit(50));
   unsubscribeMessages=onSnapshot(q,snapshot=>{
-    const wasNearBottom=isNearBottom();
+    const wasNearBottom=pinPassed&&isNearBottom();
     const newest=snapshot.docs[0]||null, newestId=newest?.id||null, newestData=newest?.data()||null;
     const hasNew=previousNewestMessageId!==null&&newestId!==previousNewestMessageId;
     const newMine=newestData?.uid===currentUID;
@@ -1223,7 +1593,7 @@ function listenReadStates(){
 }
 let readTimer=null;
 function markTalkRead(){
-  if(!currentUID||activePage()!=="talkPage"||!isNearBottom()||talkDateFilter)return;
+  if(!currentUID||!pinPassed||activePage()!=="talkPage"||!isNearBottom()||talkDateFilter)return;
   clearTimeout(readTimer);
   readTimer=setTimeout(async()=>{
     try{await setDoc(doc(db,"readStates",currentUID),{uid:currentUID,senderId:currentId,lastReadAt:serverTimestamp()},{merge:true})}catch(e){console.error(e)}
@@ -1274,10 +1644,14 @@ function listenSchedules(){
     schedules=snap.docs.map(d=>({id:d.id,...d.data()}));renderCalendar();renderSelectedDay();
   });
 }
+function visibleSchedules(){
+  return schedules.filter(s=>!s.privateOnly || s.uid===currentUID);
+}
 function filteredSchedules(){
-  if(scheduleFilter==="mine")return schedules.filter(s=>s.uid===currentUID);
-  if(scheduleFilter==="others")return schedules.filter(s=>s.uid!==currentUID);
-  return schedules;
+  const visible=visibleSchedules();
+  if(scheduleFilter==="mine")return visible.filter(s=>s.uid===currentUID);
+  if(scheduleFilter==="others")return visible.filter(s=>s.uid!==currentUID);
+  return visible;
 }
 
 function eventCoversDate(s,d){
@@ -1360,7 +1734,7 @@ function renderSelectedDay(){
     t.textContent=scheduleRangeText(s);
     const title=document.createElement("div");title.className="scheduleTitle";title.textContent=s.title||"";
     const memo=document.createElement("div");memo.className="scheduleMemo";memo.textContent=s.memo||"";
-    const owner=document.createElement("div");owner.className="scheduleOwner";owner.textContent=`${s.uid===currentUID?"🔵":"🔴"} ${s.senderId}`;
+    const owner=document.createElement("div");owner.className="scheduleOwner";owner.textContent=`${s.uid===currentUID?"🔵":"🔴"} ${s.senderId}${s.privateOnly?"　🔒自分のみ":""}`;
     c.append(t,title);if(s.memo)c.appendChild(memo);c.appendChild(owner);
     if(s.uid===currentUID){
       const a=document.createElement("div");a.className="scheduleActions";
@@ -1395,6 +1769,7 @@ function openScheduleEditor(s=null){
   $("scheduleTimeInput").value=s?.startsAt?.toDate?d.toTimeString().slice(0,5):"09:00";
   $("scheduleEndTimeInput").value=s?.endsAt?.toDate?s.endsAt.toDate().toTimeString().slice(0,5):"";
   $("scheduleTimeRow").classList.toggle("hidden",$("scheduleAllDayInput").checked);
+  $("schedulePrivateInput").checked=!!s?.privateOnly;
   $("scheduleMemoInput").value=s?.memo||"";
   $("scheduleModal").classList.remove("hidden");
 }
@@ -1423,6 +1798,7 @@ $("saveSchedule").onclick=async()=>{
         endDate=allDay?($("scheduleEndDateInput").value||date):date,
         time=allDay?"12:00":($("scheduleTimeInput").value||"00:00"),
         endTime=allDay?"":$("scheduleEndTimeInput").value,
+        privateOnly=$("schedulePrivateInput").checked,
         memo=$("scheduleMemoInput").value.trim();
 
   if(!title||!date){alert("タイトルと日付を入力してください");return}
@@ -1440,7 +1816,7 @@ $("saveSchedule").onclick=async()=>{
     endsAt=Timestamp.fromDate(endDateTime);
   }
 
-  const payload={title,memo,startsAt,endsAt,allDay,startDate:date,endDate};
+  const payload={title,memo,startsAt,endsAt,allDay,startDate:date,endDate,privateOnly};
   if(editingSchedule)await updateDoc(doc(db,"schedules",editingSchedule.id),payload);
   else await addDoc(collection(db,"schedules"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
   $("scheduleModal").classList.add("hidden");editingSchedule=null;
