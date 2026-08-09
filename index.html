@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.4.6 ===== */
+/* ===== v3.4.7 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -158,7 +158,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .voiceMini.danger{background:#eee;color:#a1001a}
 
 
-/* v3.4.6 solo overflow menu */
+/* v3.4.7 solo overflow menu */
 .post{position:relative}
 .postHead{align-items:flex-start}
 .soloPostTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
@@ -227,7 +227,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 
 
 
-/* v3.4.6 LINE-style compact talk */
+/* v3.4.7 LINE-style compact talk */
 .messageRow{margin:1px 0 2px}
 .messageRow.groupStart{margin-top:7px}
 .sender{margin:0 7px 1px;font-size:9px}
@@ -426,7 +426,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.4.6 schedule/calendar refinements */
+/* v3.4.7 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -517,7 +517,7 @@ audio{display:none}
   .scheduleTimeField label{font-size:10px}
 }
 
-/* v3.4.6 iPhone time-input overlap fix */
+/* v3.4.7 iPhone time-input overlap fix */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -552,7 +552,7 @@ audio{display:none}
 }
 
 
-/* v3.4.6 ひとりごと：投稿単位を見やすく */
+/* v3.4.7 ひとりごと：投稿単位を見やすく */
 #soloList{padding:9px 8px 18px;background:#f3f4f6}
 #soloList .post{
   position:relative;background:#fff;border:1px solid rgba(0,0,0,.045);
@@ -570,7 +570,7 @@ audio{display:none}
 #soloList .soloMetaSummary{margin-top:6px}
 
 
-/* v3.4.6 予定作成：開始/終了時刻レイアウト修正 */
+/* v3.4.7 予定作成：開始/終了時刻レイアウト修正 */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -628,7 +628,7 @@ audio{display:none}
 }
 
 
-/* v3.4.6 9401 カモフラージュモード */
+/* v3.4.7 9401 カモフラージュモード */
 #camoLoginScreen,#camoScreen{min-height:100dvh;background:#fff;color:#111}
 #camoLoginScreen{display:flex;align-items:center;justify-content:center;padding:24px}
 .camoLoginCard{width:100%;max-width:390px}
@@ -656,7 +656,7 @@ audio{display:none}
 .camoSend{width:40px;height:40px;border:0;border-radius:50%;background:#111;color:#fff;font-size:16px}
 
 
-/* v3.4.6 通常トーク：自分の時刻/既読は吹き出し左 */
+/* v3.4.7 通常トーク：自分の時刻/既読は吹き出し左 */
 .messageRow.mine .bubbleLine{
   flex-direction:row!important;
   justify-content:flex-end;
@@ -673,7 +673,7 @@ audio{display:none}
 .messageRow:not(.mine) .metaSide{order:2!important}
 .messageRow:not(.mine) .messageMenuButton{order:3!important}
 
-/* v3.4.6 予定作成：iPhoneでも見切れない縦1列 */
+/* v3.4.7 予定作成：iPhoneでも見切れない縦1列 */
 .scheduleTimeRow{
   display:flex!important;
   flex-direction:column!important;
@@ -720,7 +720,7 @@ audio{display:none}
 }
 
 
-/* v3.4.6 */
+/* v3.4.7 */
 #pinScreen .pinDot{border-color:#777!important}
   #pinScreen .pinDot.filled{background:#fff!important;border-color:#fff!important}
   #pinScreen .pinKey{background:#222!important;color:#fff!important}
@@ -771,7 +771,7 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 }
 
 
-/* v3.4.6 */
+/* v3.4.7 */
 
 /* 予定作成：1項目1段、高さ・余白を統一 */
 #scheduleModal .modalCard{
@@ -905,12 +905,12 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 }
 
 
-/* v3.4.6 */
+/* v3.4.7 */
 
 /* 9401 Instagram風ヘッダー：左寄せシンプル版 */
 #camoScreen .camoTop{
   min-height:62px!important;
-  padding:10px 16px!important;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px!important;
   display:flex!important;
   align-items:center!important;
   justify-content:space-between!important;
@@ -959,7 +959,7 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 }
 
 
-/* v3.4.6 PIN表示を初期デザインへ完全復元 */
+/* v3.4.7 PIN表示を初期デザインへ完全復元 */
 #pinScreen{
   min-height:100dvh!important;
   display:flex;
@@ -1003,11 +1003,57 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 #pinScreen #pinError{height:22px;margin-top:18px;color:#999!important;font-size:13px}
 
 
-/* v3.4.6: iPhone上端を通常PB・9401とも黒で統一 */
+/* v3.4.7: iPhone上端を通常PB・9401とも黒で統一 */
 html,body{background:#000;}
 body:not(.decoy-mode) #app{background:#f7f7f7;}
 body.decoy-mode,body.decoy-mode #app{background:#000!important;}
 #pinScreen{background:#f7f7f7!important;color:#111!important;}
+
+
+/* v3.4.7 上端だけ黒／通常画面の背景色は従来通り */
+html{
+  background:#f7f7f7!important;
+}
+body{
+  background:#f7f7f7!important;
+}
+
+/* PIN以外では、iPhoneのSafe Area部分だけ黒く塗る */
+body:not(.pinLocked)::before{
+  content:"";
+  position:fixed;
+  z-index:19999;
+  left:0;
+  right:0;
+  top:0;
+  height:env(safe-area-inset-top);
+  min-height:0;
+  background:#000;
+  pointer-events:none;
+}
+
+/* 通常PBの中身は元の背景へ */
+#appScreen{
+  background:#f7f7f7!important;
+}
+#talkPage,#soloPage,#schedulePage,#locationPage,#updatesPage{
+  background:#f7f7f7;
+}
+
+/* 9401は画面全体を黒のまま */
+#camoScreen,#camoLoginScreen{
+  background:#000!important;
+  color:#fff!important;
+}
+
+/* PINは初期ライト画面を維持し、黒い上端カバーも出さない */
+body.pinLocked{
+  background:#f7f7f7!important;
+}
+#pinScreen{
+  background:#f7f7f7!important;
+  color:#111!important;
+}
 
 </style>
 </head>
@@ -1070,7 +1116,7 @@ body.decoy-mode,body.decoy-mode #app{background:#000!important;}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.6</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.7</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -1202,8 +1248,8 @@ body.decoy-mode,body.decoy-mode #app{background:#000!important;}
 </div>
 
 <div id="updatesPage" class="page hidden">
-  <div class="scroll"><div class="updateCard"><div class="updateVersion">v3.4.6</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PB・9401モードとも画面最上部を黒で統一</li><li>iPhoneのステータスバー領域も黒背景に調整</li><li>PIN入力画面は見やすいライト表示を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN入力画面を初期デザインへ完全復元</li><li>入力済みPINの丸表示を濃くして判別しやすい状態へ戻した</li><li>PINキーの色・背景・サイズを初期仕様へ戻した</li></ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+  <div class="scroll"><div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PB全体が黒くなる不具合を修正</li><li>通常PBの本文背景を従来のライト表示へ復元</li><li>通常PB・9401ともSafe Areaの最上部だけ黒く表示する方式へ変更</li><li>9401ヘッダーをSafe Areaまで黒くつなげるよう調整</li><li>PIN画面はライト表示を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PB・9401モードとも画面最上部を黒で統一</li><li>iPhoneのステータスバー領域も黒背景に調整</li><li>PIN入力画面は見やすいライト表示を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN入力画面を初期デザインへ完全復元</li><li>入力済みPINの丸表示を濃くして判別しやすい状態へ戻した</li><li>PINキーの色・背景・サイズを初期仕様へ戻した</li></ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>9401モード上部を左寄せのシンプルなInstagram風ヘッダーへ変更</li>
       <li>InstagramタイトルのタップでInstagramへ移動する機能を維持</li>
       <li>予定作成画面の日付欄にラベルを追加し、縦位置を調整</li>
@@ -1450,7 +1496,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.4.6";
+const APP_VERSION="3.4.7";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -2946,7 +2992,7 @@ function closeLocalVoice(){
 /* Initial calendar */
 calendarDate=new Date();selectedDate=new Date();renderCalendar();renderSelectedDay();
 
-/* v3.4.6 PIN画面を完全な全画面ロックにする */
+/* v3.4.7 PIN画面を完全な全画面ロックにする */
 const pinLockObserver=new MutationObserver(()=>{
   const locked=!$("pinScreen").classList.contains("hidden");
   document.body.classList.toggle("pinLocked",locked);
