@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.4.3 ===== */
+/* ===== v3.4.4 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -158,7 +158,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .voiceMini.danger{background:#eee;color:#a1001a}
 
 
-/* v3.4.3 solo overflow menu */
+/* v3.4.4 solo overflow menu */
 .post{position:relative}
 .postHead{align-items:flex-start}
 .soloPostTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
@@ -227,7 +227,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 
 
 
-/* v3.4.3 LINE-style compact talk */
+/* v3.4.4 LINE-style compact talk */
 .messageRow{margin:1px 0 2px}
 .messageRow.groupStart{margin-top:7px}
 .sender{margin:0 7px 1px;font-size:9px}
@@ -426,7 +426,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.4.3 schedule/calendar refinements */
+/* v3.4.4 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -517,7 +517,7 @@ audio{display:none}
   .scheduleTimeField label{font-size:10px}
 }
 
-/* v3.4.3 iPhone time-input overlap fix */
+/* v3.4.4 iPhone time-input overlap fix */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -552,7 +552,7 @@ audio{display:none}
 }
 
 
-/* v3.4.3 ひとりごと：投稿単位を見やすく */
+/* v3.4.4 ひとりごと：投稿単位を見やすく */
 #soloList{padding:9px 8px 18px;background:#f3f4f6}
 #soloList .post{
   position:relative;background:#fff;border:1px solid rgba(0,0,0,.045);
@@ -570,7 +570,7 @@ audio{display:none}
 #soloList .soloMetaSummary{margin-top:6px}
 
 
-/* v3.4.3 予定作成：開始/終了時刻レイアウト修正 */
+/* v3.4.4 予定作成：開始/終了時刻レイアウト修正 */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -628,7 +628,7 @@ audio{display:none}
 }
 
 
-/* v3.4.3 9401 カモフラージュモード */
+/* v3.4.4 9401 カモフラージュモード */
 #camoLoginScreen,#camoScreen{min-height:100dvh;background:#fff;color:#111}
 #camoLoginScreen{display:flex;align-items:center;justify-content:center;padding:24px}
 .camoLoginCard{width:100%;max-width:390px}
@@ -656,7 +656,7 @@ audio{display:none}
 .camoSend{width:40px;height:40px;border:0;border-radius:50%;background:#111;color:#fff;font-size:16px}
 
 
-/* v3.4.3 通常トーク：自分の時刻/既読は吹き出し左 */
+/* v3.4.4 通常トーク：自分の時刻/既読は吹き出し左 */
 .messageRow.mine .bubbleLine{
   flex-direction:row!important;
   justify-content:flex-end;
@@ -673,7 +673,7 @@ audio{display:none}
 .messageRow:not(.mine) .metaSide{order:2!important}
 .messageRow:not(.mine) .messageMenuButton{order:3!important}
 
-/* v3.4.3 予定作成：iPhoneでも見切れない縦1列 */
+/* v3.4.4 予定作成：iPhoneでも見切れない縦1列 */
 .scheduleTimeRow{
   display:flex!important;
   flex-direction:column!important;
@@ -720,7 +720,7 @@ audio{display:none}
 }
 
 
-/* v3.4.3 */
+/* v3.4.4 */
 @media (prefers-color-scheme: dark){
   #pinScreen{background:#000!important;color:#fff!important}
   #pinScreen .pinDot{border-color:#777!important}
@@ -773,7 +773,7 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 }
 
 
-/* v3.4.3 */
+/* v3.4.4 */
 
 /* PIN: ライト表示へ戻す（OSダークモードの影響を受けない） */
 #pinScreen{
@@ -924,6 +924,60 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
   border:1px solid #363636!important;
 }
 
+
+/* v3.4.4 */
+
+/* 9401 Instagram風ヘッダー：左寄せシンプル版 */
+#camoScreen .camoTop{
+  min-height:62px!important;
+  padding:10px 16px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  background:#000!important;
+  border-bottom:1px solid #262626!important;
+}
+.camoInstagramLink{
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  color:#fff!important;
+  text-decoration:none!important;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  font-size:21px!important;
+  font-weight:800!important;
+  letter-spacing:-.2px!important;
+  line-height:1!important;
+  justify-self:auto!important;
+}
+.camoInstagramLink::after{
+  content:"⌄";
+  font-size:17px;
+  font-weight:500;
+  margin-top:-2px;
+}
+.camoInstagramMark{display:none!important}
+#camoScreen .camoTop::before,
+#camoScreen .camoTop::after{
+  content:none!important;
+}
+
+/* スケジュール作成：日付ラベルを追加した見た目に揃える */
+#scheduleModal .scheduleDateLabel{
+  display:block;
+  margin:0 4px 6px;
+  font-size:11px;
+  line-height:1.25;
+  color:#777;
+}
+#scheduleModal input[type="date"]{
+  height:56px!important;
+  min-height:56px!important;
+  line-height:56px!important;
+  padding:0 16px!important;
+  text-align:center!important;
+}
+
 </style>
 </head>
 <body>
@@ -985,7 +1039,7 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.3</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.4</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -1117,40 +1171,45 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 </div>
 
 <div id="updatesPage" class="page hidden">
-  <div class="scroll"><div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN入力画面をライト表示へ戻し、入力済み桁を見やすく調整</li><li>予定作成画面の日付・開始時刻・終了時刻の高さと余白を統一</li><li>終日・自分のみ表示の配置を調整</li><li>9401モード上部をInstagram風の黒ヘッダーへ変更</li><li>InstagramタイトルのタップでInstagramへ移動する機能を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>9401モードを黒背景・白文字のダークUIへ変更</li><li>9401上部にInstagram風リンクバーを追加</li><li>PIN画面をOSのダークモードに連動</li><li>再ロック時に背後の9401コメント画面へスクロールできる問題を修正</li><li>予定作成画面の右端見切れを追加修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>通常トークで自分の時刻・既読・編集済みを吹き出し左側へ変更</li><li>予定作成画面の日付入力の見切れを修正</li><li>開始時刻・終了時刻を縦1列に変更しiPhoneでの表示崩れを改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN 9401 のカモフラージュモードを追加</li><li>トークをSNSコメント風UIで閲覧・返信・送信可能に</li><li>通常PBの名称やタブを表示しない専用画面を追加</li></ul></div>
+  <div class="scroll">
+    <div class="updateCard"><div class="updateVersion">v3.4.4</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>9401モード上部を左寄せのシンプルなInstagram風ヘッダーへ変更</li>
+      <li>InstagramタイトルのタップでInstagramへ移動する機能を維持</li>
+      <li>予定作成画面の日付欄にラベルを追加し、縦位置を調整</li>
+      <li>アップデート履歴のバージョン表記を修正</li>
+    </ul></div>
     <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>PIN入力画面をライト表示へ戻し、入力済み桁を見やすく調整</li>
+      <li>予定作成画面の日付・開始時刻・終了時刻の高さと余白を統一</li>
+      <li>終日・自分のみ表示の配置を調整</li>
+      <li>9401モード上部をInstagram風の黒ヘッダーへ変更</li>
+      <li>InstagramタイトルのタップでInstagramへ移動する機能を維持</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.4.2</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>9401モードを黒背景・白文字のダークUIへ変更</li>
+      <li>9401上部にInstagram風リンクバーを追加</li>
+      <li>PIN画面をOSのダークモードに連動</li>
+      <li>再ロック時に背後の9401コメント画面へスクロールできる問題を修正</li>
+      <li>予定作成画面の右端見切れを追加修正</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>通常トークで自分の時刻・既読・編集済みを吹き出し左側へ変更</li>
+      <li>予定作成画面の日付入力の見切れを修正</li>
+      <li>開始時刻・終了時刻を縦1列に変更しiPhoneでの表示崩れを改善</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.4.0</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>PIN 9401 のカモフラージュモードを追加</li>
+      <li>トークをSNSコメント風UIで閲覧・返信・送信可能に</li>
+      <li>通常PBの名称やタブを表示しない専用画面を追加</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.3.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>予定作成画面の開始・終了時刻欄の高さと幅を修正</li>
       <li>iPhone Safariで終了時刻欄が潰れる表示崩れを改善</li>
     </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+    <div class="updateCard"><div class="updateVersion">v3.3.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
       <li>ひとりごとを投稿ごとのカード表示に変更</li>
       <li>自分／相手を左端の色で見分けやすく改善</li>
       <li>アップデート履歴をバージョン別表示に変更</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>Safari／ホーム画面版のPIN再ロックを修正</li><li>PIN再ロック時間を設定から変更可能に</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>既存のひとりごとが表示されない不具合を修正</li><li>アップデート情報を修正</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>トークをLINE型コンパクトレイアウトに変更</li><li>時刻・既読・編集済みを吹き出し横へ移動</li>
-      <li>ひとりごとの操作を「…」メニューへ集約</li><li>予定作成画面の開始・終了時刻欄を調整</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>ひとりごと・ノートの表示処理を修正</li><li>カレンダーの既存予定表示を修正</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>アップデートタブとNEW表示を追加</li><li>右上に再読み込みボタンを追加</li>
-      <li>PIN再ロック機能を追加</li><li>ホーム画面版のオーバースクロールを抑制</li>
-      <li>予定に「自分のみ表示」を追加</li><li>ひとりごとにフィルター・コメント・絵文字リアクションを追加</li><li>ノート機能を追加</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.2.1</div><ul class="updateItems">
-      <li>予定に終了時刻を追加</li><li>予定画面のはみ出しを改善</li><li>カレンダー表示モードを追加</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.2.0</div><ul class="updateItems">
-      <li>複数日の終日予定に対応</li><li>トーク内の改行に対応</li><li>簡易通知を追加</li>
-      <li>カレンダーに「今日」を追加</li><li>ひとりごとの表示を圧縮</li>
     </ul></div>
   </div>
 </div>
@@ -1290,6 +1349,7 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
   <div class="modal">
     <h3 id="scheduleModalTitle">予定を追加</h3>
     <input id="scheduleTitleInput" placeholder="予定のタイトル">
+    <label class="scheduleDateLabel" for="scheduleDateInput">日付</label>
     <input id="scheduleDateInput" type="date">
     <div class="allDayRow">
       <label for="scheduleAllDayInput">終日</label>
@@ -1359,7 +1419,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.4.3";
+const APP_VERSION="3.4.4";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -2855,7 +2915,7 @@ function closeLocalVoice(){
 /* Initial calendar */
 calendarDate=new Date();selectedDate=new Date();renderCalendar();renderSelectedDay();
 
-/* v3.4.3 PIN画面を完全な全画面ロックにする */
+/* v3.4.4 PIN画面を完全な全画面ロックにする */
 const pinLockObserver=new MutationObserver(()=>{
   const locked=!$("pinScreen").classList.contains("hidden");
   document.body.classList.toggle("pinLocked",locked);
