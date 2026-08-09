@@ -1127,7 +1127,7 @@ body.pinLocked{
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.7</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.9</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -1136,7 +1136,7 @@ body.pinLocked{
   <div id="headerMenu" class="headerMenu hidden">
     <button id="menuSearch">🔍 メッセージを検索</button>
     <button id="menuDateFilter">📅 日付で見る</button>
-    <button id="menuVoice">🎙 ボイスルームを開く</button>
+    <button id="menuVoice">📞 通話を開始</button>
     <button id="menuSettings">⚙️ 設定</button>
     <button id="logoutButton">ログアウト</button>
   </div>
@@ -1161,6 +1161,7 @@ body.pinLocked{
       <div id="voiceInfo" class="voiceInfo"><span class="voiceDot"></span>ボイスルーム開催中</div>
       <div class="voiceActions">
         <button id="joinVoice" class="voiceMini">参加</button>
+        <button id="declineVoice" class="voiceMini sub">あとで</button>
         <button id="muteVoice" class="voiceMini sub hidden">🎤</button>
         <button id="leaveVoice" class="voiceMini danger hidden">退出</button>
       </div>
@@ -1260,7 +1261,8 @@ body.pinLocked{
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
-<div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>PWA起動時のステータスバーを黒に設定</li><li>撤回済み・一時的な変更をアップデート履歴から整理</li><li>履歴のバージョン番号を固定データ化し、現在版で上書きされないよう修正</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>ヘッダーの表示バージョンをv3.4.9へ修正</li><li>ボイスルームを1対1通話v2へ更新</li><li>PBを前面表示中だけ「通話のお誘い」を表示</li><li>着信は60秒で自動失効し、古いルームが残りにくい構造へ変更</li><li>通話ごとにcallIdを発行して前回の接続情報との混在を防止</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>撤回済み・一時的な変更をアップデート履歴から整理</li><li>履歴のバージョン番号を固定データ化し、現在版で上書きされないよう修正</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PBの本文背景をライト表示へ復元</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN入力画面を初期デザインへ復元</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.4</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>9401上部を左寄せのシンプルなInstagram風ヘッダーへ変更</li><li>Instagramへのリンクを追加</li><li>予定作成の日付欄を調整</li></ul></div>
@@ -1478,7 +1480,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.4.8";
+const APP_VERSION="3.4.9";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -1495,6 +1497,8 @@ let unreadTalkCount=0;
 let audioContext=null;
 let voiceHeartbeatTimer=null;
 const VOICE_STALE_MS=2*60*1000;
+const VOICE_INVITE_MS=60*1000;
+let dismissedVoiceCallId=null;
 
 
 
@@ -1829,6 +1833,10 @@ function handleIncomingMessage(data){
   }
 }
 document.addEventListener("visibilitychange",updateNotificationUI);
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden && !voiceJoined) $("voiceBar")?.classList.add("hidden");
+  else if(!document.hidden && pinPassed) listenVoiceRoom();
+});
 
 
 
@@ -2812,7 +2820,7 @@ async function resetVoiceRoomState(){
     voiceJoined=false;voiceRole=null;voiceMuted=false;
     stopVoiceHeartbeat();
     await setDoc(voiceRoomRef,{
-      active:false,hostUID:null,hostId:null,participantUID:null,participantId:null,
+      active:false,callId:null,hostUID:null,hostId:null,participantUID:null,participantId:null,
       offer:null,answer:null,updatedAt:serverTimestamp(),endedAt:serverTimestamp()
     },{merge:true});
     await clearCollection("callerCandidates");
@@ -2846,6 +2854,7 @@ function listenVoiceRoom(){
     if(!snap.exists()||!snap.data().active){
       if(!voiceJoined)$("voiceBar").classList.add("hidden");
       $("leaveVoice").textContent="退出";
+      $("declineVoice").classList.add("hidden");
       $("menuVoice").classList.remove("hidden");
       return;
     }
@@ -2853,18 +2862,27 @@ function listenVoiceRoom(){
     if(await resetStaleVoiceIfNeeded(d))return;
 
     $("menuVoice").classList.add("hidden");
-    $("voiceBar").classList.remove("hidden");
     if(voiceJoined){
-      $("voiceInfo").innerHTML='<span class="voiceDot"></span>ボイスルーム参加中';
+      $("voiceBar").classList.remove("hidden");
+      $("voiceInfo").innerHTML='<span class="voiceDot"></span>通話中';
       $("joinVoice").classList.add("hidden");
+      $("declineVoice").classList.add("hidden");
       $("muteVoice").classList.remove("hidden");
       $("leaveVoice").classList.remove("hidden");
       $("leaveVoice").textContent=voiceRole==="host"?"終了":"退出";
     }else{
-      $("voiceInfo").innerHTML=`<span class="voiceDot"></span>${escapeHtml(d.hostId||"誰か")} がボイスルームを開いています`;
-      $("joinVoice").classList.remove("hidden");
-      $("muteVoice").classList.add("hidden");
-      $("leaveVoice").classList.add("hidden");
+      const callId=d.callId||"legacy";
+      const age=Date.now()-roomTimestampMs(d);
+      const incoming=d.hostUID!==currentUID;
+      const visible=pinPassed && !document.hidden && incoming && age<VOICE_INVITE_MS && dismissedVoiceCallId!==callId;
+      $("voiceBar").classList.toggle("hidden",!visible);
+      if(visible){
+        $("voiceInfo").innerHTML=`<span class="voiceDot"></span>📞 ${escapeHtml(d.hostId||"相手")}から通話のお誘い`;
+        $("joinVoice").classList.remove("hidden");
+        $("declineVoice").classList.remove("hidden");
+        $("muteVoice").classList.add("hidden");
+        $("leaveVoice").classList.add("hidden");
+      }
     }
   });
 }
@@ -2884,26 +2902,42 @@ async function openVoiceRoom(){
     await clearCollection("callerCandidates");await clearCollection("calleeCandidates");await prepareAudio();
     voiceRole="host";voiceJoined=true;
     $("voiceBar").classList.remove("hidden");
-    $("voiceInfo").innerHTML='<span class="voiceDot"></span>ボイスルーム参加中';
+    $("voiceInfo").innerHTML='<span class="voiceDot"></span>通話中・相手を待っています';
     $("joinVoice").classList.add("hidden");
+    $("declineVoice").classList.add("hidden");
     $("muteVoice").classList.remove("hidden");
     $("leaveVoice").classList.remove("hidden");
     $("leaveVoice").textContent="終了";
     peerConnection.onicecandidate=async e=>{if(e.candidate)await addDoc(collection(db,"voiceRooms","main","callerCandidates"),e.candidate.toJSON())};
     const offer=await peerConnection.createOffer();await peerConnection.setLocalDescription(offer);
-    await setDoc(voiceRoomRef,{active:true,hostUID:currentUID,hostId:currentId,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),offer:{type:offer.type,sdp:offer.sdp},answer:null});
+    const callId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    dismissedVoiceCallId=null;
+    await setDoc(voiceRoomRef,{active:true,callId,hostUID:currentUID,hostId:currentId,participantUID:null,participantId:null,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),offer:{type:offer.type,sdp:offer.sdp},answer:null});
     startVoiceHeartbeat();
     unsubscribeCalleeIce=onSnapshot(collection(db,"voiceRooms","main","calleeCandidates"),s=>s.docChanges().forEach(c=>{if(c.type==="added")peerConnection?.addIceCandidate(new RTCIceCandidate(c.doc.data())).catch(console.error)}));
     answerListener=onSnapshot(voiceRoomRef,async s=>{const d=s.data();if(peerConnection&&d?.answer&&!peerConnection.currentRemoteDescription)await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer))});
   }catch(e){console.error(e);closeLocalVoice();voiceJoined=false;alert("マイクを開始できませんでした。マイク許可を確認してください。")}
 }
+$("declineVoice").onclick=async()=>{
+  try{
+    const snap=await getDoc(voiceRoomRef);
+    if(snap.exists())dismissedVoiceCallId=snap.data().callId||"legacy";
+  }catch(e){}
+  $("voiceBar").classList.add("hidden");
+};
 $("joinVoice").onclick=async()=>{
   try{
     const snap=await getDoc(voiceRoomRef);if(!snap.exists()||!snap.data().active){alert("ルームは終了しています");return}
-    const room=snap.data();await prepareAudio();voiceRole="participant";voiceJoined=true;
+    const room=snap.data();
+    if(room.hostUID===currentUID){return}
+    if(Date.now()-roomTimestampMs(room)>VOICE_INVITE_MS){alert("この通話のお誘いは終了しました");return}
+    if(!room.offer){alert("通話の準備ができていません");return}
+    dismissedVoiceCallId=null;
+    await prepareAudio();voiceRole="participant";voiceJoined=true;
     $("voiceBar").classList.remove("hidden");
-    $("voiceInfo").innerHTML='<span class="voiceDot"></span>ボイスルーム参加中';
+    $("voiceInfo").innerHTML='<span class="voiceDot"></span>通話中';
     $("joinVoice").classList.add("hidden");
+    $("declineVoice").classList.add("hidden");
     $("muteVoice").classList.remove("hidden");
     $("leaveVoice").classList.remove("hidden");
     $("leaveVoice").textContent="退出";
@@ -2981,8 +3015,7 @@ async function leaveVoiceRoom(updateFirestore=true){
     $("voiceBar").classList.add("hidden");
     $("menuVoice").classList.remove("hidden");
   }else{
-    $("voiceBar").classList.remove("hidden");
-    $("voiceInfo").innerHTML=`<span class="voiceDot"></span>${escapeHtml(r.data().hostId||"誰か")} がボイスルームを開いています`;
+    $("voiceBar").classList.add("hidden");
     $("joinVoice").classList.remove("hidden");
   }
 }
@@ -3016,4 +3049,3 @@ document.body.classList.toggle("pinLocked",!$("pinScreen").classList.contains("h
 </script>
 </body>
 </html>
-  
