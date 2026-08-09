@@ -1055,6 +1055,16 @@ body.pinLocked{
   color:#111!important;
 }
 
+
+/* v3.4.8 */
+.typingIndicator{display:none;align-items:center;gap:5px;width:max-content;min-height:28px;padding:4px 10px;margin:3px 0 5px 8px;border-radius:14px;background:#e9e9eb}
+.typingIndicator.show{display:flex}
+.typingIndicator i{width:6px;height:6px;border-radius:50%;background:#777;display:block;animation:typingDot 1.15s infinite ease-in-out}
+.typingIndicator i:nth-child(2){animation-delay:.15s}.typingIndicator i:nth-child(3){animation-delay:.30s}
+@keyframes typingDot{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-2px)}}
+#camoTypingIndicator{background:#202020!important;margin-left:14px}
+#camoTypingIndicator i{background:#aaa}
+
 </style>
 </head>
 <body>
@@ -1106,6 +1116,7 @@ body.pinLocked{
     <span id="camoReplyText"></span>
     <button id="camoCancelReply">×</button>
   </div>
+  <div id="camoTypingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
   <div class="camoComposer">
     <textarea id="camoInput" rows="1" placeholder="コメントを追加…"></textarea>
     <button id="camoSend" class="camoSend">➤</button>
@@ -1166,7 +1177,8 @@ body.pinLocked{
   <div id="replyBar" class="hidden"><span id="replyText"></span><button id="cancelReply">×</button></div>
   <div id="editBar" class="hidden"><span>メッセージを編集中</span><button id="cancelEdit">×</button></div>
 
-  <div class="composer">
+  <div id="typingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
+<div class="composer">
     <textarea id="messageInput" rows="1" placeholder="メッセージ"></textarea>
     <button id="sendMessage" class="send">➤</button>
   </div>
@@ -1247,49 +1259,16 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden">
-  <div class="scroll"><div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PB全体が黒くなる不具合を修正</li><li>通常PBの本文背景を従来のライト表示へ復元</li><li>通常PB・9401ともSafe Areaの最上部だけ黒く表示する方式へ変更</li><li>9401ヘッダーをSafe Areaまで黒くつなげるよう調整</li><li>PIN画面はライト表示を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PB・9401モードとも画面最上部を黒で統一</li><li>iPhoneのステータスバー領域も黒背景に調整</li><li>PIN入力画面は見やすいライト表示を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN入力画面を初期デザインへ完全復元</li><li>入力済みPINの丸表示を濃くして判別しやすい状態へ戻した</li><li>PINキーの色・背景・サイズを初期仕様へ戻した</li></ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>9401モード上部を左寄せのシンプルなInstagram風ヘッダーへ変更</li>
-      <li>InstagramタイトルのタップでInstagramへ移動する機能を維持</li>
-      <li>予定作成画面の日付欄にラベルを追加し、縦位置を調整</li>
-      <li>アップデート履歴のバージョン表記を修正</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>PIN入力画面をライト表示へ戻し、入力済み桁を見やすく調整</li>
-      <li>予定作成画面の日付・開始時刻・終了時刻の高さと余白を統一</li>
-      <li>終日・自分のみ表示の配置を調整</li>
-      <li>9401モード上部をInstagram風の黒ヘッダーへ変更</li>
-      <li>InstagramタイトルのタップでInstagramへ移動する機能を維持</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.2</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>9401モードを黒背景・白文字のダークUIへ変更</li>
-      <li>9401上部にInstagram風リンクバーを追加</li>
-      <li>PIN画面をOSのダークモードに連動</li>
-      <li>再ロック時に背後の9401コメント画面へスクロールできる問題を修正</li>
-      <li>予定作成画面の右端見切れを追加修正</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>通常トークで自分の時刻・既読・編集済みを吹き出し左側へ変更</li>
-      <li>予定作成画面の日付入力の見切れを修正</li>
-      <li>開始時刻・終了時刻を縦1列に変更しiPhoneでの表示崩れを改善</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.4.0</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>PIN 9401 のカモフラージュモードを追加</li>
-      <li>トークをSNSコメント風UIで閲覧・返信・送信可能に</li>
-      <li>通常PBの名称やタブを表示しない専用画面を追加</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>予定作成画面の開始・終了時刻欄の高さと幅を修正</li>
-      <li>iPhone Safariで終了時刻欄が潰れる表示崩れを改善</li>
-    </ul></div>
-    <div class="updateCard"><div class="updateVersion">v3.3.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
-      <li>ひとりごとを投稿ごとのカード表示に変更</li>
-      <li>自分／相手を左端の色で見分けやすく改善</li>
-      <li>アップデート履歴をバージョン別表示に変更</li>
-    </ul></div>
-  </div>
-</div>
+<div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>PWA起動時のステータスバーを黒に設定</li><li>撤回済み・一時的な変更をアップデート履歴から整理</li><li>履歴のバージョン番号を固定データ化し、現在版で上書きされないよう修正</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PBの本文背景をライト表示へ復元</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN入力画面を初期デザインへ復元</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.4</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>9401上部を左寄せのシンプルなInstagram風ヘッダーへ変更</li><li>Instagramへのリンクを追加</li><li>予定作成の日付欄を調整</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>通常トークで自分の時刻・既読・編集済みを吹き出し左側へ変更</li><li>予定作成を1項目1段のレイアウトへ改善</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.0</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN 9401のカモフラージュモードを追加</li><li>SNSコメント風UIでトークの閲覧・返信・送信に対応</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.3.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>予定作成の開始・終了時刻欄をiPhone向けに改善</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.3.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>ひとりごとを投稿ごとのカード表示に変更</li><li>自分／相手を見分けやすい表示へ改善</li><li>アップデート履歴をバージョン別表示に変更</li></ul></div>
+</div></div>
 
 <audio id="remoteAudio" autoplay playsinline></audio>
 </section>
@@ -1460,6 +1439,9 @@ body.pinLocked{
 </div>
 
 <script type="module">
+const IS_PWA=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+document.documentElement.classList.toggle("pwaMode",IS_PWA);
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
@@ -1496,7 +1478,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.4.7";
+const APP_VERSION="3.4.8";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -1514,6 +1496,30 @@ let audioContext=null;
 let voiceHeartbeatTimer=null;
 const VOICE_STALE_MS=2*60*1000;
 
+
+
+/* v3.4.8 typing presence */
+let typingTimer=null,typingUnsub=null;
+async function setTypingState(on){
+  if(!currentUID||!currentId)return;
+  try{await setDoc(doc(db,"typing",currentUID),{uid:currentUID,senderId:currentId,typing:!!on,updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn(e)}
+}
+function pulseTyping(){setTypingState(true);clearTimeout(typingTimer);typingTimer=setTimeout(()=>setTypingState(false),2500)}
+function stopTyping(){clearTimeout(typingTimer);setTypingState(false)}
+function listenTyping(){
+  if(typingUnsub)typingUnsub();
+  typingUnsub=onSnapshot(collection(db,"typing"),snap=>{
+    let on=false,now=Date.now();
+    snap.forEach(s=>{const d=s.data(),t=d.updatedAt?.toMillis?.()||0;if(d.uid!==currentUID&&d.typing===true&&now-t<5000)on=true});
+    $("typingIndicator")?.classList.toggle("show",on);
+    $("camoTypingIndicator")?.classList.toggle("show",on);
+  });
+}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stopTyping()});
+window.addEventListener("pagehide",stopTyping);
+$("camoInput")?.addEventListener("input",()=>{$("camoInput").value.trim()?pulseTyping():stopTyping()});
+
+$("messageInput")?.addEventListener("input",()=>{$("messageInput").value.trim()?pulseTyping():stopTyping()});
 
 /* PIN */
 function updateDots(){ document.querySelectorAll(".pinDot").forEach((d,i)=>d.classList.toggle("on",i<pin.length)); }
@@ -1645,7 +1651,7 @@ function showApp(user){
   updateUpdateBadge();
   if(!appInitialized){
     appInitialized=true;
-    listenMessages();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();
+    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();
   }
 }
 
@@ -2175,7 +2181,7 @@ function editMessage(data){
   replyTarget=null;$("replyBar").classList.add("hidden");editingMessage=data;$("messageInput").value=data.text||"";
   $("editBar").classList.remove("hidden");$("messageInput").focus();
 }
-$("cancelEdit").onclick=()=>{editingMessage=null;$("messageInput").value="";$("editBar").classList.add("hidden")};
+$("cancelEdit").onclick=()=>{editingMessage=null;$("messageInput").value="";stopTyping();$("editBar").classList.add("hidden")};
 
 /* Complete delete: delete message + clear copied quote from currently matching replies */
 async function removeMessageCompletely(data){
@@ -2260,7 +2266,7 @@ $("camoSend").onclick=async()=>{
     text,senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),edited:false,reactions:{},
     replyTo:camoReplyTarget?{id:camoReplyTarget.id,senderId:camoReplyTarget.senderId,text:(camoReplyTarget.text||"").slice(0,150)}:null
   });
-  $("camoInput").value="";camoReplyTarget=null;$("camoReplyBar").classList.add("hidden");
+  $("camoInput").value="";stopTyping();camoReplyTarget=null;$("camoReplyBar").classList.add("hidden");
 };
 $("camoExitButton").onclick=()=>{
   camouflageMode=false;pinPassed=false;pin="";updateDots();
@@ -3010,3 +3016,4 @@ document.body.classList.toggle("pinLocked",!$("pinScreen").classList.contains("h
 </script>
 </body>
 </html>
+  
