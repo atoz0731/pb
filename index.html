@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.3.3 ===== */
+/* ===== v3.3.4 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -119,28 +119,6 @@ html{background:#111}
 #pinError{height:22px;margin-top:18px;color:#999;font-size:13px}
 
 
-/* 10秒PIN再ロック（Safari / ホーム画面版共通） */
-function lockToPin(){
-  if(!auth.currentUser || !pinPassed)return;
-  pinPassed=false;pin="";updateDots();$("pinError").textContent="";
-  $("appScreen").classList.add("hidden");$("loginScreen").classList.add("hidden");$("pinScreen").classList.remove("hidden");
-}
-function rememberHiddenTime(){
-  hiddenAt=Date.now();
-  try{sessionStorage.setItem("pb.hiddenAt",String(hiddenAt))}catch(e){}
-}
-function checkRelock(){
-  let t=hiddenAt;
-  try{t=Math.max(t,Number(sessionStorage.getItem("pb.hiddenAt")||0))}catch(e){}
-  if(pinPassed&&t&&Date.now()-t>=RELOCK_MS)lockToPin();
-}
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden)rememberHiddenTime();
-  else checkRelock();
-});
-window.addEventListener("pagehide",rememberHiddenTime);
-window.addEventListener("pageshow",checkRelock);
-
 /* LOGIN */
 #loginScreen{min-height:100dvh;background:#111;display:flex;align-items:center;justify-content:center;padding:24px}
 .loginCard{width:100%;max-width:420px;background:#fff;border-radius:25px;padding:34px 24px}
@@ -180,7 +158,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .voiceMini.danger{background:#eee;color:#a1001a}
 
 
-/* v3.3.3 solo overflow menu */
+/* v3.3.4 solo overflow menu */
 .post{position:relative}
 .postHead{align-items:flex-start}
 .soloPostTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
@@ -249,7 +227,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 
 
 
-/* v3.3.3 LINE-style compact talk */
+/* v3.3.4 LINE-style compact talk */
 .messageRow{margin:1px 0 2px}
 .messageRow.groupStart{margin-top:7px}
 .sender{margin:0 7px 1px;font-size:9px}
@@ -448,7 +426,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.3.3 schedule/calendar refinements */
+/* v3.3.4 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -539,7 +517,7 @@ audio{display:none}
   .scheduleTimeField label{font-size:10px}
 }
 
-/* v3.3.3 iPhone time-input overlap fix */
+/* v3.3.4 iPhone time-input overlap fix */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -607,7 +585,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.3</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.4</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -741,7 +719,7 @@ audio{display:none}
 <div id="updatesPage" class="page hidden">
   <div class="scroll">
     <div class="updateCard">
-      <div class="updateVersion">v3.3.3</div>
+      <div class="updateVersion">v3.3.4</div>
       <div class="updateDate">2026/08/09</div>
       <ul class="updateItems">
         <li>トークをLINE型コンパクトレイアウトに変更</li>
@@ -756,6 +734,8 @@ audio{display:none}
         <li>予定に「自分のみ表示」を追加</li>
         <li>ひとりごとにフィルター・コメント・絵文字リアクションを追加</li>
         <li>ノート機能を追加</li>
+        <li>Safari／ホーム画面版のPIN再ロックを修正</li>
+        <li>PIN再ロック時間を設定から変更可能に</li>
       </ul>
     </div>
     <div class="updateCard">
@@ -849,6 +829,23 @@ audio{display:none}
 
     <div class="settingsNote">
       本格的なPush通知ではありません。PBのページが完全に閉じられている場合や、OSがブラウザを停止した場合は通知されません。
+    </div>
+
+
+    <div class="settingsGroup">セキュリティ</div>
+    <div class="calendarModeRow">
+      <div>
+        <div class="settingText">PIN再ロック</div>
+        <div class="settingSub">別タブやホームへ移動してから、PINを再要求するまでの時間</div>
+      </div>
+      <select id="settingRelockSeconds">
+        <option value="0">すぐ</option>
+        <option value="10">10秒</option>
+        <option value="30">30秒</option>
+        <option value="60">1分</option>
+        <option value="300">5分</option>
+        <option value="-1">再ロックしない</option>
+      </select>
     </div>
 
     <div class="settingsGroup">カレンダー</div>
@@ -965,8 +962,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.3.0";
-const RELOCK_MS=10000;
+const APP_VERSION="3.3.4";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -975,7 +971,8 @@ const DEFAULT_SETTINGS={
   title:true,
   vibrate:false,
   backgroundNotification:false,
-  calendarMode:"titles"
+  calendarMode:"titles",
+  relockSeconds:10
 };
 let pbSettings={...DEFAULT_SETTINGS};
 let unreadTalkCount=0;
@@ -994,13 +991,78 @@ $("backKey").onclick=()=>{pin=pin.slice(0,-1);updateDots()};
 function checkPin(){
   if(pin==="0208"){window.location.replace("https://www.google.com/");return}
   if(pin==="0814"){
-    pinPassed=true;$("pinScreen").classList.add("hidden");
+    pinPassed=true;clearHiddenStamp();$("pinScreen").classList.add("hidden");
     if(auth.currentUser)showApp(auth.currentUser);else $("loginScreen").classList.remove("hidden");
     return;
   }
   $("pinError").textContent="PINが違います";pin="";updateDots();
   setTimeout(()=>$("pinError").textContent="",1000);
 }
+
+/* PIN再ロック（Safari / ホーム画面版共通） */
+function relockDelayMs(){
+  const sec=Number(pbSettings?.relockSeconds ?? 10);
+  if(sec<0)return -1;
+  return sec*1000;
+}
+function clearHiddenStamp(){
+  hiddenAt=0;
+  try{sessionStorage.removeItem("pb.hiddenAt")}catch(e){}
+  try{localStorage.removeItem("pb.hiddenAt.fallback")}catch(e){}
+}
+function lockToPin(){
+  if(!auth.currentUser || !pinPassed)return;
+  pinPassed=false;
+  pin="";
+  updateDots();
+  $("pinError").textContent="";
+  $("headerMenu")?.classList.add("hidden");
+  $("settingsModal")?.classList.add("hidden");
+  $("appScreen").classList.add("hidden");
+  $("loginScreen").classList.add("hidden");
+  $("pinScreen").classList.remove("hidden");
+  clearHiddenStamp();
+}
+function rememberHiddenTime(){
+  if(!pinPassed || !auth.currentUser)return;
+  hiddenAt=Date.now();
+  try{sessionStorage.setItem("pb.hiddenAt",String(hiddenAt))}catch(e){}
+  // Safari/PWAのページ復元で sessionStorage の復元が不安定な場合の保険。
+  try{localStorage.setItem("pb.hiddenAt.fallback",String(hiddenAt))}catch(e){}
+}
+function readHiddenTime(){
+  let t=hiddenAt||0;
+  try{t=Math.max(t,Number(sessionStorage.getItem("pb.hiddenAt")||0))}catch(e){}
+  try{t=Math.max(t,Number(localStorage.getItem("pb.hiddenAt.fallback")||0))}catch(e){}
+  return t;
+}
+function checkRelock(){
+  if(!pinPassed || !auth.currentUser)return;
+  const delay=relockDelayMs();
+  if(delay<0){
+    clearHiddenStamp();
+    return;
+  }
+  const t=readHiddenTime();
+  if(!t)return;
+  if(Date.now()-t>=delay){
+    lockToPin();
+  }else{
+    // 10秒未満などで戻った場合は今回の離脱記録をクリア。
+    clearHiddenStamp();
+  }
+}
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)rememberHiddenTime();
+  else setTimeout(checkRelock,0);
+});
+window.addEventListener("pagehide",rememberHiddenTime);
+window.addEventListener("pageshow",()=>setTimeout(checkRelock,0));
+window.addEventListener("blur",()=>{
+  // iOS Safariで visibilitychange が遅れるケースの補助。
+  if(document.hidden)rememberHiddenTime();
+});
+
 
 /* LOGIN */
 $("loginButton").onclick=async()=>{
@@ -1074,6 +1136,9 @@ function syncSettingsControls(){
   $("settingVibrate").checked=!!pbSettings.vibrate;
   $("settingBackgroundNotification").checked=!!pbSettings.backgroundNotification;
   $("settingCalendarMode").value=pbSettings.calendarMode||"titles";
+  $("settingRelockSeconds").value=String(
+    Number.isFinite(Number(pbSettings.relockSeconds)) ? Number(pbSettings.relockSeconds) : 10
+  );
 }
 ["Sound","Badge","TabFlash","Title","Vibrate"].forEach(name=>{
   const el=$(`setting${name}`);
@@ -1082,6 +1147,10 @@ function syncSettingsControls(){
     pbSettings[key]=el.checked;saveSettings();
   };
 });
+$("settingRelockSeconds").onchange=()=>{
+  pbSettings.relockSeconds=Number($("settingRelockSeconds").value);
+  saveSettings();
+};
 $("settingCalendarMode").onchange=()=>{
   pbSettings.calendarMode=$("settingCalendarMode").value;
   saveSettings();
