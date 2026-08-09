@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.3.0 ===== */
+/* ===== v3.3.1 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -318,171 +318,6 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
   flex:1;
 }
 
-/* SOLO / NOTES */
-function visibleSoloPosts(){
-  if(soloFilter==="mine")return soloPosts.filter(x=>x.uid===currentUID);
-  if(soloFilter==="others")return soloPosts.filter(x=>x.uid!==currentUID);
-  return soloPosts;
-}
-function listenSolo(){
-  if(unsubscribeSolo)unsubscribeSolo();
-  const q=query(collection(db,"solo"),orderBy("createdAt","desc"),limit(50));
-  unsubscribeSolo=onSnapshot(q,snap=>{
-    soloPosts=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderSolo();
-  });
-}
-function renderSolo(){
-  const list=$("soloList");list.innerHTML="";
-  visibleSoloPosts().forEach(data=>{
-    const post=document.createElement("article");post.className="post";
-    const head=document.createElement("div");head.className="postHead";
-    const user=document.createElement("div");user.className="postUser";user.textContent=data.senderId;
-    const time=document.createElement("div");time.className="postTime";
-    if(data.createdAt?.toDate)time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
-    head.append(user,time);
-
-    const body=document.createElement("div");body.className="postText";body.textContent=data.text||"";
-
-    const footer=document.createElement("div");footer.className="postFooter";
-    const reactions=data.reactions||{};
-    const summary=document.createElement("div");summary.className="soloReactionSummary";
-    let hasReaction=false;
-    REACTIONS.forEach(em=>{
-      const users=reactions[em]||[];if(!users.length)return;hasReaction=true;
-      const chip=document.createElement("button");chip.className="soloReactionChip";chip.textContent=`${em}${users.length>1?users.length:""}`;
-      chip.onclick=()=>toggleSoloReaction(data,em);summary.appendChild(chip);
-    });
-    if(hasReaction)footer.appendChild(summary);
-
-    const react=document.createElement("button");react.textContent="☺";react.onclick=()=>toggleSoloReactionPicker(post,data);
-    const comments=data.comments||[];
-    const commentsBtn=document.createElement("button");commentsBtn.className="commentToggle";commentsBtn.textContent=`💬 ${comments.length}`;
-    commentsBtn.onclick=()=>toggleComments(post,data);
-    footer.append(react,commentsBtn);
-
-    if(data.uid===currentUID){
-      const edit=document.createElement("button");edit.textContent="編集";
-      edit.onclick=async()=>{const n=prompt("ひとりごとを編集",data.text||"");if(n?.trim())await updateDoc(doc(db,"solo",data.id),{text:n.trim(),edited:true})};
-      const del=document.createElement("button");del.textContent="削除";
-      del.onclick=async()=>{if(confirm("削除しますか？"))await deleteDoc(doc(db,"solo",data.id))};
-      footer.append(edit,del);
-    }
-    post.append(head,body,footer);list.appendChild(post);
-  });
-}
-function toggleSoloReactionPicker(post,data){
-  document.querySelectorAll(".soloReactionPicker").forEach(x=>x.remove());
-  const p=document.createElement("div");p.className="soloReactionPicker";
-  REACTIONS.forEach(em=>{
-    const b=document.createElement("button");b.textContent=em;
-    b.onclick=async()=>{await toggleSoloReaction(data,em);p.remove()};
-    p.appendChild(b);
-  });
-  post.appendChild(p);
-}
-async function toggleSoloReaction(data,emoji){
-  const reactions=JSON.parse(JSON.stringify(data.reactions||{}));let same=false;
-  REACTIONS.forEach(k=>{
-    const users=reactions[k]||[];
-    if(k===emoji&&users.includes(currentUID))same=true;
-    reactions[k]=users.filter(u=>u!==currentUID);
-  });
-  if(!same){reactions[emoji]=reactions[emoji]||[];reactions[emoji].push(currentUID)}
-  await updateDoc(doc(db,"solo",data.id),{reactions});
-}
-function toggleComments(post,data){
-  const old=post.querySelector(".commentsBox");if(old){old.remove();return}
-  const box=document.createElement("div");box.className="commentsBox";
-  (data.comments||[]).forEach(c=>{
-    const row=document.createElement("div");row.className="comment";
-    const meta=document.createElement("div");meta.className="commentMeta";
-    const dt=c.createdAt?new Date(c.createdAt):null;
-    meta.textContent=`${c.senderId}${dt?`　${dt.toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
-    const t=document.createElement("div");t.className="commentText";t.textContent=c.text||"";
-    row.append(meta,t);
-    if(c.uid===currentUID){
-      const del=document.createElement("button");del.className="commentDelete";del.textContent="削除";
-      del.onclick=async()=>{await updateDoc(doc(db,"solo",data.id),{comments:(data.comments||[]).filter(x=>x.id!==c.id)})};
-      row.appendChild(del);
-    }
-    box.appendChild(row);
-  });
-  const comp=document.createElement("div");comp.className="commentComposer";
-  const input=document.createElement("input");input.placeholder="コメントを書く…";
-  const send=document.createElement("button");send.textContent="送信";
-  send.onclick=async()=>{
-    const t=input.value.trim();if(!t)return;
-    const comments=[...(data.comments||[]),{id:`${currentUID}-${Date.now()}`,uid:currentUID,senderId:currentId,text:t,createdAt:Date.now()}];
-    await updateDoc(doc(db,"solo",data.id),{comments});
-  };
-  comp.append(input,send);box.appendChild(comp);post.appendChild(box);
-}
-$("sendSolo").onclick=async()=>{
-  const text=$("soloInput").value.trim();if(!text)return;
-  await addDoc(collection(db,"solo"),{text,uid:currentUID,senderId:currentId,createdAt:serverTimestamp(),reactions:{},comments:[]});
-  $("soloInput").value="";
-};
-document.querySelectorAll(".soloFilterBtn").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll(".soloFilterBtn").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");soloFilter=b.dataset.solofilter;renderSolo();
-});
-$("soloModeButton").onclick=()=>{
-  $("soloModeButton").classList.add("active");$("notesModeButton").classList.remove("active");
-  $("soloView").classList.remove("hidden");$("notesView").classList.add("hidden");
-};
-$("notesModeButton").onclick=()=>{
-  $("notesModeButton").classList.add("active");$("soloModeButton").classList.remove("active");
-  $("notesView").classList.remove("hidden");$("soloView").classList.add("hidden");
-};
-
-function listenNotes(){
-  if(unsubscribeNotes)unsubscribeNotes();
-  const q=query(collection(db,"notes"),orderBy("updatedAt","desc"),limit(100));
-  unsubscribeNotes=onSnapshot(q,snap=>{
-    notes=snap.docs.map(d=>({id:d.id,...d.data()})).filter(n=>!n.privateOnly||n.uid===currentUID);
-    renderNotes();
-  });
-}
-function renderNotes(){
-  const list=$("noteList");list.innerHTML="";
-  [...notes].sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0))).forEach(n=>{
-    const card=document.createElement("div");card.className="noteCard";
-    const head=document.createElement("div");head.className="noteHead";
-    const title=document.createElement("div");title.className="noteTitle";title.textContent=n.title||"無題";
-    const pin=document.createElement("div");pin.className="notePin";pin.textContent=n.pinned?"📌":"";
-    head.append(title,pin);
-    const body=document.createElement("div");body.className="noteBody";body.textContent=n.body||"";
-    const meta=document.createElement("div");meta.className="noteMeta";
-    meta.textContent=`${n.senderId||""}${n.privateOnly?"　🔒自分のみ":""}${n.updatedAt?.toDate?`　更新 ${n.updatedAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
-    card.append(head,body,meta);
-    if(n.uid===currentUID){
-      const acts=document.createElement("div");acts.className="noteActions";
-      const edit=document.createElement("button");edit.textContent="編集";edit.onclick=()=>openNoteEditor(n);
-      const del=document.createElement("button");del.textContent="削除";del.onclick=async()=>{if(confirm("このノートを削除しますか？"))await deleteDoc(doc(db,"notes",n.id))};
-      acts.append(edit,del);card.appendChild(acts);
-    }
-    list.appendChild(card);
-  });
-}
-function openNoteEditor(n=null){
-  editingNote=n;$("noteModalTitle").textContent=n?"ノートを編集":"ノートを追加";
-  $("noteTitleInput").value=n?.title||"";$("noteBodyInput").value=n?.body||"";
-  $("notePrivateInput").checked=!!n?.privateOnly;$("notePinnedInput").checked=!!n?.pinned;
-  $("noteModal").classList.remove("hidden");
-}
-$("openNoteModal").onclick=()=>openNoteEditor();
-$("cancelNoteModal").onclick=()=>$("noteModal").classList.add("hidden");
-$("noteModal").addEventListener("click",e=>{if(e.target===$("noteModal"))$("noteModal").classList.add("hidden")});
-$("saveNote").onclick=async()=>{
-  const title=$("noteTitleInput").value.trim(),body=$("noteBodyInput").value.trim();
-  if(!title&&!body){alert("タイトルか本文を入力してください");return}
-  const payload={title,body,privateOnly:$("notePrivateInput").checked,pinned:$("notePinnedInput").checked,updatedAt:serverTimestamp()};
-  if(editingNote)await updateDoc(doc(db,"notes",editingNote.id),payload);
-  else await addDoc(collection(db,"notes"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
-  editingNote=null;$("noteModal").classList.add("hidden");
-};
-
 /* CALENDAR */
 .calendarToolbar{background:#fff;padding:10px 11px 8px;border-bottom:1px solid #ddd}
 .calendarMonthRow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -532,7 +367,7 @@ $("saveNote").onclick=async()=>{
 .endDateRow{margin-top:2px}
 
 
-/* v3.3.0 schedule/calendar refinements */
+/* v3.3.1 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -656,7 +491,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.0</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.1</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -790,7 +625,7 @@ audio{display:none}
 <div id="updatesPage" class="page hidden">
   <div class="scroll">
     <div class="updateCard">
-      <div class="updateVersion">v3.3.0</div>
+      <div class="updateVersion">v3.3.1</div>
       <div class="updateDate">2026/08/09</div>
       <ul class="updateItems">
         <li>アップデートタブを追加</li>
@@ -1604,32 +1439,187 @@ function isReadByOther(message){
   return Object.values(readStates).some(s=>s.uid!==currentUID&&s.lastReadAt?.seconds>=message.createdAt.seconds);
 }
 
-/* SOLO */
+/* SOLO / NOTES */
+function visibleSoloPosts(){
+  if(soloFilter==="mine")return soloPosts.filter(x=>x.uid===currentUID);
+  if(soloFilter==="others")return soloPosts.filter(x=>x.uid!==currentUID);
+  return soloPosts;
+}
 function listenSolo(){
   if(unsubscribeSolo)unsubscribeSolo();
   const q=query(collection(db,"solo"),orderBy("createdAt","desc"),limit(50));
   unsubscribeSolo=onSnapshot(q,snap=>{
-    const list=$("soloList");list.innerHTML="";
-    snap.forEach(d=>{
-      const data={id:d.id,...d.data()},post=document.createElement("article");post.className="post";
-      const head=document.createElement("div");head.className="postHead";
-      const user=document.createElement("div");user.className="postUser";user.textContent=data.senderId;
-      const time=document.createElement("div");time.className="postTime";if(data.createdAt?.toDate)time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
-      head.append(user,time);
-      const text=document.createElement("div");text.className="postText";text.textContent=data.text||"";
-      const footer=document.createElement("div");footer.className="postFooter";
-      const liked=data.likedBy||[],heart=document.createElement("button");heart.textContent=`${liked.includes(currentUID)?"♥":"♡"} ${liked.length}`;
-      heart.onclick=()=>updateDoc(doc(db,"solo",data.id),{likedBy:liked.includes(currentUID)?arrayRemove(currentUID):arrayUnion(currentUID)});footer.appendChild(heart);
-      if(data.uid===currentUID){
-        const edit=document.createElement("button");edit.textContent="編集";edit.onclick=async()=>{const n=prompt("ひとりごとを編集",data.text||"");if(n?.trim())await updateDoc(doc(db,"solo",data.id),{text:n.trim(),edited:true})};
-        const del=document.createElement("button");del.textContent="削除";del.onclick=async()=>{if(confirm("削除しますか？"))await deleteDoc(doc(db,"solo",data.id))};
-        footer.append(edit,del);
-      }
-      post.append(head,text,footer);list.appendChild(post);
+    soloPosts=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderSolo();
+  },e=>console.error("solo listen",e));
+}
+function renderSolo(){
+  const list=$("soloList");list.innerHTML="";
+  const posts=visibleSoloPosts();
+  if(!posts.length){
+    list.innerHTML='<div class="small" style="padding:14px">表示するひとりごとはありません。</div>';
+    return;
+  }
+  posts.forEach(data=>{
+    const post=document.createElement("article");post.className="post";
+    const head=document.createElement("div");head.className="postHead";
+    const user=document.createElement("div");user.className="postUser";user.textContent=data.uid===currentUID?"自分":(data.senderId||"");
+    const time=document.createElement("div");time.className="postTime";
+    if(data.createdAt?.toDate)time.textContent=data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    head.append(user,time);
+
+    const body=document.createElement("div");body.className="postText";body.textContent=data.text||"";
+    const footer=document.createElement("div");footer.className="postFooter";
+
+    const reactions=data.reactions||{};
+    const summary=document.createElement("div");summary.className="soloReactionSummary";
+    let hasReaction=false;
+    REACTIONS.forEach(em=>{
+      const users=reactions[em]||[];
+      if(!users.length)return;
+      hasReaction=true;
+      const chip=document.createElement("button");chip.className="soloReactionChip"+(users.includes(currentUID)?" mineReaction":"");
+      chip.textContent=`${em}${users.length>1?users.length:""}`;
+      chip.onclick=()=>toggleSoloReaction(data,em);
+      summary.appendChild(chip);
     });
+    if(hasReaction)footer.appendChild(summary);
+
+    const react=document.createElement("button");react.textContent="☺";react.title="リアクション";
+    react.onclick=()=>toggleSoloReactionPicker(post,data);
+    const comments=data.comments||[];
+    const commentsBtn=document.createElement("button");commentsBtn.className="commentToggle";commentsBtn.textContent=`💬 ${comments.length}`;
+    commentsBtn.onclick=()=>toggleComments(post,data);
+    footer.append(react,commentsBtn);
+
+    if(data.uid===currentUID){
+      const edit=document.createElement("button");edit.textContent="編集";
+      edit.onclick=async()=>{const n=prompt("ひとりごとを編集",data.text||"");if(n?.trim())await updateDoc(doc(db,"solo",data.id),{text:n.trim(),edited:true})};
+      const del=document.createElement("button");del.textContent="削除";
+      del.onclick=async()=>{if(confirm("削除しますか？"))await deleteDoc(doc(db,"solo",data.id))};
+      footer.append(edit,del);
+    }
+    post.append(head,body,footer);list.appendChild(post);
   });
 }
-$("sendSolo").onclick=async()=>{const text=$("soloInput").value.trim();if(!text)return;await addDoc(collection(db,"solo"),{text,uid:currentUID,senderId:currentId,createdAt:serverTimestamp(),likedBy:[]});$("soloInput").value=""};
+function toggleSoloReactionPicker(post,data){
+  document.querySelectorAll(".soloReactionPicker").forEach(x=>x.remove());
+  const p=document.createElement("div");p.className="soloReactionPicker";
+  REACTIONS.forEach(em=>{
+    const b=document.createElement("button");b.textContent=em;
+    b.onclick=async()=>{await toggleSoloReaction(data,em);p.remove()};
+    p.appendChild(b);
+  });
+  post.appendChild(p);
+}
+async function toggleSoloReaction(data,emoji){
+  const reactions=JSON.parse(JSON.stringify(data.reactions||{}));let same=false;
+  REACTIONS.forEach(k=>{
+    const users=reactions[k]||[];
+    if(k===emoji&&users.includes(currentUID))same=true;
+    reactions[k]=users.filter(u=>u!==currentUID);
+  });
+  if(!same){reactions[emoji]=reactions[emoji]||[];reactions[emoji].push(currentUID)}
+  await updateDoc(doc(db,"solo",data.id),{reactions});
+}
+function toggleComments(post,data){
+  const old=post.querySelector(".commentsBox");if(old){old.remove();return}
+  const box=document.createElement("div");box.className="commentsBox";
+  (data.comments||[]).forEach(c=>{
+    const row=document.createElement("div");row.className="comment";
+    const meta=document.createElement("div");meta.className="commentMeta";
+    const dt=c.createdAt?new Date(c.createdAt):null;
+    meta.textContent=`${c.uid===currentUID?"自分":(c.senderId||"")}${dt?`　${dt.toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
+    const t=document.createElement("div");t.className="commentText";t.textContent=c.text||"";
+    row.append(meta,t);
+    if(c.uid===currentUID){
+      const del=document.createElement("button");del.className="commentDelete";del.textContent="削除";
+      del.onclick=async()=>{await updateDoc(doc(db,"solo",data.id),{comments:(data.comments||[]).filter(x=>x.id!==c.id)})};
+      row.appendChild(del);
+    }
+    box.appendChild(row);
+  });
+  const comp=document.createElement("div");comp.className="commentComposer";
+  const input=document.createElement("input");input.placeholder="コメントを書く…";
+  const send=document.createElement("button");send.textContent="送信";
+  send.onclick=async()=>{
+    const t=input.value.trim();if(!t)return;
+    const comments=[...(data.comments||[]),{id:`${currentUID}-${Date.now()}`,uid:currentUID,senderId:currentId,text:t,createdAt:Date.now()}];
+    await updateDoc(doc(db,"solo",data.id),{comments});
+  };
+  comp.append(input,send);box.appendChild(comp);post.appendChild(box);
+}
+$("sendSolo").onclick=async()=>{
+  const text=$("soloInput").value.trim();if(!text)return;
+  await addDoc(collection(db,"solo"),{text,uid:currentUID,senderId:currentId,createdAt:serverTimestamp(),reactions:{},comments:[]});
+  $("soloInput").value="";
+};
+document.querySelectorAll(".soloFilterBtn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".soloFilterBtn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");soloFilter=b.dataset.solofilter;renderSolo();
+});
+$("soloModeButton").onclick=()=>{
+  $("soloModeButton").classList.add("active");$("notesModeButton").classList.remove("active");
+  $("soloView").classList.remove("hidden");$("notesView").classList.add("hidden");
+};
+$("notesModeButton").onclick=()=>{
+  $("notesModeButton").classList.add("active");$("soloModeButton").classList.remove("active");
+  $("notesView").classList.remove("hidden");$("soloView").classList.add("hidden");
+};
+
+function listenNotes(){
+  if(unsubscribeNotes)unsubscribeNotes();
+  const q=query(collection(db,"notes"),orderBy("updatedAt","desc"),limit(100));
+  unsubscribeNotes=onSnapshot(q,snap=>{
+    notes=snap.docs.map(d=>({id:d.id,...d.data()})).filter(n=>!n.privateOnly||n.uid===currentUID);
+    renderNotes();
+  },e=>{
+    console.error("notes listen",e);
+    $("noteList").innerHTML='<div class="small" style="padding:14px">ノートを読み込めませんでした。Firestoreルールも確認してください。</div>';
+  });
+}
+function renderNotes(){
+  const list=$("noteList");list.innerHTML="";
+  const visible=[...notes].sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0)));
+  if(!visible.length){list.innerHTML='<div class="small" style="padding:14px">ノートはまだありません。</div>';return}
+  visible.forEach(n=>{
+    const card=document.createElement("div");card.className="noteCard";
+    const head=document.createElement("div");head.className="noteHead";
+    const title=document.createElement("div");title.className="noteTitle";title.textContent=n.title||"無題";
+    const pin=document.createElement("div");pin.className="notePin";pin.textContent=n.pinned?"📌":"";
+    head.append(title,pin);
+    const body=document.createElement("div");body.className="noteBody";body.textContent=n.body||"";
+    const meta=document.createElement("div");meta.className="noteMeta";
+    meta.textContent=`${n.uid===currentUID?"自分":(n.senderId||"")}${n.privateOnly?"　🔒自分のみ":""}${n.updatedAt?.toDate?`　更新 ${n.updatedAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
+    card.append(head,body,meta);
+    if(n.uid===currentUID){
+      const acts=document.createElement("div");acts.className="noteActions";
+      const edit=document.createElement("button");edit.textContent="編集";edit.onclick=()=>openNoteEditor(n);
+      const del=document.createElement("button");del.textContent="削除";del.onclick=async()=>{if(confirm("このノートを削除しますか？"))await deleteDoc(doc(db,"notes",n.id))};
+      acts.append(edit,del);card.appendChild(acts);
+    }
+    list.appendChild(card);
+  });
+}
+function openNoteEditor(n=null){
+  editingNote=n;$("noteModalTitle").textContent=n?"ノートを編集":"ノートを追加";
+  $("noteTitleInput").value=n?.title||"";$("noteBodyInput").value=n?.body||"";
+  $("notePrivateInput").checked=!!n?.privateOnly;$("notePinnedInput").checked=!!n?.pinned;
+  $("noteModal").classList.remove("hidden");
+}
+$("openNoteModal").onclick=()=>openNoteEditor();
+$("cancelNoteModal").onclick=()=>$("noteModal").classList.add("hidden");
+$("noteModal").addEventListener("click",e=>{if(e.target===$("noteModal"))$("noteModal").classList.add("hidden")});
+$("saveNote").onclick=async()=>{
+  const title=$("noteTitleInput").value.trim(),body=$("noteBodyInput").value.trim();
+  if(!title&&!body){alert("タイトルか本文を入力してください");return}
+  const payload={title,body,privateOnly:$("notePrivateInput").checked,pinned:$("notePinnedInput").checked,updatedAt:serverTimestamp()};
+  try{
+    if(editingNote)await updateDoc(doc(db,"notes",editingNote.id),payload);
+    else await addDoc(collection(db,"notes"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
+    editingNote=null;$("noteModal").classList.add("hidden");
+  }catch(e){console.error(e);alert("ノートを保存できませんでした。Firestoreルールを確認してください。");}
+};
 
 /* CALENDAR */
 function startOfDay(d){const x=new Date(d);x.setHours(0,0,0,0);return x}
@@ -1655,11 +1645,12 @@ function filteredSchedules(){
 }
 
 function eventCoversDate(s,d){
-  if(!s.startsAt?.toDate)return false;
   const target=dateId(d);
-  const start=s.startDate || dateId(s.startsAt.toDate());
-  const end=s.allDay ? (s.endDate || start) : start;
-  return target>=start && target<=end;
+  let start=s.startDate||s.date||"";
+  if(!start&&s.startsAt?.toDate)start=dateId(s.startsAt.toDate());
+  if(!start)return false;
+  const end=s.allDay?(s.endDate||start):start;
+  return target>=start&&target<=end;
 }
 function scheduleRangeText(s){
   if(!s.allDay){
