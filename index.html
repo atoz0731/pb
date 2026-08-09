@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.3.2 ===== */
+/* ===== v3.3.3 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -180,7 +180,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .voiceMini.danger{background:#eee;color:#a1001a}
 
 
-/* v3.3.2 solo overflow menu */
+/* v3.3.3 solo overflow menu */
 .post{position:relative}
 .postHead{align-items:flex-start}
 .soloPostTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
@@ -249,7 +249,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 
 
 
-/* v3.3.2 LINE-style compact talk */
+/* v3.3.3 LINE-style compact talk */
 .messageRow{margin:1px 0 2px}
 .messageRow.groupStart{margin-top:7px}
 .sender{margin:0 7px 1px;font-size:9px}
@@ -448,7 +448,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.3.2 schedule/calendar refinements */
+/* v3.3.3 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -539,7 +539,7 @@ audio{display:none}
   .scheduleTimeField label{font-size:10px}
 }
 
-/* v3.3.2 iPhone time-input overlap fix */
+/* v3.3.3 iPhone time-input overlap fix */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -607,7 +607,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.2</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.3</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -741,9 +741,14 @@ audio{display:none}
 <div id="updatesPage" class="page hidden">
   <div class="scroll">
     <div class="updateCard">
-      <div class="updateVersion">v3.3.2</div>
+      <div class="updateVersion">v3.3.3</div>
       <div class="updateDate">2026/08/09</div>
       <ul class="updateItems">
+        <li>トークをLINE型コンパクトレイアウトに変更</li>
+        <li>時刻・既読・編集済みを吹き出し横へ移動</li>
+        <li>ひとりごとの投稿表示を復旧</li>
+        <li>ひとりごとの操作を「…」メニューへ集約</li>
+        <li>予定作成画面の開始・終了時刻欄を調整</li>
         <li>アップデートタブを追加</li>
         <li>右上に再読み込みボタンを追加</li>
         <li>10秒後のPIN再ロックに対応</li>
@@ -1625,7 +1630,7 @@ function listenSolo(){
 function renderSolo(){
   const list=$("soloList");if(!list)return;
   list.innerHTML="";
-  let posts=soloDocs.filter(x=>!x.privateOnly||x.uid===currentUID);
+  let posts=soloPosts.filter(x=>!x.privateOnly||x.uid===currentUID);
   if(soloFilter==="mine")posts=posts.filter(x=>x.uid===currentUID);
   if(soloFilter==="others")posts=posts.filter(x=>x.uid!==currentUID);
 
