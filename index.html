@@ -21,7 +21,7 @@ button{cursor:pointer}
 .hidden{display:none!important}
 
 
-/* ===== v3.3.4 ===== */
+/* ===== v3.3.5 ===== */
 html{background:#111}
 @media (display-mode: standalone){
   html,body{
@@ -158,7 +158,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .voiceMini.danger{background:#eee;color:#a1001a}
 
 
-/* v3.3.4 solo overflow menu */
+/* v3.3.5 solo overflow menu */
 .post{position:relative}
 .postHead{align-items:flex-start}
 .soloPostTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
@@ -227,7 +227,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 
 
 
-/* v3.3.4 LINE-style compact talk */
+/* v3.3.5 LINE-style compact talk */
 .messageRow{margin:1px 0 2px}
 .messageRow.groupStart{margin-top:7px}
 .sender{margin:0 7px 1px;font-size:9px}
@@ -426,7 +426,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .endDateRow{margin-top:2px}
 
 
-/* v3.3.4 schedule/calendar refinements */
+/* v3.3.5 schedule/calendar refinements */
 .modalOverlay{
   padding-top:env(safe-area-inset-top);
 }
@@ -517,7 +517,7 @@ audio{display:none}
   .scheduleTimeField label{font-size:10px}
 }
 
-/* v3.3.4 iPhone time-input overlap fix */
+/* v3.3.5 iPhone time-input overlap fix */
 .scheduleTimeRow{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -550,6 +550,24 @@ audio{display:none}
   .scheduleTimeRow{gap:10px!important}
   .scheduleTimeField input[type="time"]{font-size:15px;padding-left:3px!important;padding-right:3px!important}
 }
+
+
+/* v3.3.5 ひとりごと：投稿単位を見やすく */
+#soloList{padding:9px 8px 18px;background:#f3f4f6}
+#soloList .post{
+  position:relative;background:#fff;border:1px solid rgba(0,0,0,.045);
+  border-radius:14px;padding:10px 11px 9px 14px;margin:0 0 8px;
+  box-shadow:0 1px 5px rgba(0,0,0,.055);overflow:visible
+}
+#soloList .post::before{
+  content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;
+  border-radius:0 4px 4px 0;background:#e24a4a
+}
+#soloList .post.mineSolo::before{background:#2f6fed}
+#soloList .postText{margin-top:5px;line-height:1.48}
+#soloList .postUser{font-size:11px;font-weight:800}
+#soloList .postTime{font-size:9px}
+#soloList .soloMetaSummary{margin-top:6px}
 
 </style>
 </head>
@@ -585,7 +603,7 @@ audio{display:none}
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.4</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span>v3.3.5</span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -718,44 +736,36 @@ audio{display:none}
 
 <div id="updatesPage" class="page hidden">
   <div class="scroll">
-    <div class="updateCard">
-      <div class="updateVersion">v3.3.4</div>
-      <div class="updateDate">2026/08/09</div>
-      <ul class="updateItems">
-        <li>トークをLINE型コンパクトレイアウトに変更</li>
-        <li>時刻・既読・編集済みを吹き出し横へ移動</li>
-        <li>ひとりごとの投稿表示を復旧</li>
-        <li>ひとりごとの操作を「…」メニューへ集約</li>
-        <li>予定作成画面の開始・終了時刻欄を調整</li>
-        <li>アップデートタブを追加</li>
-        <li>右上に再読み込みボタンを追加</li>
-        <li>10秒後のPIN再ロックに対応</li>
-        <li>ホーム画面版のオーバースクロールを抑制</li>
-        <li>予定に「自分のみ表示」を追加</li>
-        <li>ひとりごとにフィルター・コメント・絵文字リアクションを追加</li>
-        <li>ノート機能を追加</li>
-        <li>Safari／ホーム画面版のPIN再ロックを修正</li>
-        <li>PIN再ロック時間を設定から変更可能に</li>
-      </ul>
-    </div>
-    <div class="updateCard">
-      <div class="updateVersion">v3.2.1</div>
-      <ul class="updateItems">
-        <li>予定に終了時刻を追加</li>
-        <li>予定画面のはみ出しを改善</li>
-        <li>カレンダー表示モードを追加</li>
-      </ul>
-    </div>
-    <div class="updateCard">
-      <div class="updateVersion">v3.2.0</div>
-      <ul class="updateItems">
-        <li>複数日の終日予定に対応</li>
-        <li>トーク内の改行に対応</li>
-        <li>簡易通知を追加</li>
-        <li>カレンダーに「今日」を追加</li>
-        <li>ひとりごとの表示を圧縮</li>
-      </ul>
-    </div>
+    <div class="updateCard"><div class="updateVersion">v3.3.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>ひとりごとを投稿ごとのカード表示に変更</li>
+      <li>自分／相手を左端の色で見分けやすく改善</li>
+      <li>アップデート履歴をバージョン別表示に変更</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.3.4</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>Safari／ホーム画面版のPIN再ロックを修正</li><li>PIN再ロック時間を設定から変更可能に</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.3.3</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>既存のひとりごとが表示されない不具合を修正</li><li>アップデート情報を修正</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.3.2</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>トークをLINE型コンパクトレイアウトに変更</li><li>時刻・既読・編集済みを吹き出し横へ移動</li>
+      <li>ひとりごとの操作を「…」メニューへ集約</li><li>予定作成画面の開始・終了時刻欄を調整</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.3.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>ひとりごと・ノートの表示処理を修正</li><li>カレンダーの既存予定表示を修正</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.3.0</div><div class="updateDate">2026/08/09</div><ul class="updateItems">
+      <li>アップデートタブとNEW表示を追加</li><li>右上に再読み込みボタンを追加</li>
+      <li>PIN再ロック機能を追加</li><li>ホーム画面版のオーバースクロールを抑制</li>
+      <li>予定に「自分のみ表示」を追加</li><li>ひとりごとにフィルター・コメント・絵文字リアクションを追加</li><li>ノート機能を追加</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.2.1</div><ul class="updateItems">
+      <li>予定に終了時刻を追加</li><li>予定画面のはみ出しを改善</li><li>カレンダー表示モードを追加</li>
+    </ul></div>
+    <div class="updateCard"><div class="updateVersion">v3.2.0</div><ul class="updateItems">
+      <li>複数日の終日予定に対応</li><li>トーク内の改行に対応</li><li>簡易通知を追加</li>
+      <li>カレンダーに「今日」を追加</li><li>ひとりごとの表示を圧縮</li>
+    </ul></div>
   </div>
 </div>
 
@@ -962,7 +972,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.3.4";
+const APP_VERSION="3.3.5";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -1710,7 +1720,7 @@ function renderSolo(){
 
   posts.forEach(data=>{
     const post=document.createElement("article");
-    post.className="post";
+    post.className="post"+(data.uid===currentUID?" mineSolo":"");
 
     const top=document.createElement("div");
     top.className="soloPostTop";
