@@ -1065,6 +1065,224 @@ body.pinLocked{
 #camoTypingIndicator{background:#202020!important;margin-left:14px}
 #camoTypingIndicator i{background:#aaa}
 
+
+/* v3.4.9 1対1音声通話 v2 */
+#voiceBar.incoming{background:#fff8e8;border-bottom-color:#f0dfb4}
+#voiceBar.calling{background:#f5f7ff;border-bottom-color:#dce2ff}
+#voiceBar.connected{background:#f4fff6;border-bottom-color:#d5efda}
+.voiceDot.ringing{background:#f0a000}
+.voiceDot.connected{background:#1ca64c}
+
+
+/* =========================================================
+   v3.5.0 : 9402 News / 9403 Weather / 9404 Teams
+   ========================================================= */
+.decoyScreen{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.decoyScroll{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.decoyCommentBox{
+  flex-shrink:0;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+}
+.decoyCommentBox textarea{
+  flex:1;
+  min-height:40px;
+  max-height:100px;
+  resize:none;
+  box-sizing:border-box;
+  font-size:16px;
+}
+.decoyCommentBox button{
+  flex-shrink:0;
+  border:0;
+}
+
+/* ---------- 9402 NEWS ---------- */
+#newsScreen{background:#f5f5f5;color:#202020}
+.newsHeader{
+  flex-shrink:0;background:#fff;border-bottom:1px solid #ddd;
+}
+.newsBrandRow{
+  height:54px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;box-sizing:border-box;
+}
+.newsBrand{font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:800;letter-spacing:-1px}
+.newsHeaderIcon{font-size:20px;color:#555}
+.newsNav{
+  display:flex;gap:18px;overflow-x:auto;padding:0 14px 10px;font-size:12px;color:#555;white-space:nowrap
+}
+.newsNav span:first-child{font-weight:800;color:#111}
+.newsArticle{
+  background:#fff;padding:18px 15px 16px;border-bottom:8px solid #eee
+}
+.newsCategory{font-size:11px;color:#b32025;font-weight:800;margin-bottom:7px}
+.newsTitle{font-size:23px;line-height:1.35;font-weight:800;letter-spacing:-.4px}
+.newsMeta{font-size:10px;color:#999;margin:8px 0 14px}
+.newsLead{font-size:14px;line-height:1.8;color:#333}
+.newsMore{
+  display:flex;justify-content:flex-end;margin-top:10px
+}
+.newsMore button{border:0;background:none;color:#666;font-size:11px}
+.newsCommentsTitle{
+  padding:13px 15px 8px;background:#fff;font-size:15px;font-weight:800
+}
+.newsFeed{background:#fff;padding:0 15px 18px}
+.newsComment{padding:12px 0;border-bottom:1px solid #eee}
+.newsCommentHead{display:flex;justify-content:space-between;gap:8px}
+.newsName{font-size:12px;font-weight:800}
+.newsTime{font-size:10px;color:#aaa}
+.newsText{font-size:14px;line-height:1.5;margin-top:5px;white-space:pre-wrap}
+.newsMetaLine{display:flex;gap:14px;margin-top:6px;color:#888;font-size:10px}
+.newsReplyBtn{border:0;background:none;color:#777;padding:0;font-size:10px}
+#newsReplyBar{background:#fafafa;border-top:1px solid #eee}
+#newsScreen .decoyCommentBox{background:#fff;border-top:1px solid #ddd}
+#newsScreen .decoyCommentBox textarea{border:1px solid #ccc;border-radius:20px;padding:9px 13px;background:#fff;color:#111}
+#newsScreen .decoyCommentBox button{background:#b32025;color:#fff;border-radius:18px;padding:10px 14px;font-weight:700}
+
+/* ---------- 9403 WEATHER ---------- */
+#weatherScreen{
+  background:linear-gradient(#4c9be8,#79b9f2 42%,#eef7ff 42%,#eef7ff);
+  color:#fff
+}
+.weatherHeader{
+  flex-shrink:0;padding:12px 14px 10px;background:rgba(23,95,162,.18);
+  backdrop-filter:blur(8px)
+}
+.weatherTopRow{display:flex;align-items:center;justify-content:space-between}
+.weatherBrand{font-size:20px;font-weight:800}
+.weatherModeBtns{display:flex;gap:6px}
+.weatherModeBtns button{
+  border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);
+  color:#fff;border-radius:16px;padding:6px 9px;font-size:11px
+}
+.weatherModeBtns button.active{background:#fff;color:#2974b5}
+.weatherMain{padding:20px 15px 18px;text-align:center}
+.weatherPlace{font-size:20px;font-weight:800}
+.weatherCondition{font-size:13px;margin-top:3px;opacity:.9}
+.weatherNow{display:flex;justify-content:center;align-items:center;gap:12px;margin:9px 0}
+.weatherIcon{font-size:54px}
+.weatherTemp{font-size:58px;font-weight:300;letter-spacing:-3px}
+.weatherHiLo{font-size:13px}
+.weatherFacts{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px
+}
+.weatherFact{
+  background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.15);
+  border-radius:13px;padding:9px 4px
+}
+.weatherFactLabel{font-size:9px;opacity:.78}
+.weatherFactValue{font-size:14px;font-weight:700;margin-top:3px}
+.weatherPanel{
+  background:rgba(255,255,255,.93);color:#1c3550;margin:0 10px 10px;
+  border-radius:16px;padding:12px;box-shadow:0 3px 12px rgba(0,0,0,.08)
+}
+.weatherPanelTitle{font-size:12px;font-weight:800;margin-bottom:9px}
+.hourlyStrip{display:flex;gap:12px;overflow-x:auto;padding-bottom:3px}
+.hourItem{min-width:50px;text-align:center;font-size:10px}
+.hourIcon{font-size:20px;margin:4px 0}
+.hourTemp{font-size:12px;font-weight:700}
+.weekItem{
+  display:grid;grid-template-columns:1.2fr .8fr 1fr 1fr;
+  align-items:center;padding:8px 2px;border-top:1px solid #e8eef3;font-size:11px
+}
+.weekItem:first-of-type{border-top:0}
+.weekWeather{text-align:center;font-size:18px}
+.weekRain{text-align:right;color:#3486cf}
+.weatherCommentsTitle{
+  background:rgba(255,255,255,.96);color:#1c3550;padding:13px 15px 8px;
+  margin-top:5px;font-size:14px;font-weight:800
+}
+.weatherFeed{background:#fff;color:#222;padding:0 15px 18px}
+.weatherComment{padding:11px 0;border-bottom:1px solid #eee}
+.weatherCommentHead{display:flex;gap:8px;align-items:center}
+.weatherAvatar{
+  width:28px;height:28px;border-radius:50%;background:#dbe9f6;color:#31658f;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800
+}
+.weatherCommentName{font-size:11px;font-weight:800}
+.weatherCommentTime{font-size:9px;color:#aaa}
+.weatherCommentText{margin:4px 0 0 36px;font-size:13px;line-height:1.45;white-space:pre-wrap}
+.weatherCommentMeta{margin:5px 0 0 36px;font-size:10px}
+.weatherCommentMeta button{border:0;background:none;color:#999;padding:0;font-size:10px}
+#weatherReplyBar{background:#f8fbfd;color:#555;border-top:1px solid #ddd}
+#weatherScreen .decoyCommentBox{background:#fff;border-top:1px solid #ddd}
+#weatherScreen .decoyCommentBox textarea{border:1px solid #ccd6df;border-radius:20px;padding:9px 13px;background:#fff;color:#111}
+#weatherScreen .decoyCommentBox button{background:#3387cf;color:#fff;border-radius:18px;padding:10px 14px;font-weight:700}
+.weatherStatus{text-align:center;padding:8px;color:#eaf6ff;font-size:11px}
+
+/* ---------- 9404 TEAMS ---------- */
+#teamsScreen{background:#f4f4f8;color:#252423}
+.teamsHeader{
+  flex-shrink:0;background:#4f52b2;color:#fff;padding:10px 12px 9px
+}
+.teamsHeaderTop{display:flex;align-items:center;justify-content:space-between}
+.teamsBrand{font-size:18px;font-weight:800}
+.teamsAvatar{
+  width:28px;height:28px;border-radius:50%;background:#7776c8;
+  display:flex;align-items:center;justify-content:center;font-size:11px
+}
+.teamsSearch{
+  margin-top:8px;background:#fff;color:#888;border-radius:4px;padding:7px 10px;font-size:11px
+}
+.teamsTabs{
+  flex-shrink:0;display:flex;background:#fff;border-bottom:1px solid #ddd
+}
+.teamsTabs div{
+  flex:1;text-align:center;padding:10px 4px;font-size:11px;color:#666
+}
+.teamsTabs .active{color:#4f52b2;font-weight:800;border-bottom:2px solid #4f52b2}
+.teamsChannelHead{
+  background:#fff;padding:11px 13px;border-bottom:1px solid #ddd
+}
+.teamsChannelTitle{font-size:15px;font-weight:800}
+.teamsChannelSub{font-size:10px;color:#888;margin-top:2px}
+.teamsFeed{padding:10px 9px 18px}
+.teamsPost{
+  background:#fff;border-radius:6px;padding:10px 11px;margin-bottom:8px;
+  border:1px solid #e2e2e2
+}
+.teamsPostHead{display:flex;align-items:center;gap:8px}
+.teamsPostAvatar{
+  width:30px;height:30px;border-radius:50%;background:#deddf5;color:#4f52b2;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800
+}
+.teamsPostName{font-size:11px;font-weight:800}
+.teamsPostTime{font-size:9px;color:#aaa;margin-top:1px}
+.teamsPostText{font-size:13px;line-height:1.5;margin:7px 0 0 38px;white-space:pre-wrap}
+.teamsPostActions{display:flex;gap:13px;margin:7px 0 0 38px}
+.teamsPostActions button{border:0;background:none;color:#656565;font-size:10px;padding:0}
+#teamsReplyBar{background:#fafafa;border-top:1px solid #ddd}
+#teamsScreen .decoyCommentBox{background:#fff;border-top:1px solid #ddd}
+#teamsScreen .decoyCommentBox textarea{border:1px solid #c8c8c8;border-radius:4px;padding:9px 10px;background:#fff;color:#111}
+#teamsScreen .decoyCommentBox button{background:#4f52b2;color:#fff;border-radius:4px;padding:10px 13px;font-weight:700}
+
+/* Decoy reply bar common */
+.decoyReplyBar{
+  flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
+  gap:8px;padding:6px 11px;font-size:11px
+}
+.decoyReplyBar button{border:0;background:none;font-size:18px;color:inherit}
+
+/* typing indicators inside added decoys */
+#newsTypingIndicator,#weatherTypingIndicator,#teamsTypingIndicator{margin-left:14px}
+#weatherTypingIndicator{background:rgba(255,255,255,.95)}
+#teamsTypingIndicator{background:#e6e6ee}
+
 </style>
 </head>
 <body>
@@ -1123,11 +1341,90 @@ body.pinLocked{
   </div>
 </section>
 
+
+<section id="newsScreen" class="decoyScreen hidden">
+  <div class="newsHeader">
+    <div class="newsBrandRow">
+      <div class="newsBrand">Daily News</div>
+      <div class="newsHeaderIcon">☰</div>
+    </div>
+    <div class="newsNav"><span>トップ</span><span>国内</span><span>経済</span><span>暮らし</span><span>エンタメ</span><span>スポーツ</span></div>
+  </div>
+  <div id="newsScroll" class="decoyScroll">
+    <article class="newsArticle">
+      <div id="newsCategory" class="newsCategory">暮らし</div>
+      <div id="newsTitle" class="newsTitle"></div>
+      <div id="newsMeta" class="newsMeta"></div>
+      <div id="newsLead" class="newsLead"></div>
+      <div class="newsMore"><button id="newsNextArticle">別の記事を見る ›</button></div>
+    </article>
+    <div class="newsCommentsTitle">この記事へのコメント</div>
+    <div id="newsFeed" class="newsFeed"></div>
+    <div id="newsTypingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
+  </div>
+  <div id="newsReplyBar" class="decoyReplyBar hidden"><span id="newsReplyText"></span><button id="newsCancelReply">×</button></div>
+  <div class="decoyCommentBox"><textarea id="newsInput" rows="1" placeholder="コメントを入力…"></textarea><button id="newsSend">投稿</button></div>
+</section>
+
+<section id="weatherScreen" class="decoyScreen hidden">
+  <div class="weatherHeader">
+    <div class="weatherTopRow">
+      <div class="weatherBrand">Weather</div>
+      <div class="weatherModeBtns">
+        <button id="weatherFukuoka" class="active">福岡</button>
+        <button id="weatherCurrent">現在地</button>
+      </div>
+    </div>
+  </div>
+  <div id="weatherScroll" class="decoyScroll">
+    <div id="weatherStatus" class="weatherStatus">天気を読み込んでいます…</div>
+    <div class="weatherMain">
+      <div id="weatherPlace" class="weatherPlace">福岡</div>
+      <div id="weatherCondition" class="weatherCondition">--</div>
+      <div class="weatherNow"><div id="weatherIcon" class="weatherIcon">☀️</div><div id="weatherTemp" class="weatherTemp">--°</div></div>
+      <div id="weatherHiLo" class="weatherHiLo">最高 --° / 最低 --°</div>
+      <div class="weatherFacts">
+        <div class="weatherFact"><div class="weatherFactLabel">降水確率</div><div id="weatherRain" class="weatherFactValue">--%</div></div>
+        <div class="weatherFact"><div class="weatherFactLabel">湿度</div><div id="weatherHumidity" class="weatherFactValue">--%</div></div>
+        <div class="weatherFact"><div class="weatherFactLabel">風</div><div id="weatherWind" class="weatherFactValue">-- m/s</div></div>
+      </div>
+    </div>
+    <div class="weatherPanel">
+      <div class="weatherPanelTitle">時間ごとの天気</div>
+      <div id="weatherHourly" class="hourlyStrip"></div>
+    </div>
+    <div class="weatherPanel">
+      <div class="weatherPanelTitle">週間予報</div>
+      <div id="weatherWeekly"></div>
+    </div>
+    <div class="weatherCommentsTitle">天気についてのコメント</div>
+    <div id="weatherFeed" class="weatherFeed"></div>
+    <div id="weatherTypingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
+  </div>
+  <div id="weatherReplyBar" class="decoyReplyBar hidden"><span id="weatherReplyText"></span><button id="weatherCancelReply">×</button></div>
+  <div class="decoyCommentBox"><textarea id="weatherInput" rows="1" placeholder="コメントを入力…"></textarea><button id="weatherSend">投稿</button></div>
+</section>
+
+<section id="teamsScreen" class="decoyScreen hidden">
+  <div class="teamsHeader">
+    <div class="teamsHeaderTop"><div class="teamsBrand">Teams</div><div class="teamsAvatar">PB</div></div>
+    <div class="teamsSearch">検索</div>
+  </div>
+  <div class="teamsTabs"><div>アクティビティ</div><div class="active">チャット</div><div>Teams</div><div>予定表</div></div>
+  <div class="teamsChannelHead"><div class="teamsChannelTitle">一般</div><div class="teamsChannelSub">投稿</div></div>
+  <div id="teamsScroll" class="decoyScroll">
+    <div id="teamsFeed" class="teamsFeed"></div>
+    <div id="teamsTypingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
+  </div>
+  <div id="teamsReplyBar" class="decoyReplyBar hidden"><span id="teamsReplyText"></span><button id="teamsCancelReply">×</button></div>
+  <div class="decoyCommentBox"><textarea id="teamsInput" rows="1" placeholder="新しい投稿"></textarea><button id="teamsSend">送信</button></div>
+</section>
+
 <section id="appScreen" class="hidden">
 <header>
   <div>
     <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span>v3.4.9</span></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span id="appVersionLabel"></span></div>
   </div>
   <div class="headerRight">
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
@@ -1136,7 +1433,7 @@ body.pinLocked{
   <div id="headerMenu" class="headerMenu hidden">
     <button id="menuSearch">🔍 メッセージを検索</button>
     <button id="menuDateFilter">📅 日付で見る</button>
-    <button id="menuVoice">📞 通話を開始</button>
+    <button id="menuVoice">📞 音声通話を開始</button>
     <button id="menuSettings">⚙️ 設定</button>
     <button id="logoutButton">ログアウト</button>
   </div>
@@ -1158,10 +1455,10 @@ body.pinLocked{
 
   <div id="voiceBar" class="hidden">
     <div class="voiceBarInner">
-      <div id="voiceInfo" class="voiceInfo"><span class="voiceDot"></span>ボイスルーム開催中</div>
+      <div id="voiceInfo" class="voiceInfo"><span class="voiceDot"></span>音声通話</div>
       <div class="voiceActions">
         <button id="joinVoice" class="voiceMini">参加</button>
-        <button id="declineVoice" class="voiceMini sub">あとで</button>
+        <button id="declineVoice" class="voiceMini sub hidden">あとで</button>
         <button id="muteVoice" class="voiceMini sub hidden">🎤</button>
         <button id="leaveVoice" class="voiceMini danger hidden">退出</button>
       </div>
@@ -1261,15 +1558,13 @@ body.pinLocked{
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
-<div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>ヘッダーの表示バージョンをv3.4.9へ修正</li><li>ボイスルームを1対1通話v2へ更新</li><li>PBを前面表示中だけ「通話のお誘い」を表示</li><li>着信は60秒で自動失効し、古いルームが残りにくい構造へ変更</li><li>通話ごとにcallIdを発行して前回の接続情報との混在を防止</li></ul></div>
-<div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>撤回済み・一時的な変更をアップデート履歴から整理</li><li>履歴のバージョン番号を固定データ化し、現在版で上書きされないよう修正</li></ul></div>
-<div class="updateCard"><div class="updateVersion">v3.4.7</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>通常PBの本文背景をライト表示へ復元</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN入力画面を初期デザインへ復元</li></ul></div>
-<div class="updateCard"><div class="updateVersion">v3.4.4</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>9401上部を左寄せのシンプルなInstagram風ヘッダーへ変更</li><li>Instagramへのリンクを追加</li><li>予定作成の日付欄を調整</li></ul></div>
-<div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>通常トークで自分の時刻・既読・編集済みを吹き出し左側へ変更</li><li>予定作成を1項目1段のレイアウトへ改善</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.4</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>9401上部を左寄せのシンプルなInstagram風ヘッダーへ変更</li><li>Instagramへのリンクを追加</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.4.1</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>通常トークで自分の時刻・既読・編集済みを吹き出し左側へ変更</li><li>予定作成を1項目1段へ改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.0</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>PIN 9401のカモフラージュモードを追加</li><li>SNSコメント風UIでトークの閲覧・返信・送信に対応</li></ul></div>
-<div class="updateCard"><div class="updateVersion">v3.3.6</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>予定作成の開始・終了時刻欄をiPhone向けに改善</li></ul></div>
-<div class="updateCard"><div class="updateVersion">v3.3.5</div><div class="updateDate">2026/08/09</div><ul class="updateItems"><li>ひとりごとを投稿ごとのカード表示に変更</li><li>自分／相手を見分けやすい表示へ改善</li><li>アップデート履歴をバージョン別表示に変更</li></ul></div>
 </div></div>
 
 <audio id="remoteAudio" autoplay playsinline></audio>
@@ -1373,9 +1668,9 @@ body.pinLocked{
       </select>
     </div>
 
-    <div class="settingsGroup">ボイスルーム</div>
-    <button id="resetVoiceRoom" class="dangerButton">ボイスルームをリセット</button>
-    <div class="settingsNote">古い「開催中」表示が残った場合だけ使用してください。</div>
+    <div class="settingsGroup">音声通話</div>
+    <button id="resetVoiceRoom" class="dangerButton">音声通話をリセット</button>
+    <div class="settingsNote">通話表示がおかしい場合だけ使用してください。</div>
 
     <div class="modalBtns">
       <button id="closeSettings">閉じる</button>
@@ -1470,6 +1765,8 @@ const $ = id => document.getElementById(id);
 
 let pin="", pinPassed=false, currentUID="", currentId="";
 let camouflageMode=false, camoReplyTarget=null;
+let decoyMode="";
+let newsReplyTarget=null, weatherReplyTarget=null, teamsReplyTarget=null;
 let replyTarget=null, editingMessage=null, oldestMessage=null;
 let messageDocs=new Map(), previousNewestMessageId=null, firstMessageLoad=true;
 let readStates={}, locationWatch=null;
@@ -1480,7 +1777,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.4.9";
+const APP_VERSION="3.5.0";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -1497,8 +1794,6 @@ let unreadTalkCount=0;
 let audioContext=null;
 let voiceHeartbeatTimer=null;
 const VOICE_STALE_MS=2*60*1000;
-const VOICE_INVITE_MS=60*1000;
-let dismissedVoiceCallId=null;
 
 
 
@@ -1517,6 +1812,9 @@ function listenTyping(){
     snap.forEach(s=>{const d=s.data(),t=d.updatedAt?.toMillis?.()||0;if(d.uid!==currentUID&&d.typing===true&&now-t<5000)on=true});
     $("typingIndicator")?.classList.toggle("show",on);
     $("camoTypingIndicator")?.classList.toggle("show",on);
+    $("newsTypingIndicator")?.classList.toggle("show",on);
+    $("weatherTypingIndicator")?.classList.toggle("show",on);
+    $("teamsTypingIndicator")?.classList.toggle("show",on);
   });
 }
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopTyping()});
@@ -1535,18 +1833,43 @@ $("backKey").onclick=()=>{pin=pin.slice(0,-1);updateDots()};
 function checkPin(){
   if(pin==="0208"){window.location.replace("https://www.google.com/");return}
   if(pin==="0814"){
-    camouflageMode=false;
+    camouflageMode=false;decoyMode="";
     pinPassed=true;clearHiddenStamp();$("pinScreen").classList.add("hidden");
     if(auth.currentUser)showApp(auth.currentUser);else $("loginScreen").classList.remove("hidden");
     return;
   }
   if(pin==="9401"){
     camouflageMode=true;
+    decoyMode="instagram";
     pinPassed=true;
     if(typeof clearHiddenStamp==="function")clearHiddenStamp();
     $("pinScreen").classList.add("hidden");
     if(auth.currentUser)showApp(auth.currentUser);
     else $("camoLoginScreen").classList.remove("hidden");
+    return;
+  }
+  if(pin==="9402"){
+    camouflageMode=true;decoyMode="news";
+    pinPassed=true;
+    if(typeof clearHiddenStamp==="function")clearHiddenStamp();
+    $("pinScreen").classList.add("hidden");
+    if(auth.currentUser)showApp(auth.currentUser);else $("camoLoginScreen").classList.remove("hidden");
+    return;
+  }
+  if(pin==="9403"){
+    camouflageMode=true;decoyMode="weather";
+    pinPassed=true;
+    if(typeof clearHiddenStamp==="function")clearHiddenStamp();
+    $("pinScreen").classList.add("hidden");
+    if(auth.currentUser)showApp(auth.currentUser);else $("camoLoginScreen").classList.remove("hidden");
+    return;
+  }
+  if(pin==="9404"){
+    camouflageMode=true;decoyMode="teams";
+    pinPassed=true;
+    if(typeof clearHiddenStamp==="function")clearHiddenStamp();
+    $("pinScreen").classList.add("hidden");
+    if(auth.currentUser)showApp(auth.currentUser);else $("camoLoginScreen").classList.remove("hidden");
     return;
   }
   $("pinError").textContent="PINが違います";pin="";updateDots();
@@ -1644,12 +1967,24 @@ $("camoLoginPassword").addEventListener("keydown",e=>{
 $("logoutButton").onclick=async()=>{await leaveVoiceRoom(false);await signOut(auth);$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")};
 onAuthStateChanged(auth,user=>{
   if(user&&pinPassed)showApp(user);
-  if(!user&&pinPassed){$("appScreen").classList.add("hidden");$("camoScreen").classList.add("hidden");if(camouflageMode)$("camoLoginScreen").classList.remove("hidden");else $("loginScreen").classList.remove("hidden")}
+  if(!user&&pinPassed){["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen"].forEach(id=>$(id)?.classList.add("hidden"));if(camouflageMode)$("camoLoginScreen").classList.remove("hidden");else $("loginScreen").classList.remove("hidden")}
 });
 function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
   $("userLabel").textContent=`ID：${currentId}`;
-  $("loginScreen").classList.add("hidden");$("camoLoginScreen").classList.add("hidden");$("pinScreen").classList.add("hidden");if(camouflageMode){$("appScreen").classList.add("hidden");$("camoScreen").classList.remove("hidden")}else{$("camoScreen").classList.add("hidden");$("appScreen").classList.remove("hidden")}
+  $("appVersionLabel").textContent=`v${APP_VERSION}`;
+  $("loginScreen").classList.add("hidden");
+  $("camoLoginScreen").classList.add("hidden");
+  $("pinScreen").classList.add("hidden");
+  ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen"].forEach(id=>$(id)?.classList.add("hidden"));
+  if(camouflageMode){
+    const target=decoyMode==="news"?"newsScreen":decoyMode==="weather"?"weatherScreen":decoyMode==="teams"?"teamsScreen":"camoScreen";
+    $(target).classList.remove("hidden");
+    if(decoyMode==="weather")loadWeather("fukuoka");
+    if(decoyMode==="news")renderNewsArticle();
+  }else{
+    $("appScreen").classList.remove("hidden");
+  }
   loadSettings();
   updateNotificationUI();
   updateUpdateBadge();
@@ -1750,7 +2085,7 @@ $("settingBackgroundNotification").onchange=async()=>{
 $("resetVoiceRoom").onclick=async()=>{
   if(!confirm("ボイスルームの状態をリセットしますか？"))return;
   await resetVoiceRoomState();
-  alert("ボイスルームをリセットしました。");
+  alert("音声通話をリセットしました。");
 };
 $("closeSettings").onclick=()=>$("settingsModal").classList.add("hidden");
 $("settingsModal").addEventListener("click",e=>{if(e.target===$("settingsModal"))$("settingsModal").classList.add("hidden")});
@@ -1833,10 +2168,6 @@ function handleIncomingMessage(data){
   }
 }
 document.addEventListener("visibilitychange",updateNotificationUI);
-document.addEventListener("visibilitychange",()=>{
-  if(document.hidden && !voiceJoined) $("voiceBar")?.classList.add("hidden");
-  else if(!document.hidden && pinPassed) listenVoiceRoom();
-});
 
 
 
@@ -1995,6 +2326,7 @@ function listenMessages(){
     oldestMessage=snapshot.docs[snapshot.docs.length-1]||oldestMessage;
     renderMessages();
     renderCamoMessages();
+    renderExtraDecoyMessages();
 
     if(firstMessageLoad){
       firstMessageLoad=false;
@@ -2281,6 +2613,228 @@ $("camoExitButton").onclick=()=>{
   $("camoScreen").classList.add("hidden");$("pinScreen").classList.remove("hidden");
 };
 
+
+
+/* =========================================================
+   v3.5.0 Decoy modes 9402 / 9403 / 9404
+   ========================================================= */
+const NEWS_ARTICLES=[
+  {
+    category:"暮らし",
+    title:"朝の時間を快適に　身近な工夫で整える一日のスタート",
+    lead:"忙しい朝を少しでも快適に過ごすため、前日の準備や短時間でできる習慣を取り入れる人が増えています。無理なく続けられる工夫がポイントです。"
+  },
+  {
+    category:"地域",
+    title:"週末のお出かけを楽しむ　身近なスポットに注目",
+    lead:"遠出だけでなく、近場の公園や商業施設、季節の催しを楽しむ過ごし方にも注目が集まっています。移動時間を抑えながら気軽に楽しめるのが魅力です。"
+  },
+  {
+    category:"暮らし",
+    title:"夏の室内を快適に　暑さ対策はこまめな水分補給から",
+    lead:"暑い日が続く時期は、室内でも熱中症への注意が必要です。室温の管理とともに、のどが渇く前の水分補給を意識することが大切です。"
+  },
+  {
+    category:"テクノロジー",
+    title:"スマートフォンをもっと便利に　ホーム画面の使い方を見直す",
+    lead:"よく使う機能をまとめたり、通知を必要なものだけに絞ったりすることで、日々の操作をよりシンプルにすることができます。"
+  }
+];
+let newsArticleIndex=Math.floor(Math.random()*NEWS_ARTICLES.length);
+
+function renderNewsArticle(){
+  const a=NEWS_ARTICLES[newsArticleIndex%NEWS_ARTICLES.length];
+  $("newsCategory").textContent=a.category;
+  $("newsTitle").textContent=a.title;
+  $("newsLead").textContent=a.lead;
+  $("newsMeta").textContent=new Date().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})+" 配信";
+}
+$("newsNextArticle").onclick=()=>{
+  newsArticleIndex=(newsArticleIndex+1)%NEWS_ARTICLES.length;
+  renderNewsArticle();
+  $("newsScroll").scrollTop=0;
+};
+
+function sortedMessageItems(){
+  return [...messageDocs.values()].filter(x=>x.text)
+    .sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+}
+function msgTime(data){
+  return data.createdAt?.toDate
+    ? data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})
+    : "";
+}
+function setDecoyReply(mode,data){
+  const cfg={
+    news:["newsReplyBar","newsReplyText","newsInput"],
+    weather:["weatherReplyBar","weatherReplyText","weatherInput"],
+    teams:["teamsReplyBar","teamsReplyText","teamsInput"]
+  }[mode];
+  if(mode==="news")newsReplyTarget=data;
+  if(mode==="weather")weatherReplyTarget=data;
+  if(mode==="teams")teamsReplyTarget=data;
+  $(cfg[1]).textContent=`${data.senderId}「${(data.text||"").slice(0,30)}」に返信`;
+  $(cfg[0]).classList.remove("hidden");
+  $(cfg[2]).focus();
+}
+function renderExtraDecoyMessages(){
+  const items=sortedMessageItems();
+
+  const nf=$("newsFeed"); if(nf){
+    nf.innerHTML="";
+    items.forEach(data=>{
+      const el=document.createElement("div");el.className="newsComment";
+      el.innerHTML=`<div class="newsCommentHead"><div class="newsName">${escapeHtml(data.uid===currentUID?"自分":data.senderId||"")}</div><div class="newsTime">${escapeHtml(msgTime(data))}</div></div>
+        ${data.replyTo?.text?`<div class="camoReplyQuote">${escapeHtml(data.replyTo.senderId+"："+data.replyTo.text)}</div>`:""}
+        <div class="newsText">${escapeHtml(data.text||"")}</div>`;
+      const meta=document.createElement("div");meta.className="newsMetaLine";
+      const b=document.createElement("button");b.className="newsReplyBtn";b.textContent="返信";b.onclick=()=>setDecoyReply("news",data);
+      meta.appendChild(b);el.appendChild(meta);nf.appendChild(el);
+    });
+  }
+
+  const wf=$("weatherFeed"); if(wf){
+    wf.innerHTML="";
+    items.forEach(data=>{
+      const el=document.createElement("div");el.className="weatherComment";
+      const initial=(data.senderId||"?").slice(0,1).toUpperCase();
+      el.innerHTML=`<div class="weatherCommentHead"><div class="weatherAvatar">${escapeHtml(initial)}</div><div><div class="weatherCommentName">${escapeHtml(data.uid===currentUID?"自分":data.senderId||"")}</div><div class="weatherCommentTime">${escapeHtml(msgTime(data))}</div></div></div>
+        ${data.replyTo?.text?`<div class="camoReplyQuote">${escapeHtml(data.replyTo.senderId+"："+data.replyTo.text)}</div>`:""}
+        <div class="weatherCommentText">${escapeHtml(data.text||"")}</div>`;
+      const meta=document.createElement("div");meta.className="weatherCommentMeta";
+      const b=document.createElement("button");b.textContent="返信";b.onclick=()=>setDecoyReply("weather",data);
+      meta.appendChild(b);el.appendChild(meta);wf.appendChild(el);
+    });
+  }
+
+  const tf=$("teamsFeed"); if(tf){
+    tf.innerHTML="";
+    items.forEach(data=>{
+      const el=document.createElement("div");el.className="teamsPost";
+      const initial=(data.senderId||"?").slice(0,1).toUpperCase();
+      el.innerHTML=`<div class="teamsPostHead"><div class="teamsPostAvatar">${escapeHtml(initial)}</div><div><div class="teamsPostName">${escapeHtml(data.uid===currentUID?"自分":data.senderId||"")}</div><div class="teamsPostTime">${escapeHtml(msgTime(data))}</div></div></div>
+        ${data.replyTo?.text?`<div class="camoReplyQuote">${escapeHtml(data.replyTo.senderId+"："+data.replyTo.text)}</div>`:""}
+        <div class="teamsPostText">${escapeHtml(data.text||"")}</div>`;
+      const acts=document.createElement("div");acts.className="teamsPostActions";
+      const b=document.createElement("button");b.textContent="返信";b.onclick=()=>setDecoyReply("teams",data);
+      acts.appendChild(b);el.appendChild(acts);tf.appendChild(el);
+    });
+  }
+}
+
+async function sendDecoyMessage(mode){
+  const cfg={
+    news:{input:"newsInput",bar:"newsReplyBar",target:()=>newsReplyTarget,clear:()=>newsReplyTarget=null},
+    weather:{input:"weatherInput",bar:"weatherReplyBar",target:()=>weatherReplyTarget,clear:()=>weatherReplyTarget=null},
+    teams:{input:"teamsInput",bar:"teamsReplyBar",target:()=>teamsReplyTarget,clear:()=>teamsReplyTarget=null}
+  }[mode];
+  const input=$(cfg.input),value=input.value.trim();
+  if(!value)return;
+  const target=cfg.target();
+  await addDoc(collection(db,"messages"),{
+    text:value,senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),
+    edited:false,reactions:{},
+    replyTo:target?{id:target.id,senderId:target.senderId,text:(target.text||"").slice(0,150)}:null
+  });
+  input.value="";stopTyping();cfg.clear();$(cfg.bar).classList.add("hidden");
+}
+$("newsSend").onclick=()=>sendDecoyMessage("news");
+$("weatherSend").onclick=()=>sendDecoyMessage("weather");
+$("teamsSend").onclick=()=>sendDecoyMessage("teams");
+$("newsCancelReply").onclick=()=>{newsReplyTarget=null;$("newsReplyBar").classList.add("hidden")};
+$("weatherCancelReply").onclick=()=>{weatherReplyTarget=null;$("weatherReplyBar").classList.add("hidden")};
+$("teamsCancelReply").onclick=()=>{teamsReplyTarget=null;$("teamsReplyBar").classList.add("hidden")};
+
+["newsInput","weatherInput","teamsInput"].forEach(id=>{
+  $(id)?.addEventListener("input",()=>$(id).value.trim()?pulseTyping():stopTyping());
+});
+
+/* Weather via Open-Meteo (API key不要) */
+const FUKUOKA={lat:33.5902,lon:130.4017,label:"福岡"};
+let weatherMode="fukuoka";
+const WMO={
+  0:["快晴","☀️"],1:["晴れ","🌤️"],2:["晴れ時々曇り","⛅"],3:["曇り","☁️"],
+  45:["霧","🌫️"],48:["霧","🌫️"],51:["弱い霧雨","🌦️"],53:["霧雨","🌦️"],55:["強い霧雨","🌧️"],
+  61:["弱い雨","🌦️"],63:["雨","🌧️"],65:["強い雨","🌧️"],66:["凍雨","🌧️"],67:["凍雨","🌧️"],
+  71:["弱い雪","🌨️"],73:["雪","🌨️"],75:["大雪","❄️"],77:["雪","🌨️"],
+  80:["にわか雨","🌦️"],81:["にわか雨","🌧️"],82:["激しいにわか雨","⛈️"],
+  85:["にわか雪","🌨️"],86:["強いにわか雪","❄️"],
+  95:["雷雨","⛈️"],96:["雷雨","⛈️"],99:["激しい雷雨","⛈️"]
+};
+function weatherInfo(code){return WMO[code]||["天気","🌤️"]}
+function fmtDay(iso){return new Date(iso+"T12:00:00").toLocaleDateString("ja-JP",{weekday:"short"})}
+async function fetchWeather(lat,lon,label){
+  $("weatherStatus").textContent="天気を読み込んでいます…";
+  try{
+    const params=new URLSearchParams({
+      latitude:String(lat),longitude:String(lon),
+      current:"temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m",
+      hourly:"temperature_2m,precipitation_probability,weather_code",
+      daily:"weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+      timezone:"auto",forecast_days:"7"
+    });
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`);
+    if(!r.ok)throw new Error("weather http");
+    const d=await r.json();
+    const info=weatherInfo(d.current.weather_code);
+    $("weatherPlace").textContent=label;
+    $("weatherCondition").textContent=info[0];
+    $("weatherIcon").textContent=info[1];
+    $("weatherTemp").textContent=`${Math.round(d.current.temperature_2m)}°`;
+    $("weatherHiLo").textContent=`最高 ${Math.round(d.daily.temperature_2m_max[0])}° / 最低 ${Math.round(d.daily.temperature_2m_min[0])}°`;
+    $("weatherRain").textContent=`${d.daily.precipitation_probability_max[0]??"--"}%`;
+    $("weatherHumidity").textContent=`${d.current.relative_humidity_2m??"--"}%`;
+    $("weatherWind").textContent=`${Math.round((d.current.wind_speed_10m||0)/3.6*10)/10} m/s`;
+
+    const currentHour=new Date(d.current.time).getHours();
+    let start=d.hourly.time.findIndex(t=>new Date(t).getHours()===currentHour&&new Date(t)>=new Date(d.current.time.slice(0,13)+":00"));
+    if(start<0)start=0;
+    $("weatherHourly").innerHTML="";
+    for(let i=start;i<Math.min(start+12,d.hourly.time.length);i++){
+      const tm=new Date(d.hourly.time[i]);
+      const wi=weatherInfo(d.hourly.weather_code[i]);
+      const el=document.createElement("div");el.className="hourItem";
+      el.innerHTML=`<div>${tm.getHours()}時</div><div class="hourIcon">${wi[1]}</div><div class="hourTemp">${Math.round(d.hourly.temperature_2m[i])}°</div><div>${d.hourly.precipitation_probability[i]??0}%</div>`;
+      $("weatherHourly").appendChild(el);
+    }
+
+    $("weatherWeekly").innerHTML="";
+    d.daily.time.forEach((day,i)=>{
+      const wi=weatherInfo(d.daily.weather_code[i]);
+      const el=document.createElement("div");el.className="weekItem";
+      el.innerHTML=`<div>${i===0?"今日":fmtDay(day)}</div><div class="weekWeather">${wi[1]}</div><div>${Math.round(d.daily.temperature_2m_max[i])}° / ${Math.round(d.daily.temperature_2m_min[i])}°</div><div class="weekRain">${d.daily.precipitation_probability_max[i]??0}%</div>`;
+      $("weatherWeekly").appendChild(el);
+    });
+    $("weatherStatus").textContent="";
+  }catch(e){
+    console.error(e);
+    $("weatherStatus").textContent="天気情報を取得できませんでした。";
+  }
+}
+function setWeatherModeButtons(mode){
+  weatherMode=mode;
+  $("weatherFukuoka").classList.toggle("active",mode==="fukuoka");
+  $("weatherCurrent").classList.toggle("active",mode==="current");
+}
+function loadWeather(mode="fukuoka"){
+  if(mode==="fukuoka"){
+    setWeatherModeButtons("fukuoka");
+    fetchWeather(FUKUOKA.lat,FUKUOKA.lon,FUKUOKA.label);
+    return;
+  }
+  setWeatherModeButtons("current");
+  if(!navigator.geolocation){
+    alert("この端末では現在地を取得できません。");loadWeather("fukuoka");return;
+  }
+  $("weatherStatus").textContent="現在地を取得しています…";
+  navigator.geolocation.getCurrentPosition(
+    p=>fetchWeather(p.coords.latitude,p.coords.longitude,"現在地"),
+    ()=>{alert("位置情報を取得できませんでした。福岡を表示します。");loadWeather("fukuoka")},
+    {enableHighAccuracy:false,timeout:10000,maximumAge:300000}
+  );
+}
+$("weatherFukuoka").onclick=()=>loadWeather("fukuoka");
+$("weatherCurrent").onclick=()=>loadWeather("current");
 
 /* READ: only when Talk active AND latest area visible */
 function listenReadStates(){
@@ -2804,229 +3358,282 @@ function listenLocations(){
   });
 }
 
-/* VOICE ROOM - 2-person WebRTC, hidden when inactive */
+/* VOICE CALL v2 - 1対1 / PB前面時だけ着信UI */
 const voiceRoomRef=doc(db,"voiceRooms","main");
 let peerConnection=null,localStream=null,voiceRole=null,voiceJoined=false,voiceMuted=false;
+let currentCallId=null,voiceExpireTimer=null;
 let unsubscribeCallerIce=null,unsubscribeCalleeIce=null,answerListener=null;
-const rtcConfig={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]};
+const rtcConfig={iceServers:[
+  {urls:"stun:stun.l.google.com:19302"},
+  {urls:"stun:stun1.l.google.com:19302"}
+]};
+const CALL_RING_MS=60000;
 
-function roomTimestampMs(data){
-  const ts=data?.updatedAt || data?.createdAt;
-  return ts?.toDate ? ts.toDate().getTime() : 0;
+function newCallId(){return `${Date.now()}-${Math.random().toString(36).slice(2,10)}`}
+function isPBForeground(){
+  return document.visibilityState==="visible"&&pinPassed&&!camouflageMode&&!$("appScreen").classList.contains("hidden");
+}
+function callExpiresMs(d){
+  if(d?.expiresAt?.toDate)return d.expiresAt.toDate().getTime();
+  if(d?.createdAt?.toDate)return d.createdAt.toDate().getTime()+CALL_RING_MS;
+  return 0;
+}
+function setVoiceBarMode(mode,label){
+  const bar=$("voiceBar");
+  bar.classList.remove("incoming","calling","connected");
+  if(mode)bar.classList.add(mode);
+  const dotClass=(mode==="incoming"||mode==="calling")?"ringing":"connected";
+  $("voiceInfo").innerHTML=`<span class="voiceDot ${dotClass}"></span>${escapeHtml(label)}`;
+}
+function hideVoiceBar(){
+  $("voiceBar").classList.add("hidden");
+  $("joinVoice").classList.add("hidden");
+  $("declineVoice").classList.add("hidden");
+  $("muteVoice").classList.add("hidden");
+  $("leaveVoice").classList.add("hidden");
+}
+function clearVoiceExpireTimer(){if(voiceExpireTimer){clearTimeout(voiceExpireTimer);voiceExpireTimer=null}}
+async function clearCollection(name){
+  const snap=await getDocs(collection(db,"voiceRooms","main",name));
+  await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
+}
+function stopVoiceListeners(){
+  if(unsubscribeCallerIce){unsubscribeCallerIce();unsubscribeCallerIce=null}
+  if(unsubscribeCalleeIce){unsubscribeCalleeIce();unsubscribeCalleeIce=null}
+  if(answerListener){answerListener();answerListener=null}
+}
+function closeLocalVoice(){
+  stopVoiceListeners();
+  clearVoiceExpireTimer();
+  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
+  if(peerConnection){peerConnection.close();peerConnection=null}
+  $("remoteAudio").srcObject=null;
+  voiceJoined=false;voiceRole=null;voiceMuted=false;currentCallId=null;
+  $("muteVoice").textContent="🎤";
 }
 async function resetVoiceRoomState(){
   try{
     closeLocalVoice();
-    voiceJoined=false;voiceRole=null;voiceMuted=false;
-    stopVoiceHeartbeat();
     await setDoc(voiceRoomRef,{
-      active:false,callId:null,hostUID:null,hostId:null,participantUID:null,participantId:null,
-      offer:null,answer:null,updatedAt:serverTimestamp(),endedAt:serverTimestamp()
+      active:false,status:"ended",callId:null,callerUID:null,callerId:null,
+      participantUID:null,participantId:null,offer:null,answer:null,
+      endedAt:serverTimestamp(),updatedAt:serverTimestamp()
     },{merge:true});
     await clearCollection("callerCandidates");
     await clearCollection("calleeCandidates");
-    $("voiceBar").classList.add("hidden");
-    $("menuVoice").classList.remove("hidden");
+    hideVoiceBar();$("menuVoice").classList.remove("hidden");
   }catch(e){console.error("voice reset",e)}
 }
-async function resetStaleVoiceIfNeeded(data){
-  if(!data?.active || voiceJoined)return false;
-  const ms=roomTimestampMs(data);
-  if(!ms || Date.now()-ms>VOICE_STALE_MS){
-    await resetVoiceRoomState();
-    return true;
-  }
-  return false;
-}
-function startVoiceHeartbeat(){
-  stopVoiceHeartbeat();
-  voiceHeartbeatTimer=setInterval(async()=>{
-    if(!voiceJoined)return;
-    try{await setDoc(voiceRoomRef,{updatedAt:serverTimestamp()},{merge:true})}catch(e){}
-  },30000);
-}
-function stopVoiceHeartbeat(){
-  if(voiceHeartbeatTimer){clearInterval(voiceHeartbeatTimer);voiceHeartbeatTimer=null}
-}
-function listenVoiceRoom(){
-  if(unsubscribeVoice)unsubscribeVoice();
-  unsubscribeVoice=onSnapshot(voiceRoomRef,async snap=>{
-    if(!snap.exists()||!snap.data().active){
-      if(!voiceJoined)$("voiceBar").classList.add("hidden");
-      $("leaveVoice").textContent="退出";
-      $("declineVoice").classList.add("hidden");
-      $("menuVoice").classList.remove("hidden");
-      return;
-    }
-    const d=snap.data();
-    if(await resetStaleVoiceIfNeeded(d))return;
-
-    $("menuVoice").classList.add("hidden");
-    if(voiceJoined){
-      $("voiceBar").classList.remove("hidden");
-      $("voiceInfo").innerHTML='<span class="voiceDot"></span>通話中';
-      $("joinVoice").classList.add("hidden");
-      $("declineVoice").classList.add("hidden");
-      $("muteVoice").classList.remove("hidden");
-      $("leaveVoice").classList.remove("hidden");
-      $("leaveVoice").textContent=voiceRole==="host"?"終了":"退出";
-    }else{
-      const callId=d.callId||"legacy";
-      const age=Date.now()-roomTimestampMs(d);
-      const incoming=d.hostUID!==currentUID;
-      const visible=pinPassed && !document.hidden && incoming && age<VOICE_INVITE_MS && dismissedVoiceCallId!==callId;
-      $("voiceBar").classList.toggle("hidden",!visible);
-      if(visible){
-        $("voiceInfo").innerHTML=`<span class="voiceDot"></span>📞 ${escapeHtml(d.hostId||"相手")}から通話のお誘い`;
-        $("joinVoice").classList.remove("hidden");
-        $("declineVoice").classList.remove("hidden");
-        $("muteVoice").classList.add("hidden");
-        $("leaveVoice").classList.add("hidden");
-      }
-    }
+async function prepareAudio(callId){
+  localStream=await navigator.mediaDevices.getUserMedia({
+    audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false
   });
-}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-async function clearCollection(name){
-  const snap=await getDocs(collection(db,"voiceRooms","main",name));await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
-}
-async function prepareAudio(){
-  localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
   peerConnection=new RTCPeerConnection(rtcConfig);
   localStream.getTracks().forEach(t=>peerConnection.addTrack(t,localStream));
-  peerConnection.ontrack=e=>{const a=$("remoteAudio");a.srcObject=e.streams[0];a.play().catch(()=>{})};
+  peerConnection.ontrack=e=>{
+    const a=$("remoteAudio");a.srcObject=e.streams[0];a.play().catch(()=>{});
+  };
+  peerConnection.onconnectionstatechange=async()=>{
+    if(!peerConnection)return;
+    const state=peerConnection.connectionState;
+    if(state==="connected"){
+      setVoiceBarMode("connected","通話中");
+      $("muteVoice").classList.remove("hidden");
+      $("leaveVoice").classList.remove("hidden");
+      $("leaveVoice").textContent="終了";
+      try{
+        const s=await getDoc(voiceRoomRef);
+        if(s.data()?.callId===callId)await setDoc(voiceRoomRef,{status:"connected",updatedAt:serverTimestamp()},{merge:true});
+      }catch(e){}
+    }
+    if(state==="failed"){
+      alert("音声接続に失敗しました。通信環境を確認してください。");
+      finishVoiceCall("failed");
+    }
+  };
+}
+async function addLocalIce(which,callId,candidate){
+  await addDoc(collection(db,"voiceRooms","main",which),{
+    callId,candidate:candidate.toJSON(),createdAt:serverTimestamp()
+  });
+}
+function listenRemoteIce(which,callId){
+  return onSnapshot(collection(db,"voiceRooms","main",which),snap=>{
+    snap.docChanges().forEach(ch=>{
+      if(ch.type!=="added"||!peerConnection)return;
+      const d=ch.doc.data();
+      if(d.callId!==callId)return;
+      peerConnection.addIceCandidate(new RTCIceCandidate(d.candidate)).catch(console.warn);
+    });
+  });
+}
+function scheduleCallerExpiry(callId){
+  clearVoiceExpireTimer();
+  voiceExpireTimer=setTimeout(async()=>{
+    const s=await getDoc(voiceRoomRef),d=s.data();
+    if(d?.active&&d.callId===callId&&d.status==="ringing"){
+      await setDoc(voiceRoomRef,{active:false,status:"expired",endedAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+    }
+  },CALL_RING_MS+1000);
 }
 async function openVoiceRoom(){
   try{
-    const cur=await getDoc(voiceRoomRef);if(cur.exists()&&cur.data().active){alert("すでにルームが開かれています");return}
-    await clearCollection("callerCandidates");await clearCollection("calleeCandidates");await prepareAudio();
-    voiceRole="host";voiceJoined=true;
-    $("voiceBar").classList.remove("hidden");
-    $("voiceInfo").innerHTML='<span class="voiceDot"></span>通話中・相手を待っています';
-    $("joinVoice").classList.add("hidden");
-    $("declineVoice").classList.add("hidden");
-    $("muteVoice").classList.remove("hidden");
-    $("leaveVoice").classList.remove("hidden");
-    $("leaveVoice").textContent="終了";
-    peerConnection.onicecandidate=async e=>{if(e.candidate)await addDoc(collection(db,"voiceRooms","main","callerCandidates"),e.candidate.toJSON())};
-    const offer=await peerConnection.createOffer();await peerConnection.setLocalDescription(offer);
-    const callId=(crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    dismissedVoiceCallId=null;
-    await setDoc(voiceRoomRef,{active:true,callId,hostUID:currentUID,hostId:currentId,participantUID:null,participantId:null,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),offer:{type:offer.type,sdp:offer.sdp},answer:null});
-    startVoiceHeartbeat();
-    unsubscribeCalleeIce=onSnapshot(collection(db,"voiceRooms","main","calleeCandidates"),s=>s.docChanges().forEach(c=>{if(c.type==="added")peerConnection?.addIceCandidate(new RTCIceCandidate(c.doc.data())).catch(console.error)}));
-    answerListener=onSnapshot(voiceRoomRef,async s=>{const d=s.data();if(peerConnection&&d?.answer&&!peerConnection.currentRemoteDescription)await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer))});
-  }catch(e){console.error(e);closeLocalVoice();voiceJoined=false;alert("マイクを開始できませんでした。マイク許可を確認してください。")}
-}
-$("declineVoice").onclick=async()=>{
-  try{
-    const snap=await getDoc(voiceRoomRef);
-    if(snap.exists())dismissedVoiceCallId=snap.data().callId||"legacy";
-  }catch(e){}
-  $("voiceBar").classList.add("hidden");
-};
-$("joinVoice").onclick=async()=>{
-  try{
-    const snap=await getDoc(voiceRoomRef);if(!snap.exists()||!snap.data().active){alert("ルームは終了しています");return}
-    const room=snap.data();
-    if(room.hostUID===currentUID){return}
-    if(Date.now()-roomTimestampMs(room)>VOICE_INVITE_MS){alert("この通話のお誘いは終了しました");return}
-    if(!room.offer){alert("通話の準備ができていません");return}
-    dismissedVoiceCallId=null;
-    await prepareAudio();voiceRole="participant";voiceJoined=true;
-    $("voiceBar").classList.remove("hidden");
-    $("voiceInfo").innerHTML='<span class="voiceDot"></span>通話中';
-    $("joinVoice").classList.add("hidden");
-    $("declineVoice").classList.add("hidden");
-    $("muteVoice").classList.remove("hidden");
-    $("leaveVoice").classList.remove("hidden");
-    $("leaveVoice").textContent="退出";
-    peerConnection.onicecandidate=async e=>{if(e.candidate)await addDoc(collection(db,"voiceRooms","main","calleeCandidates"),e.candidate.toJSON())};
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(room.offer));
-    const answer=await peerConnection.createAnswer();await peerConnection.setLocalDescription(answer);
-    await updateDoc(voiceRoomRef,{answer:{type:answer.type,sdp:answer.sdp},participantUID:currentUID,participantId:currentId,updatedAt:serverTimestamp()});
-    startVoiceHeartbeat();
-    unsubscribeCallerIce=onSnapshot(collection(db,"voiceRooms","main","callerCandidates"),s=>s.docChanges().forEach(c=>{if(c.type==="added")peerConnection?.addIceCandidate(new RTCIceCandidate(c.doc.data())).catch(console.error)}));
-  }catch(e){console.error(e);closeLocalVoice();voiceJoined=false;alert("ボイスルームに参加できませんでした。")}
-};
-$("muteVoice").onclick=()=>{
-  if(!localStream)return;voiceMuted=!voiceMuted;localStream.getAudioTracks().forEach(t=>t.enabled=!voiceMuted);$("muteVoice").textContent=voiceMuted?"🔇":"🎤";
-};
-$("leaveVoice").onclick=()=>leaveVoiceRoom(true);
-async function leaveVoiceRoom(updateFirestore=true){
-  if(!voiceJoined)return;
-
-  const wasHost = voiceRole==="host";
-
-  closeLocalVoice();
-  stopVoiceHeartbeat();
-  voiceJoined=false;
-  voiceRole=null;
-  voiceMuted=false;
-
-  $("muteVoice").textContent="🎤";
-  $("muteVoice").classList.add("hidden");
-  $("leaveVoice").classList.add("hidden");
-  $("leaveVoice").textContent="退出";
-
-  if(updateFirestore){
-    try{
-      if(wasHost){
-        // 開催者が抜ける = ルーム自体を終了
-        await setDoc(
-          voiceRoomRef,
-          {
-            active:false,
-            hostUID:null,
-            hostId:null,
-            participantUID:null,
-            participantId:null,
-            offer:null,
-            answer:null,
-            endedAt:serverTimestamp(),
-            updatedAt:serverTimestamp()
-          },
-          {merge:true}
-        );
-        await clearCollection("callerCandidates");
-        await clearCollection("calleeCandidates");
-      }else{
-        // 参加者が抜ける = 参加者だけ退出
-        await setDoc(
-          voiceRoomRef,
-          {
-            participantUID:null,
-            participantId:null,
-            answer:null,
-            updatedAt:serverTimestamp()
-          },
-          {merge:true}
-        );
-        await clearCollection("calleeCandidates");
-      }
-    }catch(e){
-      console.error("ボイスルーム退出処理:",e);
+    const old=await getDoc(voiceRoomRef),od=old.data();
+    if(od?.active&&["ringing","connecting","connected"].includes(od.status)){
+      alert("すでに通話のお誘いがあります。");return;
     }
-  }
 
-  const r=await getDoc(voiceRoomRef);
+    const callId=newCallId();currentCallId=callId;
+    await clearCollection("callerCandidates");await clearCollection("calleeCandidates");
+    await prepareAudio(callId);
+    voiceRole="caller";voiceJoined=true;
 
-  if(!r.exists()||!r.data().active){
-    $("voiceBar").classList.add("hidden");
-    $("menuVoice").classList.remove("hidden");
-  }else{
-    $("voiceBar").classList.add("hidden");
-    $("joinVoice").classList.remove("hidden");
+    peerConnection.onicecandidate=e=>{
+      if(e.candidate)addLocalIce("callerCandidates",callId,e.candidate).catch(console.warn);
+    };
+    const offer=await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    await setDoc(voiceRoomRef,{
+      active:true,callId,status:"ringing",
+      callerUID:currentUID,callerId:currentId,
+      participantUID:null,participantId:null,
+      createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
+      expiresAt:Timestamp.fromDate(new Date(Date.now()+CALL_RING_MS)),
+      offer:{type:offer.type,sdp:offer.sdp},answer:null
+    });
+
+    setVoiceBarMode("calling","呼び出し中…");
+    $("voiceBar").classList.remove("hidden");
+    $("joinVoice").classList.add("hidden");$("declineVoice").classList.add("hidden");
+    $("muteVoice").classList.add("hidden");$("leaveVoice").classList.remove("hidden");
+    $("leaveVoice").textContent="中止";$("menuVoice").classList.add("hidden");
+
+    unsubscribeCalleeIce=listenRemoteIce("calleeCandidates",callId);
+    answerListener=onSnapshot(voiceRoomRef,async snap=>{
+      const d=snap.data();
+      if(!peerConnection||d?.callId!==callId)return;
+      if(d.status==="declined"){
+        alert("今回は参加しないようです。");
+        closeLocalVoice();hideVoiceBar();$("menuVoice").classList.remove("hidden");return;
+      }
+      if(d.answer&&!peerConnection.currentRemoteDescription){
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer));
+      }
+      if(!d.active&&voiceJoined){
+        closeLocalVoice();hideVoiceBar();$("menuVoice").classList.remove("hidden");
+      }
+    });
+    scheduleCallerExpiry(callId);
+  }catch(e){
+    console.error(e);closeLocalVoice();hideVoiceBar();$("menuVoice").classList.remove("hidden");
+    alert("音声通話を開始できませんでした。マイク許可を確認してください。");
   }
 }
-function closeLocalVoice(){
-  if(unsubscribeCallerIce){unsubscribeCallerIce();unsubscribeCallerIce=null}
-  if(unsubscribeCalleeIce){unsubscribeCalleeIce();unsubscribeCalleeIce=null}
-  if(answerListener){answerListener();answerListener=null}
-  if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
-  if(peerConnection){peerConnection.close();peerConnection=null}
-  $("remoteAudio").srcObject=null;
+async function joinVoiceCall(){
+  try{
+    const snap=await getDoc(voiceRoomRef),room=snap.data();
+    if(!room?.active||room.status!=="ringing"||room.callerUID===currentUID){
+      alert("この通話のお誘いは終了しています。");hideVoiceBar();return;
+    }
+    if(callExpiresMs(room)&&Date.now()>callExpiresMs(room)){await declineVoiceCall("expired");return}
+
+    currentCallId=room.callId;await prepareAudio(room.callId);
+    voiceRole="participant";voiceJoined=true;
+    peerConnection.onicecandidate=e=>{
+      if(e.candidate)addLocalIce("calleeCandidates",room.callId,e.candidate).catch(console.warn);
+    };
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(room.offer));
+    const answer=await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+    await setDoc(voiceRoomRef,{
+      status:"connecting",participantUID:currentUID,participantId:currentId,
+      answer:{type:answer.type,sdp:answer.sdp},updatedAt:serverTimestamp()
+    },{merge:true});
+
+    unsubscribeCallerIce=listenRemoteIce("callerCandidates",room.callId);
+    setVoiceBarMode("connected","接続中…");
+    $("joinVoice").classList.add("hidden");$("declineVoice").classList.add("hidden");
+    $("muteVoice").classList.remove("hidden");$("leaveVoice").classList.remove("hidden");
+    $("leaveVoice").textContent="終了";
+  }catch(e){
+    console.error(e);closeLocalVoice();hideVoiceBar();$("menuVoice").classList.remove("hidden");
+    alert("音声通話に参加できませんでした。マイク許可を確認してください。");
+  }
 }
+async function declineVoiceCall(reason="declined"){
+  try{
+    const s=await getDoc(voiceRoomRef),d=s.data();
+    if(d?.active&&d.callerUID!==currentUID){
+      await setDoc(voiceRoomRef,{active:false,status:reason,endedAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+    }
+  }catch(e){console.warn(e)}
+  hideVoiceBar();
+}
+async function finishVoiceCall(reason="ended"){
+  const callId=currentCallId;
+  closeLocalVoice();
+  try{
+    const s=await getDoc(voiceRoomRef);
+    if(s.data()?.callId===callId){
+      await setDoc(voiceRoomRef,{active:false,status:reason,endedAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+    }
+  }catch(e){console.warn(e)}
+  hideVoiceBar();$("menuVoice").classList.remove("hidden");
+}
+function renderVoiceSnapshot(d){
+  if(!d?.active){
+    if(!voiceJoined)hideVoiceBar();
+    $("menuVoice").classList.remove("hidden");return;
+  }
+  if(d.status==="ringing"&&callExpiresMs(d)&&Date.now()>callExpiresMs(d)){
+    if(d.callerUID===currentUID)setDoc(voiceRoomRef,{active:false,status:"expired",endedAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true}).catch(()=>{});
+    hideVoiceBar();return;
+  }
+
+  $("menuVoice").classList.add("hidden");
+  if(d.callerUID===currentUID){
+    if(!voiceJoined)return;
+    $("voiceBar").classList.remove("hidden");
+    setVoiceBarMode(d.status==="ringing"?"calling":"connected",
+      d.status==="ringing"?"呼び出し中…":d.status==="connected"?"通話中":"接続中…");
+    return;
+  }
+
+  if(d.status==="ringing"&&!voiceJoined){
+    if(!isPBForeground()){hideVoiceBar();return}
+    setVoiceBarMode("incoming","📞 通話のお誘い");
+    $("voiceBar").classList.remove("hidden");
+    $("joinVoice").classList.remove("hidden");$("declineVoice").classList.remove("hidden");
+    $("muteVoice").classList.add("hidden");$("leaveVoice").classList.add("hidden");
+    return;
+  }
+
+  if(voiceJoined){
+    $("voiceBar").classList.remove("hidden");
+    setVoiceBarMode("connected",d.status==="connected"?"通話中":"接続中…");
+  }else hideVoiceBar();
+}
+function listenVoiceRoom(){
+  if(unsubscribeVoice)unsubscribeVoice();
+  unsubscribeVoice=onSnapshot(voiceRoomRef,s=>renderVoiceSnapshot(s.data()));
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+$("joinVoice").onclick=joinVoiceCall;
+$("declineVoice").onclick=()=>declineVoiceCall("declined");
+$("muteVoice").onclick=()=>{
+  if(!localStream)return;
+  voiceMuted=!voiceMuted;localStream.getAudioTracks().forEach(t=>t.enabled=!voiceMuted);
+  $("muteVoice").textContent=voiceMuted?"🔇":"🎤";
+};
+$("leaveVoice").onclick=()=>finishVoiceCall("ended");
+
+document.addEventListener("visibilitychange",async()=>{
+  if(document.hidden){if(!voiceJoined)hideVoiceBar();return}
+  try{const s=await getDoc(voiceRoomRef);renderVoiceSnapshot(s.data())}catch(e){}
+});
+
 
 /* Initial calendar */
 calendarDate=new Date();selectedDate=new Date();renderCalendar();renderSelectedDay();
@@ -3038,6 +3645,9 @@ const pinLockObserver=new MutationObserver(()=>{
   if(locked){
     window.scrollTo(0,0);
     $("camoScreen")?.classList.add("hidden");
+    $("newsScreen")?.classList.add("hidden");
+    $("weatherScreen")?.classList.add("hidden");
+    $("teamsScreen")?.classList.add("hidden");
     $("camoLoginScreen")?.classList.add("hidden");
     $("appScreen")?.classList.add("hidden");
     $("loginScreen")?.classList.add("hidden");
