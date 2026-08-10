@@ -1283,6 +1283,128 @@ body.pinLocked{
 #weatherTypingIndicator{background:rgba(255,255,255,.95)}
 #teamsTypingIndicator{background:#e6e6ee}
 
+
+/* =========================================================
+   v3.5.1
+   ========================================================= */
+
+/* 共通：カモフラージュの3点メニュー */
+.decoyMenuButton{
+  border:0;background:none;color:inherit;font-size:22px;line-height:1;
+  padding:6px 8px;flex-shrink:0
+}
+#decoyMenu{
+  position:fixed;right:12px;top:58px;z-index:25000;
+  width:180px;background:#fff;color:#222;border-radius:12px;
+  box-shadow:0 5px 24px rgba(0,0,0,.25);overflow:hidden
+}
+#decoyMenu button{
+  width:100%;border:0;background:#fff;text-align:left;
+  padding:13px 14px;font-size:13px
+}
+
+/* 9402 / 9403: 過去コメント追加 */
+.loadOlderComments{
+  display:block;margin:8px auto 16px;border:1px solid #ddd;background:#fff;
+  border-radius:16px;padding:7px 14px;color:#666;font-size:11px
+}
+#weatherLoadOlder{border-color:#d6e5f1;color:#3573a7}
+
+/* 9404 Teams: 投稿カードではなく普通のチャット */
+.teamsFeed{
+  display:flex;flex-direction:column;gap:5px;padding:11px 9px 18px
+}
+.teamsChatRow{display:flex;flex-direction:column;align-items:flex-start}
+.teamsChatRow.mine{align-items:flex-end}
+.teamsChatName{font-size:9px;color:#777;margin:0 5px 2px}
+.teamsChatLine{display:flex;align-items:flex-end;gap:5px;max-width:94%}
+.teamsChatRow.mine .teamsChatLine{flex-direction:row-reverse}
+.teamsChatBubble{
+  max-width:72vw;background:#fff;border:1px solid #ddd;border-radius:5px;
+  padding:7px 9px;font-size:13px;line-height:1.42;white-space:pre-wrap;word-break:break-word
+}
+.teamsChatRow.mine .teamsChatBubble{background:#e9e8ff;border-color:#d6d4f6}
+.teamsChatMeta{font-size:9px;color:#999;white-space:nowrap;padding-bottom:2px}
+.teamsReplyQuote{
+  max-width:68vw;border-left:2px solid #b7b6dc;padding:3px 6px;
+  margin-bottom:3px;font-size:10px;color:#777;background:rgba(255,255,255,.5)
+}
+
+/* 9405 Notes風 */
+#notesDecoyScreen{background:#f7f7f2;color:#1c1c1e}
+.notesDecoyHeader{
+  flex-shrink:0;background:#f7f7f2;border-bottom:1px solid #e5e3dc;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(10px + env(safe-area-inset-top)) 12px 9px
+}
+.notesDecoyBack{font-size:14px;color:#c58b00}
+.notesDecoyTitle{font-size:18px;font-weight:800}
+.notesDecoyBody{padding:18px 17px 80px}
+.notesDecoyHeading{font-size:25px;font-weight:800;margin-bottom:4px}
+.notesDecoyUpdated{font-size:10px;color:#aaa;margin-bottom:16px}
+.notesEntry{padding:10px 0;border-bottom:1px solid #e8e6de}
+.notesEntryHead{display:flex;justify-content:space-between;gap:8px;margin-bottom:4px}
+.notesEntryName{font-size:10px;font-weight:800;color:#8f6800}
+.notesEntryTime{font-size:9px;color:#aaa}
+.notesEntryText{font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.notesEntryMeta{margin-top:5px}
+.notesEntryMeta button{border:0;background:none;color:#b07a00;padding:0;font-size:10px}
+#notesDecoyReplyBar{background:#fffef8;border-top:1px solid #e5e3dc}
+#notesDecoyScreen .decoyCommentBox{background:#fffef8;border-top:1px solid #ddd9cc}
+#notesDecoyScreen .decoyCommentBox textarea{
+  background:#fff;color:#111;border:1px solid #d8d2c1;border-radius:10px;padding:9px 11px
+}
+#notesDecoyScreen .decoyCommentBox button{
+  background:#e5a600;color:#fff;border-radius:10px;padding:10px 13px;font-weight:700
+}
+#notesTypingIndicator{background:#ece8dc;margin-left:17px}
+
+/* 行きたい場所 */
+#placesPanel{
+  position:fixed;inset:0;z-index:15000;background:#f4f5f7;
+  display:flex;flex-direction:column
+}
+.placesHeader{
+  flex-shrink:0;background:#111;color:#fff;
+  padding:calc(10px + env(safe-area-inset-top)) 12px 9px;
+  display:flex;align-items:center;justify-content:space-between
+}
+.placesHeader button{border:0;background:none;color:#fff;font-size:14px;padding:5px}
+.placesTitle{font-size:17px;font-weight:800}
+.placesToolbar{
+  flex-shrink:0;background:#fff;border-bottom:1px solid #ddd;
+  padding:8px 10px;display:flex;gap:6px
+}
+.placeFilter{
+  flex:1;border:1px solid #ddd;background:#fff;border-radius:16px;padding:7px;
+  font-size:11px
+}
+.placeFilter.active{background:#111;color:#fff;border-color:#111}
+#placesList{padding:10px;overflow-y:auto;flex:1;min-height:0}
+.placeCard{
+  background:#fff;border-radius:14px;padding:12px;margin-bottom:9px;
+  box-shadow:0 1px 5px rgba(0,0,0,.055)
+}
+.placeTop{display:flex;justify-content:space-between;gap:9px}
+.placeCategory{font-size:10px;color:#888;margin-bottom:3px}
+.placeName{font-size:15px;font-weight:800}
+.placePriority{font-size:12px;color:#d79a00;white-space:nowrap}
+.placeMemo{font-size:12px;line-height:1.5;color:#555;margin-top:6px;white-space:pre-wrap}
+.placeLink{display:inline-block;margin-top:5px;font-size:10px;color:#3367b0;text-decoration:none}
+.placeMeta{font-size:9px;color:#aaa;margin-top:7px}
+.placeActions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.placeActions button{
+  border:1px solid #ddd;background:#fff;border-radius:14px;padding:5px 8px;
+  font-size:10px;color:#555
+}
+.placeActions button.wantOn{background:#fff2f4;border-color:#efb8c0;color:#b3263c}
+.placeActions button.primaryAction{background:#111;color:#fff;border-color:#111}
+.placeEmpty{text-align:center;color:#999;font-size:12px;padding:30px 10px}
+#placeModal .modal select{
+  width:100%;padding:12px;border:1px solid #ccc;border-radius:12px;font-size:16px;
+  box-sizing:border-box;margin-bottom:8px
+}
+
 </style>
 </head>
 <body>
@@ -1346,7 +1468,7 @@ body.pinLocked{
   <div class="newsHeader">
     <div class="newsBrandRow">
       <div class="newsBrand">Daily News</div>
-      <div class="newsHeaderIcon">☰</div>
+      <button class="decoyMenuButton" aria-label="メニュー">⋯</button>
     </div>
     <div class="newsNav"><span>トップ</span><span>国内</span><span>経済</span><span>暮らし</span><span>エンタメ</span><span>スポーツ</span></div>
   </div>
@@ -1360,6 +1482,7 @@ body.pinLocked{
     </article>
     <div class="newsCommentsTitle">この記事へのコメント</div>
     <div id="newsFeed" class="newsFeed"></div>
+    <button id="newsLoadOlder" class="loadOlderComments hidden">以前のコメントを表示</button>
     <div id="newsTypingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
   </div>
   <div id="newsReplyBar" class="decoyReplyBar hidden"><span id="newsReplyText"></span><button id="newsCancelReply">×</button></div>
@@ -1370,9 +1493,12 @@ body.pinLocked{
   <div class="weatherHeader">
     <div class="weatherTopRow">
       <div class="weatherBrand">Weather</div>
-      <div class="weatherModeBtns">
-        <button id="weatherFukuoka" class="active">福岡</button>
-        <button id="weatherCurrent">現在地</button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="weatherModeBtns">
+          <button id="weatherFukuoka" class="active">福岡</button>
+          <button id="weatherCurrent">現在地</button>
+        </div>
+        <button class="decoyMenuButton" aria-label="メニュー">⋯</button>
       </div>
     </div>
   </div>
@@ -1399,6 +1525,7 @@ body.pinLocked{
     </div>
     <div class="weatherCommentsTitle">天気についてのコメント</div>
     <div id="weatherFeed" class="weatherFeed"></div>
+    <button id="weatherLoadOlder" class="loadOlderComments hidden">以前のコメントを表示</button>
     <div id="weatherTypingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
   </div>
   <div id="weatherReplyBar" class="decoyReplyBar hidden"><span id="weatherReplyText"></span><button id="weatherCancelReply">×</button></div>
@@ -1407,7 +1534,7 @@ body.pinLocked{
 
 <section id="teamsScreen" class="decoyScreen hidden">
   <div class="teamsHeader">
-    <div class="teamsHeaderTop"><div class="teamsBrand">Teams</div><div class="teamsAvatar">PB</div></div>
+    <div class="teamsHeaderTop"><div class="teamsBrand">Teams</div><div style="display:flex;align-items:center;gap:5px"><div class="teamsAvatar">PB</div><button class="decoyMenuButton" aria-label="メニュー">⋯</button></div></div>
     <div class="teamsSearch">検索</div>
   </div>
   <div class="teamsTabs"><div>アクティビティ</div><div class="active">チャット</div><div>Teams</div><div>予定表</div></div>
@@ -1419,6 +1546,66 @@ body.pinLocked{
   <div id="teamsReplyBar" class="decoyReplyBar hidden"><span id="teamsReplyText"></span><button id="teamsCancelReply">×</button></div>
   <div class="decoyCommentBox"><textarea id="teamsInput" rows="1" placeholder="新しい投稿"></textarea><button id="teamsSend">送信</button></div>
 </section>
+
+
+<section id="notesDecoyScreen" class="decoyScreen hidden">
+  <div class="notesDecoyHeader">
+    <div class="notesDecoyBack">＜ メモ</div>
+    <div class="notesDecoyTitle">メモ</div>
+    <button class="decoyMenuButton" aria-label="メニュー">⋯</button>
+  </div>
+  <div id="notesDecoyScroll" class="decoyScroll notesDecoyBody">
+    <div class="notesDecoyHeading">共有メモ</div>
+    <div id="notesDecoyUpdated" class="notesDecoyUpdated"></div>
+    <div id="notesDecoyFeed"></div>
+    <div id="notesTypingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
+  </div>
+  <div id="notesDecoyReplyBar" class="decoyReplyBar hidden"><span id="notesDecoyReplyText"></span><button id="notesDecoyCancelReply">×</button></div>
+  <div class="decoyCommentBox"><textarea id="notesDecoyInput" rows="1" placeholder="メモを追加…"></textarea><button id="notesDecoySend">追加</button></div>
+</section>
+
+<div id="decoyMenu" class="hidden">
+  <button id="decoyLockButton">🔒 PIN画面に戻る</button>
+</div>
+
+<section id="placesPanel" class="hidden">
+  <div class="placesHeader">
+    <button id="closePlaces">‹ 戻る</button>
+    <div class="placesTitle">行きたい場所</div>
+    <button id="openPlaceModal">＋ 追加</button>
+  </div>
+  <div class="placesToolbar">
+    <button class="placeFilter active" data-placefilter="want">行きたい</button>
+    <button class="placeFilter" data-placefilter="visited">行った</button>
+  </div>
+  <div id="placesList"></div>
+</section>
+
+<div id="placeModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3 id="placeModalTitle">行きたい場所を追加</h3>
+    <input id="placeNameInput" placeholder="場所名">
+    <select id="placeCategoryInput">
+      <option value="🍴 ごはん">🍴 ごはん</option>
+      <option value="☕ カフェ">☕ カフェ</option>
+      <option value="🎡 遊び・おでかけ">🎡 遊び・おでかけ</option>
+      <option value="🏨 旅行・泊まり">🏨 旅行・泊まり</option>
+      <option value="🛍 買い物">🛍 買い物</option>
+      <option value="📌 その他">📌 その他</option>
+    </select>
+    <select id="placePriorityInput">
+      <option value="1">行きたい度 ♡</option>
+      <option value="2" selected>行きたい度 ♡♡</option>
+      <option value="3">行きたい度 ♡♡♡</option>
+    </select>
+    <textarea id="placeMemoInput" rows="3" placeholder="ひとことメモ（任意）"></textarea>
+    <input id="placeUrlInput" type="url" placeholder="URL（任意）">
+    <div class="modalBtns">
+      <button id="cancelPlaceModal">キャンセル</button>
+      <button id="savePlace" class="modalSave">保存</button>
+    </div>
+  </div>
+</div>
 
 <section id="appScreen" class="hidden">
 <header>
@@ -1434,7 +1621,9 @@ body.pinLocked{
     <button id="menuSearch">🔍 メッセージを検索</button>
     <button id="menuDateFilter">📅 日付で見る</button>
     <button id="menuVoice">📞 音声通話を開始</button>
+    <button id="menuPlaces">📍 行きたい場所</button>
     <button id="menuSettings">⚙️ 設定</button>
+    <button id="menuLock">🔒 PIN画面に戻る</button>
     <button id="logoutButton">ログアウト</button>
   </div>
 </header>
@@ -1557,7 +1746,7 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll">
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -1766,7 +1955,9 @@ const $ = id => document.getElementById(id);
 let pin="", pinPassed=false, currentUID="", currentId="";
 let camouflageMode=false, camoReplyTarget=null;
 let decoyMode="";
-let newsReplyTarget=null, weatherReplyTarget=null, teamsReplyTarget=null;
+let newsReplyTarget=null, weatherReplyTarget=null, teamsReplyTarget=null, notesDecoyReplyTarget=null;
+let newsCommentLimit=20, weatherCommentLimit=20;
+let placeDocs=[],placeFilter="want",editingPlace=null,unsubscribePlaces=null;
 let replyTarget=null, editingMessage=null, oldestMessage=null;
 let messageDocs=new Map(), previousNewestMessageId=null, firstMessageLoad=true;
 let readStates={}, locationWatch=null;
@@ -1777,7 +1968,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.5.0";
+const APP_VERSION="3.5.1";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -1815,6 +2006,7 @@ function listenTyping(){
     $("newsTypingIndicator")?.classList.toggle("show",on);
     $("weatherTypingIndicator")?.classList.toggle("show",on);
     $("teamsTypingIndicator")?.classList.toggle("show",on);
+    $("notesTypingIndicator")?.classList.toggle("show",on);
   });
 }
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopTyping()});
@@ -1866,6 +2058,14 @@ function checkPin(){
   }
   if(pin==="9404"){
     camouflageMode=true;decoyMode="teams";
+    pinPassed=true;
+    if(typeof clearHiddenStamp==="function")clearHiddenStamp();
+    $("pinScreen").classList.add("hidden");
+    if(auth.currentUser)showApp(auth.currentUser);else $("camoLoginScreen").classList.remove("hidden");
+    return;
+  }
+  if(pin==="9405"){
+    camouflageMode=true;decoyMode="notes";
     pinPassed=true;
     if(typeof clearHiddenStamp==="function")clearHiddenStamp();
     $("pinScreen").classList.add("hidden");
@@ -1967,7 +2167,7 @@ $("camoLoginPassword").addEventListener("keydown",e=>{
 $("logoutButton").onclick=async()=>{await leaveVoiceRoom(false);await signOut(auth);$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")};
 onAuthStateChanged(auth,user=>{
   if(user&&pinPassed)showApp(user);
-  if(!user&&pinPassed){["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen"].forEach(id=>$(id)?.classList.add("hidden"));if(camouflageMode)$("camoLoginScreen").classList.remove("hidden");else $("loginScreen").classList.remove("hidden")}
+  if(!user&&pinPassed){["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen"].forEach(id=>$(id)?.classList.add("hidden"));if(camouflageMode)$("camoLoginScreen").classList.remove("hidden");else $("loginScreen").classList.remove("hidden")}
 });
 function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
@@ -1976,12 +2176,13 @@ function showApp(user){
   $("loginScreen").classList.add("hidden");
   $("camoLoginScreen").classList.add("hidden");
   $("pinScreen").classList.add("hidden");
-  ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen"].forEach(id=>$(id)?.classList.add("hidden"));
+  ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen"].forEach(id=>$(id)?.classList.add("hidden"));
   if(camouflageMode){
-    const target=decoyMode==="news"?"newsScreen":decoyMode==="weather"?"weatherScreen":decoyMode==="teams"?"teamsScreen":"camoScreen";
+    const target=decoyMode==="news"?"newsScreen":decoyMode==="weather"?"weatherScreen":decoyMode==="teams"?"teamsScreen":decoyMode==="notes"?"notesDecoyScreen":"camoScreen";
     $(target).classList.remove("hidden");
     if(decoyMode==="weather")loadWeather("fukuoka");
     if(decoyMode==="news")renderNewsArticle();
+    if(decoyMode==="notes")renderNotesDecoy();
   }else{
     $("appScreen").classList.remove("hidden");
   }
@@ -2608,10 +2809,7 @@ $("camoSend").onclick=async()=>{
   });
   $("camoInput").value="";stopTyping();camoReplyTarget=null;$("camoReplyBar").classList.add("hidden");
 };
-$("camoExitButton").onclick=()=>{
-  camouflageMode=false;pinPassed=false;pin="";updateDots();
-  $("camoScreen").classList.add("hidden");$("pinScreen").classList.remove("hidden");
-};
+$("camoExitButton").onclick=e=>{e.stopPropagation();$("decoyMenu").classList.toggle("hidden")};
 
 
 
@@ -2678,11 +2876,12 @@ function setDecoyReply(mode,data){
   $(cfg[2]).focus();
 }
 function renderExtraDecoyMessages(){
-  const items=sortedMessageItems();
+  const chronological=sortedMessageItems();
+  const newest=[...chronological].reverse();
 
   const nf=$("newsFeed"); if(nf){
     nf.innerHTML="";
-    items.forEach(data=>{
+    newest.slice(0,newsCommentLimit).forEach(data=>{
       const el=document.createElement("div");el.className="newsComment";
       el.innerHTML=`<div class="newsCommentHead"><div class="newsName">${escapeHtml(data.uid===currentUID?"自分":data.senderId||"")}</div><div class="newsTime">${escapeHtml(msgTime(data))}</div></div>
         ${data.replyTo?.text?`<div class="camoReplyQuote">${escapeHtml(data.replyTo.senderId+"："+data.replyTo.text)}</div>`:""}
@@ -2691,11 +2890,12 @@ function renderExtraDecoyMessages(){
       const b=document.createElement("button");b.className="newsReplyBtn";b.textContent="返信";b.onclick=()=>setDecoyReply("news",data);
       meta.appendChild(b);el.appendChild(meta);nf.appendChild(el);
     });
+    $("newsLoadOlder").classList.toggle("hidden",newest.length<=newsCommentLimit);
   }
 
   const wf=$("weatherFeed"); if(wf){
     wf.innerHTML="";
-    items.forEach(data=>{
+    newest.slice(0,weatherCommentLimit).forEach(data=>{
       const el=document.createElement("div");el.className="weatherComment";
       const initial=(data.senderId||"?").slice(0,1).toUpperCase();
       el.innerHTML=`<div class="weatherCommentHead"><div class="weatherAvatar">${escapeHtml(initial)}</div><div><div class="weatherCommentName">${escapeHtml(data.uid===currentUID?"自分":data.senderId||"")}</div><div class="weatherCommentTime">${escapeHtml(msgTime(data))}</div></div></div>
@@ -2705,21 +2905,28 @@ function renderExtraDecoyMessages(){
       const b=document.createElement("button");b.textContent="返信";b.onclick=()=>setDecoyReply("weather",data);
       meta.appendChild(b);el.appendChild(meta);wf.appendChild(el);
     });
+    $("weatherLoadOlder").classList.toggle("hidden",newest.length<=weatherCommentLimit);
   }
 
   const tf=$("teamsFeed"); if(tf){
     tf.innerHTML="";
-    items.forEach(data=>{
-      const el=document.createElement("div");el.className="teamsPost";
-      const initial=(data.senderId||"?").slice(0,1).toUpperCase();
-      el.innerHTML=`<div class="teamsPostHead"><div class="teamsPostAvatar">${escapeHtml(initial)}</div><div><div class="teamsPostName">${escapeHtml(data.uid===currentUID?"自分":data.senderId||"")}</div><div class="teamsPostTime">${escapeHtml(msgTime(data))}</div></div></div>
-        ${data.replyTo?.text?`<div class="camoReplyQuote">${escapeHtml(data.replyTo.senderId+"："+data.replyTo.text)}</div>`:""}
-        <div class="teamsPostText">${escapeHtml(data.text||"")}</div>`;
-      const acts=document.createElement("div");acts.className="teamsPostActions";
-      const b=document.createElement("button");b.textContent="返信";b.onclick=()=>setDecoyReply("teams",data);
-      acts.appendChild(b);el.appendChild(acts);tf.appendChild(el);
+    chronological.forEach(data=>{
+      const row=document.createElement("div");row.className="teamsChatRow"+(data.uid===currentUID?" mine":"");
+      const name=document.createElement("div");name.className="teamsChatName";name.textContent=data.uid===currentUID?"自分":(data.senderId||"");
+      const line=document.createElement("div");line.className="teamsChatLine";
+      const bubble=document.createElement("div");bubble.className="teamsChatBubble";
+      if(data.replyTo?.text){
+        const q=document.createElement("div");q.className="teamsReplyQuote";q.textContent=`${data.replyTo.senderId}：${data.replyTo.text}`;bubble.appendChild(q);
+      }
+      const body=document.createElement("div");body.textContent=data.text||"";bubble.appendChild(body);
+      bubble.onclick=()=>setDecoyReply("teams",data);
+      const tm=document.createElement("div");tm.className="teamsChatMeta";tm.textContent=msgTime(data);
+      line.append(bubble,tm);row.append(name,line);tf.appendChild(row);
     });
+    if(decoyMode==="teams")requestAnimationFrame(()=>$("teamsScroll").scrollTop=$("teamsScroll").scrollHeight);
   }
+
+  renderNotesDecoy();
 }
 
 async function sendDecoyMessage(mode){
@@ -2835,6 +3042,170 @@ function loadWeather(mode="fukuoka"){
 }
 $("weatherFukuoka").onclick=()=>loadWeather("fukuoka");
 $("weatherCurrent").onclick=()=>loadWeather("current");
+
+
+/* =========================================================
+   v3.5.1 UX / PIN lock / 9405 / Places
+   ========================================================= */
+function returnToPin(){
+  try{stopTyping()}catch(e){}
+  if(typeof voiceJoined!=="undefined"&&voiceJoined){finishVoiceCall("ended").catch(()=>{})}
+  camouflageMode=false;decoyMode="";
+  pinPassed=false;pin="";updateDots();$("pinError").textContent="";
+  $("decoyMenu")?.classList.add("hidden");
+  $("placesPanel")?.classList.add("hidden");
+  ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","loginScreen","camoLoginScreen"].forEach(id=>$(id)?.classList.add("hidden"));
+  $("pinScreen").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+$("menuLock").onclick=()=>{ $("headerMenu").classList.add("hidden");returnToPin() };
+
+document.querySelectorAll(".decoyMenuButton").forEach(btn=>{
+  btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const m=$("decoyMenu");
+    m.classList.toggle("hidden");
+  });
+});
+$("decoyLockButton").onclick=returnToPin;
+document.addEventListener("click",e=>{
+  if(!$("decoyMenu")?.classList.contains("hidden")&&!$("decoyMenu").contains(e.target)&&!e.target.closest(".decoyMenuButton")){
+    $("decoyMenu").classList.add("hidden");
+  }
+});
+/* 9401の旧「直接PINへ戻る」処理を上書き */
+$("camoExitButton").onclick=e=>{e.stopPropagation();$("decoyMenu").classList.toggle("hidden")};
+
+/* 9402 / 9403: 最新20件を上に */
+$("newsLoadOlder").onclick=()=>{newsCommentLimit+=20;renderExtraDecoyMessages()};
+$("weatherLoadOlder").onclick=()=>{weatherCommentLimit+=20;renderExtraDecoyMessages()};
+
+/* 9405 Notes */
+function renderNotesDecoy(){
+  const feed=$("notesDecoyFeed");if(!feed)return;
+  const items=sortedMessageItems();
+  feed.innerHTML="";
+  items.forEach(data=>{
+    const el=document.createElement("div");el.className="notesEntry";
+    const head=document.createElement("div");head.className="notesEntryHead";
+    const n=document.createElement("div");n.className="notesEntryName";n.textContent=data.uid===currentUID?"自分":(data.senderId||"");
+    const t=document.createElement("div");t.className="notesEntryTime";t.textContent=msgTime(data);
+    head.append(n,t);el.appendChild(head);
+    if(data.replyTo?.text){
+      const q=document.createElement("div");q.className="teamsReplyQuote";q.textContent=`${data.replyTo.senderId}：${data.replyTo.text}`;el.appendChild(q);
+    }
+    const b=document.createElement("div");b.className="notesEntryText";b.textContent=data.text||"";el.appendChild(b);
+    const meta=document.createElement("div");meta.className="notesEntryMeta";
+    const r=document.createElement("button");r.textContent="返信";r.onclick=()=>{
+      notesDecoyReplyTarget=data;
+      $("notesDecoyReplyText").textContent=`${data.senderId}「${(data.text||"").slice(0,30)}」に返信`;
+      $("notesDecoyReplyBar").classList.remove("hidden");$("notesDecoyInput").focus();
+    };
+    meta.appendChild(r);el.appendChild(meta);feed.appendChild(el);
+  });
+  $("notesDecoyUpdated").textContent=`${items.length}件のメモ`;
+}
+$("notesDecoySend").onclick=async()=>{
+  const value=$("notesDecoyInput").value.trim();if(!value)return;
+  await addDoc(collection(db,"messages"),{
+    text:value,senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),edited:false,reactions:{},
+    replyTo:notesDecoyReplyTarget?{id:notesDecoyReplyTarget.id,senderId:notesDecoyReplyTarget.senderId,text:(notesDecoyReplyTarget.text||"").slice(0,150)}:null
+  });
+  $("notesDecoyInput").value="";stopTyping();notesDecoyReplyTarget=null;$("notesDecoyReplyBar").classList.add("hidden");
+};
+$("notesDecoyCancelReply").onclick=()=>{notesDecoyReplyTarget=null;$("notesDecoyReplyBar").classList.add("hidden")};
+$("notesDecoyInput").addEventListener("input",()=>$("notesDecoyInput").value.trim()?pulseTyping():stopTyping());
+
+/* 行きたい場所 */
+function placeCategoryEmoji(cat){return cat||"📌 その他"}
+function renderPlaces(){
+  const list=$("placesList");if(!list)return;
+  const items=placeDocs.filter(p=>placeFilter==="visited"?!!p.visited:!p.visited);
+  list.innerHTML="";
+  if(!items.length){list.innerHTML=`<div class="placeEmpty">${placeFilter==="visited"?"まだ「行った」場所はありません":"行きたい場所を追加してみよう 📍"}</div>`;return}
+  items.forEach(p=>{
+    const card=document.createElement("div");card.className="placeCard";
+    const top=document.createElement("div");top.className="placeTop";
+    const left=document.createElement("div");
+    const cat=document.createElement("div");cat.className="placeCategory";cat.textContent=placeCategoryEmoji(p.category);
+    const name=document.createElement("div");name.className="placeName";name.textContent=p.name||"";
+    left.append(cat,name);
+    const pri=document.createElement("div");pri.className="placePriority";pri.textContent="♡".repeat(Number(p.priority||2));
+    top.append(left,pri);card.appendChild(top);
+    if(p.memo){const m=document.createElement("div");m.className="placeMemo";m.textContent=p.memo;card.appendChild(m)}
+    if(p.url){const a=document.createElement("a");a.className="placeLink";a.href=p.url;a.target="_blank";a.rel="noopener";a.textContent="リンクを開く ↗";card.appendChild(a)}
+    const meta=document.createElement("div");meta.className="placeMeta";meta.textContent=`${p.senderId||""}${p.visited&&p.visitedAt?.toDate?" ・ "+p.visitedAt.toDate().toLocaleDateString("ja-JP"):""}`;card.appendChild(meta);
+
+    const actions=document.createElement("div");actions.className="placeActions";
+    const wants=p.wants||{},wanted=!!wants[currentUID],wantCount=Object.values(wants).filter(Boolean).length;
+    const want=document.createElement("button");want.className=wanted?"wantOn":"";want.textContent=`${wanted?"♥":"♡"} 行きたい${wantCount?` ${wantCount}`:""}`;
+    want.onclick=async()=>{
+      const next={...(p.wants||{})};if(next[currentUID])delete next[currentUID];else next[currentUID]=true;
+      await updateDoc(doc(db,"places",p.id),{wants:next});
+    };
+    actions.appendChild(want);
+
+    if(!p.visited){
+      const sched=document.createElement("button");sched.textContent="📅 予定に追加";sched.onclick=()=>{
+        $("placesPanel").classList.add("hidden");
+        openScheduleEditor();
+        $("scheduleTitleInput").value=p.name||"";
+        $("scheduleMemoInput").value=[p.memo,p.url].filter(Boolean).join("\n");
+      };
+      const visited=document.createElement("button");visited.className="primaryAction";visited.textContent="✓ 行った！";
+      visited.onclick=()=>updateDoc(doc(db,"places",p.id),{visited:true,visitedAt:serverTimestamp()});
+      actions.append(sched,visited);
+    }else{
+      const back=document.createElement("button");back.textContent="↩ 行きたいに戻す";back.onclick=()=>updateDoc(doc(db,"places",p.id),{visited:false,visitedAt:null});
+      actions.appendChild(back);
+    }
+
+    if(p.uid===currentUID){
+      const edit=document.createElement("button");edit.textContent="📝";edit.onclick=()=>openPlaceEditor(p);
+      const del=document.createElement("button");del.textContent="🗑";del.onclick=async()=>{if(confirm("この場所を削除しますか？"))await deleteDoc(doc(db,"places",p.id))};
+      actions.append(edit,del);
+    }
+    card.appendChild(actions);list.appendChild(card);
+  });
+}
+function openPlaceEditor(p=null){
+  editingPlace=p;
+  $("placeModalTitle").textContent=p?"場所を編集":"行きたい場所を追加";
+  $("placeNameInput").value=p?.name||"";
+  $("placeCategoryInput").value=p?.category||"🍴 ごはん";
+  $("placePriorityInput").value=String(p?.priority||2);
+  $("placeMemoInput").value=p?.memo||"";
+  $("placeUrlInput").value=p?.url||"";
+  $("placeModal").classList.remove("hidden");
+}
+function listenPlaces(){
+  if(unsubscribePlaces)unsubscribePlaces();
+  unsubscribePlaces=onSnapshot(query(collection(db,"places"),orderBy("createdAt","desc")),snap=>{
+    placeDocs=snap.docs.map(d=>({id:d.id,...d.data()}));renderPlaces();
+  },e=>{console.warn("places",e);$("placesList").innerHTML='<div class="placeEmpty">場所リストを読み込めませんでした。</div>'});
+}
+$("menuPlaces").onclick=()=>{
+  $("headerMenu").classList.add("hidden");$("placesPanel").classList.remove("hidden");renderPlaces();
+};
+$("closePlaces").onclick=()=>$("placesPanel").classList.add("hidden");
+$("openPlaceModal").onclick=()=>openPlaceEditor();
+$("cancelPlaceModal").onclick=()=>$("placeModal").classList.add("hidden");
+$("placeModal").addEventListener("click",e=>{if(e.target===$("placeModal"))$("placeModal").classList.add("hidden")});
+$("savePlace").onclick=async()=>{
+  const name=$("placeNameInput").value.trim();if(!name){alert("場所名を入力してください");return}
+  const payload={
+    name,category:$("placeCategoryInput").value,priority:Number($("placePriorityInput").value),
+    memo:$("placeMemoInput").value.trim(),url:$("placeUrlInput").value.trim()
+  };
+  if(editingPlace)await updateDoc(doc(db,"places",editingPlace.id),payload);
+  else await addDoc(collection(db,"places"),{
+    ...payload,uid:currentUID,senderId:currentId,visited:false,wants:{[currentUID]:true},createdAt:serverTimestamp()
+  });
+  editingPlace=null;$("placeModal").classList.add("hidden");
+};
+document.querySelectorAll(".placeFilter").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".placeFilter").forEach(x=>x.classList.remove("active"));b.classList.add("active");placeFilter=b.dataset.placefilter;renderPlaces();
+});
 
 /* READ: only when Talk active AND latest area visible */
 function listenReadStates(){
@@ -3648,6 +4019,7 @@ const pinLockObserver=new MutationObserver(()=>{
     $("newsScreen")?.classList.add("hidden");
     $("weatherScreen")?.classList.add("hidden");
     $("teamsScreen")?.classList.add("hidden");
+    $("notesDecoyScreen")?.classList.add("hidden");
     $("camoLoginScreen")?.classList.add("hidden");
     $("appScreen")?.classList.add("hidden");
     $("loginScreen")?.classList.add("hidden");
