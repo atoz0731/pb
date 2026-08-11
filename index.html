@@ -1609,6 +1609,10 @@ body.pinLocked{
     </select>
     <textarea id="placeMemoInput" rows="3" placeholder="ひとことメモ（任意）"></textarea>
     <input id="placeUrlInput" type="url" placeholder="URL（任意）">
+    <label style="display:flex;align-items:center;justify-content:space-between;padding:10px 2px 6px;font-size:14px">
+      <span>最初から「行った」にする</span>
+      <input id="placeVisitedInput" type="checkbox" style="width:24px;height:24px">
+    </label>
     <div class="modalBtns">
       <button id="cancelPlaceModal">キャンセル</button>
       <button id="savePlace" class="modalSave">保存</button>
@@ -1755,7 +1759,7 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -1977,7 +1981,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.5.3";
+const APP_VERSION="3.5.4";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -3185,13 +3189,29 @@ function openPlaceEditor(p=null){
   $("placePriorityInput").value=String(p?.priority||2);
   $("placeMemoInput").value=p?.memo||"";
   $("placeUrlInput").value=p?.url||"";
+  $("placeVisitedInput").checked=!!p?.visited;
   $("placeModal").classList.remove("hidden");
 }
 function listenPlaces(){
   if(unsubscribePlaces)unsubscribePlaces();
-  unsubscribePlaces=onSnapshot(query(collection(db,"places"),orderBy("createdAt","desc")),snap=>{
-    placeDocs=snap.docs.map(d=>({id:d.id,...d.data()}));renderPlaces();
-  },e=>{console.warn("places",e);$("placesList").innerHTML='<div class="placeEmpty">場所リストを読み込めませんでした。</div>'});
+  const applySnap=(snap)=>{
+    placeDocs=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    renderPlaces();
+  };
+  const onErr=(e)=>{
+    console.warn("places ordered query",e);
+    try{
+      if(unsubscribePlaces)unsubscribePlaces();
+      unsubscribePlaces=onSnapshot(collection(db,"places"),applySnap,err=>{
+        console.warn("places fallback",err);
+        $("placesList").innerHTML='<div class="placeEmpty">場所リストを読み込めませんでした。Firestoreの権限設定を確認してください。</div>';
+      });
+    }catch(err){
+      $("placesList").innerHTML='<div class="placeEmpty">場所リストを読み込めませんでした。</div>';
+    }
+  };
+  unsubscribePlaces=onSnapshot(query(collection(db,"places"),orderBy("createdAt","desc")),applySnap,onErr);
 }
 $("menuPlaces").onclick=()=>{
   $("headerMenu").classList.add("hidden");$("placesPanel").classList.remove("hidden");renderPlaces();
@@ -3201,16 +3221,53 @@ $("openPlaceModal").onclick=()=>openPlaceEditor();
 $("cancelPlaceModal").onclick=()=>$("placeModal").classList.add("hidden");
 $("placeModal").addEventListener("click",e=>{if(e.target===$("placeModal"))$("placeModal").classList.add("hidden")});
 $("savePlace").onclick=async()=>{
-  const name=$("placeNameInput").value.trim();if(!name){alert("場所名を入力してください");return}
+  const name=$("placeNameInput").value.trim();
+  if(!name){alert("場所名を入力してください");return}
+
+  const visited=$("placeVisitedInput").checked;
   const payload={
-    name,category:$("placeCategoryInput").value,priority:Number($("placePriorityInput").value),
-    memo:$("placeMemoInput").value.trim(),url:$("placeUrlInput").value.trim()
+    name,
+    category:$("placeCategoryInput").value,
+    priority:Number($("placePriorityInput").value),
+    memo:$("placeMemoInput").value.trim(),
+    url:$("placeUrlInput").value.trim(),
+    visited
   };
-  if(editingPlace)await updateDoc(doc(db,"places",editingPlace.id),payload);
-  else await addDoc(collection(db,"places"),{
-    ...payload,uid:currentUID,senderId:currentId,visited:false,wants:{[currentUID]:true},createdAt:serverTimestamp()
-  });
-  editingPlace=null;$("placeModal").classList.add("hidden");
+
+  try{
+    if(editingPlace){
+      await updateDoc(doc(db,"places",editingPlace.id),{
+        ...payload,
+        visitedAt:visited ? (editingPlace.visitedAt || serverTimestamp()) : null
+      });
+    }else{
+      await addDoc(collection(db,"places"),{
+        ...payload,
+        uid:currentUID,
+        senderId:currentId,
+        wants:visited ? {} : {[currentUID]:true},
+        visitedAt:visited ? serverTimestamp() : null,
+        createdAt:serverTimestamp()
+      });
+    }
+
+    editingPlace=null;
+    $("placeModal").classList.add("hidden");
+    $("placeNameInput").value="";
+    $("placeMemoInput").value="";
+    $("placeUrlInput").value="";
+    $("placeVisitedInput").checked=false;
+
+    /* 登録先タブへ自動切替 */
+    placeFilter=visited ? "visited" : "want";
+    document.querySelectorAll(".placeFilter").forEach(b=>{
+      b.classList.toggle("active",b.dataset.placefilter===placeFilter);
+    });
+    renderPlaces();
+  }catch(e){
+    console.error("place save",e);
+    alert("場所を保存できませんでした。Firestoreの権限設定を確認してください。");
+  }
 };
 document.querySelectorAll(".placeFilter").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".placeFilter").forEach(x=>x.classList.remove("active"));b.classList.add("active");placeFilter=b.dataset.placefilter;renderPlaces();
