@@ -1759,7 +1759,7 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -1981,7 +1981,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.5.4";
+const APP_VERSION="3.5.6";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -2204,7 +2204,7 @@ function showApp(user){
   updateUpdateBadge();
   if(!appInitialized){
     appInitialized=true;
-    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();
+    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();listenPlaces();
   }
 }
 
@@ -3175,7 +3175,20 @@ function renderPlaces(){
 
     if(p.uid===currentUID){
       const edit=document.createElement("button");edit.textContent="📝";edit.onclick=()=>openPlaceEditor(p);
-      const del=document.createElement("button");del.textContent="🗑";del.onclick=async()=>{if(confirm("この場所を削除しますか？"))await deleteDoc(doc(db,"places",p.id))};
+      const del=document.createElement("button");del.textContent="🗑";del.onclick=async()=>{
+        if(!confirm("この場所を削除しますか？"))return;
+        const before=[...placeDocs];
+        placeDocs=placeDocs.filter(x=>x.id!==p.id);
+        renderPlaces();
+        try{
+          await deleteDoc(doc(db,"places",p.id));
+        }catch(e){
+          console.error("place delete",e);
+          placeDocs=before;
+          renderPlaces();
+          alert("削除できませんでした。Firestoreの権限設定を確認してください。");
+        }
+      };
       actions.append(edit,del);
     }
     card.appendChild(actions);list.appendChild(card);
@@ -3214,7 +3227,10 @@ function listenPlaces(){
   unsubscribePlaces=onSnapshot(query(collection(db,"places"),orderBy("createdAt","desc")),applySnap,onErr);
 }
 $("menuPlaces").onclick=()=>{
-  $("headerMenu").classList.add("hidden");$("placesPanel").classList.remove("hidden");renderPlaces();
+  $("headerMenu").classList.add("hidden");
+  $("placesPanel").classList.remove("hidden");
+  if(!unsubscribePlaces)listenPlaces();
+  renderPlaces();
 };
 $("closePlaces").onclick=()=>$("placesPanel").classList.add("hidden");
 $("openPlaceModal").onclick=()=>openPlaceEditor();
