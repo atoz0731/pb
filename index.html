@@ -1406,48 +1406,12 @@ body.pinLocked{
 }
 
 
-/* v3.5.2: 0814 / 9401 safe-area trial */
-#appScreen{
-  position:fixed!important;
-  inset:0!important;
-  width:100vw!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  overflow:hidden!important;
-  background:#f7f7f7!important;
-  z-index:9000!important;
-  display:flex!important;
-  flex-direction:column!important;
+/* v3.5.3: Safe Area試験を撤回。モーダルを確実に最前面へ */
+.modalOverlay{
+  z-index:20000!important;
 }
-#appScreen.hidden{display:none!important}
-#appScreen > header,
-#appScreen .appHeader,
-#appScreen .topHeader{
-  padding-top:calc(14px + env(safe-area-inset-top))!important;
-  background:#111!important;
-  flex-shrink:0!important;
-}
-#appScreen .tabs,
-#appScreen .tabBar,
-#appScreen .page{background:#f7f7f7}
-
-#camoScreen{
-  position:fixed!important;
-  inset:0!important;
-  width:100vw!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  overflow:hidden!important;
-  background:#000!important;
-  z-index:10000!important;
-  display:flex!important;
-  flex-direction:column!important;
-}
-#camoScreen.hidden{display:none!important}
-#camoScreen .camoTop{
-  padding-top:calc(10px + env(safe-area-inset-top))!important;
-  background:#000!important;
-  flex-shrink:0!important;
+#scheduleModal{
+  z-index:21000!important;
 }
 
 </style>
@@ -1791,7 +1755,7 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.2</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>0814通常PBの黒ヘッダーをSafe Areaまで伸ばす全画面方式を試験導入</li><li>9401も同じ全画面方式で黒ヘッダーを最上部まで伸ばすよう調整</li><li>9402〜9405の配色は変更なし</li><li>9401〜9405の三点リーダーは即PIN画面に戻る動作へ変更</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -2013,7 +1977,7 @@ let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.5.2";
+const APP_VERSION="3.5.3";
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -3253,7 +3217,7 @@ document.querySelectorAll(".placeFilter").forEach(b=>b.onclick=()=>{
 });
 
 
-/* v3.5.2: camouflage ellipsis returns immediately to PIN */
+/* v3.5.3: 9401〜9405 の「…」は即PINへ戻る */
 document.querySelectorAll(".decoyMenuButton").forEach(btn=>{
   btn.onclick=(e)=>{
     e.preventDefault();
@@ -3261,7 +3225,11 @@ document.querySelectorAll(".decoyMenuButton").forEach(btn=>{
     returnToPin();
   };
 });
-$("camoExitButton").onclick=(e)=>{e.preventDefault();e.stopPropagation();returnToPin()};
+$("camoExitButton").onclick=(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  returnToPin();
+};
 
 /* READ: only when Talk active AND latest area visible */
 function listenReadStates(){
@@ -3715,7 +3683,11 @@ $("scheduleAllDayInput").onchange=()=>{
     $("scheduleEndDateInput").value=$("scheduleDateInput").value;
   }
 };
-$("openScheduleModal").onclick=()=>openScheduleEditor();
+$("openScheduleModal").onclick=(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  openScheduleEditor();
+};
 $("scheduleDateInput").onchange=()=>{
   if($("scheduleAllDayInput").checked){
     const start=$("scheduleDateInput").value;
