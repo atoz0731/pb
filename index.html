@@ -493,6 +493,41 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .modalBtns button{flex:1;border:0;border-radius:10px;padding:11px}
 .modalSave{background:#111;color:#fff;font-weight:700}
 
+
+/* APP-INTERNAL NOTIFICATIONS */
+async function createNotice(type,targetUid,title,body,targetId){
+  try{await addDoc(collection(db,"notifications"),{type,targetUid,title,body,targetId,actorUid:currentUID,actorId:currentId,createdAt:serverTimestamp()})}catch(e){console.warn("notice",e)}
+}
+function listenNotifications(){
+  if(unsubscribeNotifications)unsubscribeNotifications();
+  notificationReadAt=Number(localStorage.getItem(`pb.noticeRead.${currentUID}`)||0);
+  unsubscribeNotifications=onSnapshot(query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(100)),snap=>{
+    notifications=snap.docs.map(d=>({id:d.id,...d.data()})).filter(n=>n.actorUid!==currentUID&&(n.targetUid==="all"||n.targetUid===currentUID));
+    renderNotifications();updateNotificationBadge();
+  },e=>console.warn("notifications",e));
+}
+function noticeMillis(n){return n.createdAt?.toMillis?.()||0}
+function updateNotificationBadge(){
+  const count=notifications.filter(n=>noticeMillis(n)>notificationReadAt).length;
+  const b=$("notificationMenuBadge");b.textContent=count>99?"99+":String(count);b.classList.toggle("hidden",!count);
+  const total=(pbSettings.badge?unreadTalkCount:0)+count;
+  if(navigator.setAppBadge){if(total)navigator.setAppBadge(total).catch(()=>{});else navigator.clearAppBadge?.().catch(()=>{})}
+}
+function renderNotifications(){
+  const box=$("notificationsList");if(!box)return;box.innerHTML="";
+  if(!notifications.length){box.innerHTML='<div class="small" style="padding:14px">お知らせはありません。</div>';return}
+  notifications.forEach(n=>{
+    const b=document.createElement("button");b.className="noticeItem"+(noticeMillis(n)>notificationReadAt?" unread":"");
+    b.innerHTML=`<div class="noticeTitle">${escapeHtml(n.title||"お知らせ")}</div><div class="noticeBody">${escapeHtml(n.body||"")}</div><div class="noticeTime">${n.createdAt?.toDate?n.createdAt.toDate().toLocaleString("ja-JP"):""}</div>`;
+    b.onclick=()=>{
+      $("notificationsPanel").classList.add("hidden");
+      if(n.type==="location_start")$("locationSharingIcon").click();
+      else if(n.type==="schedule_comment"){document.querySelector('.tab[data-page="schedulePage"]')?.click()}
+      else if(n.type==="solo_comment"){document.querySelector('.tab[data-page="soloPage"]')?.click()}
+    };box.appendChild(b);
+  });
+}
+
 /* LOCATION */
 .locationCard{margin:15px;padding:18px;background:#fff;border-radius:18px}
 .locationTop{display:flex;justify-content:space-between;align-items:center}
@@ -1414,6 +1449,51 @@ body.pinLocked{
   z-index:21000!important;
 }
 
+
+/* =========================================================
+   v3.5.7 Calendar weekend/holiday + location last position
+   ========================================================= */
+.headerLocationIcon{
+  border:0;background:none;color:#fff;font-size:17px;padding:5px 3px;
+  line-height:1;cursor:pointer
+}
+.headerLocationIcon.sharingPulse{animation:locationPulse 1.7s ease-in-out infinite}
+@keyframes locationPulse{0%,100%{opacity:.65}50%{opacity:1}}
+
+.weekdays .weekday:first-child{color:#d43a3a;font-weight:800}
+.weekdays .weekday:last-child{color:#3575cf;font-weight:800}
+.dayCell .dayNumber.sunday,
+.dayCell .dayNumber.holiday{color:#d43a3a!important}
+.dayCell .dayNumber.saturday{color:#3575cf!important}
+.dayCell.otherMonth .dayNumber.sunday,
+.dayCell.otherMonth .dayNumber.holiday,
+.dayCell.otherMonth .dayNumber.saturday{opacity:.42}
+.holidayName{
+  font-size:7px;line-height:1.05;color:#d43a3a;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin:1px 0 1px
+}
+.memberLocation{
+  padding:11px 0;border-bottom:1px solid #eee
+}
+.memberLocation:last-child{border-bottom:0}
+.locationStatus{
+  display:inline-block;margin-left:6px;padding:2px 6px;border-radius:10px;
+  font-size:9px;font-weight:700;vertical-align:1px
+}
+.locationStatus.live{background:#e8f7ed;color:#18753a}
+.locationStatus.last{background:#f0f0f0;color:#777}
+
+
+/* v3.6.0 */
+.imagePickButton{border:0;background:#eee;border-radius:50%;width:34px;height:34px;flex:0 0 34px;font-size:22px;line-height:30px}
+.imagePlaceholder{min-width:150px;min-height:92px;border:1px dashed #aaa;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;background:#f7f7f7;color:#555;font-size:12px}
+.imagePlaceholder img{display:block;max-width:min(68vw,360px);max-height:420px;border-radius:10px}
+.scheduleComments{margin-top:8px;padding-top:7px;border-top:1px solid #eee}
+.noticeItem{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #eee;background:#fff;padding:12px}
+.noticeItem.unread{background:#fff9e8}
+.noticeTitle{font-weight:800;font-size:13px}.noticeBody{font-size:12px;margin-top:3px}.noticeTime{font-size:9px;color:#999;margin-top:4px}
+
 </style>
 </head>
 <body>
@@ -1627,10 +1707,12 @@ body.pinLocked{
     <div class="userLabel"><span id="userLabel"></span>　<span id="appVersionLabel"></span></div>
   </div>
   <div class="headerRight">
+    <button id="locationSharingIcon" class="headerLocationIcon hidden" aria-label="位置情報共有中" title="位置情報共有中">📍</button>
     <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
     <button id="headerMenuButton" class="headerIcon" aria-label="メニュー">⋯</button>
   </div>
   <div id="headerMenu" class="headerMenu hidden">
+    <button id="menuNotifications">🔔 お知らせ <span id="notificationMenuBadge" class="unreadBadge hidden">0</span></button>
     <button id="menuSearch">🔍 メッセージを検索</button>
     <button id="menuDateFilter">📅 日付で見る</button>
     <button id="menuVoice">📞 音声通話を開始</button>
@@ -1668,7 +1750,7 @@ body.pinLocked{
   </div>
 
   <div id="messages" class="scroll">
-    <button id="loadMore">過去のトークを読み込む</button>
+    <button id="loadMore">↑ 過去のメッセージを100件読み込む</button>
     <div id="messageList"></div>
   </div>
 
@@ -1679,6 +1761,8 @@ body.pinLocked{
 
   <div id="typingIndicator" class="typingIndicator"><i></i><i></i><i></i></div>
 <div class="composer">
+    <button id="pickImage" class="imagePickButton" aria-label="画像を送信">＋</button>
+    <input id="imageInput" type="file" accept="image/*" class="hidden">
     <textarea id="messageInput" rows="1" placeholder="メッセージ"></textarea>
     <button id="sendMessage" class="send">➤</button>
   </div>
@@ -1753,13 +1837,14 @@ body.pinLocked{
       </div>
     </div>
     <div class="locationCard">
-      <strong>共有中のメンバー</strong>
+      <strong>共有位置</strong>
+      <div class="small" style="margin-top:4px">共有終了後も最後に共有された位置を確認できます</div>
       <div id="locations"></div>
     </div>
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -1778,8 +1863,17 @@ body.pinLocked{
     <button id="closeMessageSearch">‹ 戻る</button>
     <input id="messageSearchInput" type="search" placeholder="メッセージを検索">
   </div>
-  <div id="messageSearchHint" class="searchHint">現在読み込まれているメッセージから検索します。</div>
+  <div id="messageSearchHint" class="searchHint">全履歴を検索します。検索時だけFirestoreを追加で読み込みます。</div>
   <div id="messageSearchResults" class="searchResults"></div>
+</div>
+
+<div id="notificationsPanel" class="searchPanel hidden">
+  <div class="searchHeader">
+    <button id="closeNotifications">‹ 戻る</button>
+    <strong style="flex:1">お知らせ</strong>
+    <button id="markAllNotificationsRead">すべて既読</button>
+  </div>
+  <div id="notificationsList" class="searchResults"></div>
 </div>
 
 <div id="dateFilterModal" class="modalOverlay hidden">
@@ -1870,6 +1964,19 @@ body.pinLocked{
       </select>
     </div>
 
+    <div class="settingsGroup">ストレージ・デバッグ</div>
+    <div class="settingRow">
+      <div>
+        <div class="settingText">Firestore使用量（推定）</div>
+        <div id="storageEstimateText" class="settingSub">未計算</div>
+      </div>
+      <button id="calculateStorage" type="button">計算</button>
+    </div>
+    <div id="storageEstimateBar" style="height:8px;background:#eee;border-radius:8px;overflow:hidden;margin:6px 0 4px">
+      <div id="storageEstimateFill" style="height:100%;width:0;background:#555"></div>
+    </div>
+    <div class="settingsNote">Firebaseコンソールの実使用量ではなく、PBが読み取れるドキュメントサイズからの概算です。計算時は全件読み取りが発生します。画像は30日で削除対象になります。</div>
+
     <div class="settingsGroup">音声通話</div>
     <button id="resetVoiceRoom" class="dangerButton">音声通話をリセット</button>
     <div class="settingsNote">通話表示がおかしい場合だけ使用してください。</div>
@@ -1948,7 +2055,7 @@ import {
 import {
   getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot,
   serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc, startAfter,
-  getDocs, arrayUnion, arrayRemove, where, Timestamp
+  getDocs, arrayUnion, arrayRemove, where, Timestamp, documentId, startAt, endAt
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1978,10 +2085,19 @@ let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleFilt
 let soloPosts=[], soloFilter="all", notes=[], editingNote=null;
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
-let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null;
+let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
+let notifications=[], notificationReadAt=0, locationStartNotified=false;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.5.6";
+const APP_VERSION="3.6.0";
+
+const shortcutWeatherCheck=new URLSearchParams(location.search).get("weathercheck")==="1";
+if(shortcutWeatherCheck){
+  camouflageMode=true;
+  decoyMode="weather";
+  pinPassed=true;
+}
+
 
 const DEFAULT_SETTINGS={
   sound:true,
@@ -2204,7 +2320,7 @@ function showApp(user){
   updateUpdateBadge();
   if(!appInitialized){
     appInitialized=true;
-    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();listenPlaces();
+    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();listenPlaces();listenNotifications();cleanupExpiredImages();
   }
 }
 
@@ -2216,6 +2332,22 @@ $("reloadButton").onclick=()=>{
   if(hasDraft&&!confirm("入力途中の内容があります。再読み込みしますか？"))return;
   location.reload();
 };
+
+$("menuNotifications").onclick=()=>{
+  $("headerMenu").classList.add("hidden");
+  $("notificationsPanel").classList.remove("hidden");
+  notificationReadAt=Date.now();
+  localStorage.setItem(`pb.noticeRead.${currentUID}`,String(notificationReadAt));
+  renderNotifications();
+  updateNotificationBadge();
+};
+$("closeNotifications").onclick=()=>$("notificationsPanel").classList.add("hidden");
+$("markAllNotificationsRead").onclick=()=>{
+  notificationReadAt=Date.now();
+  localStorage.setItem(`pb.noticeRead.${currentUID}`,String(notificationReadAt));
+  renderNotifications();updateNotificationBadge();
+};
+
 $("menuSearch").onclick=()=>{
   $("headerMenu").classList.add("hidden");
   $("messageSearchPanel").classList.remove("hidden");
@@ -2301,6 +2433,27 @@ $("resetVoiceRoom").onclick=async()=>{
   await resetVoiceRoomState();
   alert("音声通話をリセットしました。");
 };
+
+$("calculateStorage").onclick=async()=>{
+  const btn=$("calculateStorage");btn.disabled=true;btn.textContent="計算中…";
+  try{
+    const cols=["messages","messageImages","solo","notes","schedules","places","notifications"];
+    let bytes=0,count=0,images=0,imageBytes=0;
+    for(const c of cols){
+      const snap=await getDocs(collection(db,c));
+      snap.docs.forEach(d=>{
+        const data=d.data();const b=approxBytes(JSON.stringify(data));
+        bytes+=b;count++;
+        if(c==="messageImages"){images++;imageBytes+=Number(data.size||b)}
+      });
+    }
+    const mib=bytes/1024/1024,pct=Math.min(100,mib/1024*100);
+    $("storageEstimateText").textContent=`約 ${mib.toFixed(1)} MB / 1,024 MB　${count.toLocaleString()}件（画像 ${images}件・約 ${(imageBytes/1024/1024).toFixed(1)} MB）`;
+    $("storageEstimateFill").style.width=`${Math.max(.5,pct)}%`;
+  }catch(e){console.error(e);$("storageEstimateText").textContent="計算できませんでした"}
+  finally{btn.disabled=false;btn.textContent="計算"}
+};
+
 $("closeSettings").onclick=()=>$("settingsModal").classList.add("hidden");
 $("settingsModal").addEventListener("click",e=>{if(e.target===$("settingsModal"))$("settingsModal").classList.add("hidden")});
 
@@ -2331,6 +2484,7 @@ function playIncomingSound(){
   }catch(e){console.debug("sound",e)}
 }
 function updateNotificationUI(){
+  setTimeout(()=>{if(typeof updateNotificationBadge==="function")updateNotificationBadge()},0);
   const b=$("talkUnreadBadge");
   if(pbSettings.badge&&unreadTalkCount>0){
     b.textContent=unreadTalkCount>99?"99+":String(unreadTalkCount);b.classList.remove("hidden");
@@ -2446,43 +2600,53 @@ $("messages").addEventListener("scroll",()=>{
 
 /* TALK SEARCH / DATE FILTER */
 function normalizeSearchText(s){return String(s||"").toLocaleLowerCase("ja-JP")}
-function renderMessageSearchResults(term){
-  const box=$("messageSearchResults");
-  const q=normalizeSearchText(term.trim());
-  const items=[...messageDocs.values()]
-    .filter(x=>x.text)
-    .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  const hits=q?items.filter(x=>normalizeSearchText(x.text).includes(q)):items.slice(0,20);
+let searchTimer=null,searchSerial=0;
+async function renderMessageSearchResults(term){
+  const box=$("messageSearchResults"),qtext=normalizeSearchText(term.trim()),serial=++searchSerial;
   box.innerHTML="";
-  if(!hits.length){
-    box.innerHTML='<div class="small" style="padding:12px">該当するメッセージはありません。</div>';
-    return;
-  }
-  hits.slice(0,100).forEach(data=>{
-    const b=document.createElement("button");b.className="searchResult";
-    const m=document.createElement("div");m.className="searchResultMeta";
-    m.textContent=`${data.senderId||""}　${data.createdAt?.toDate?data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):""}`;
-    const t=document.createElement("div");t.className="searchResultText";t.textContent=data.text||"";
-    b.append(m,t);
-    b.onclick=()=>{
-      $("messageSearchPanel").classList.add("hidden");
-      clearTalkDateFilter();
-      requestAnimationFrame(()=>{
-        const el=document.querySelector(`[data-message-id="${data.id}"]`);
-        if(el){
-          el.scrollIntoView({behavior:"smooth",block:"center"});
-          el.animate([{opacity:.4},{opacity:1}],{duration:700});
-        }else{
-          alert("このメッセージは現在の読み込み範囲外です。過去のトークを読み込んでから再検索してください。");
-        }
-      });
-    };
-    box.appendChild(b);
-  });
+  if(!qtext){box.innerHTML='<div class="small" style="padding:12px">検索語を入力してください。</div>';return}
+  box.innerHTML='<div class="small" style="padding:12px">全履歴を検索中…</div>';
+  const hits=[];let cursor=null,batches=0;
+  try{
+    while(batches<50&&hits.length<100){
+      const qq=cursor
+        ?query(collection(db,"messages"),orderBy("createdAt","desc"),startAfter(cursor),limit(250))
+        :query(collection(db,"messages"),orderBy("createdAt","desc"),limit(250));
+      const snap=await getDocs(qq);if(serial!==searchSerial)return;
+      snap.docs.forEach(d=>{const x={id:d.id,...d.data()};if(x.text&&normalizeSearchText(x.text).includes(qtext))hits.push(x)});
+      if(snap.empty||snap.docs.length<250)break;
+      cursor=snap.docs[snap.docs.length-1];batches++;
+    }
+    box.innerHTML="";
+    if(!hits.length){box.innerHTML='<div class="small" style="padding:12px">該当するメッセージはありません。</div>';return}
+    hits.slice(0,100).forEach(data=>{
+      const b=document.createElement("button");b.className="searchResult";
+      const m=document.createElement("div");m.className="searchResultMeta";
+      m.textContent=`${data.senderId||""}　${data.createdAt?.toDate?data.createdAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):""}`;
+      const t=document.createElement("div");t.className="searchResultText";t.textContent=data.text||"";
+      b.append(m,t);b.onclick=()=>jumpToMessageContext(data);box.appendChild(b);
+    });
+  }catch(e){console.error(e);box.innerHTML='<div class="small" style="padding:12px">検索できませんでした。</div>'}
 }
-$("messageSearchInput").addEventListener("input",e=>renderMessageSearchResults(e.target.value));
+async function jumpToMessageContext(data){
+  $("messageSearchPanel").classList.add("hidden");clearTalkDateFilter();
+  try{
+    const targetTime=data.createdAt;
+    const before=await getDocs(query(collection(db,"messages"),orderBy("createdAt","desc"),startAt(targetTime),limit(26)));
+    const after=await getDocs(query(collection(db,"messages"),orderBy("createdAt","asc"),startAt(targetTime),limit(26)));
+    before.docs.concat(after.docs).forEach(d=>messageDocs.set(d.id,{id:d.id,...d.data()}));
+    renderMessages();
+    requestAnimationFrame(()=>{
+      const el=document.querySelector(`[data-message-id="${data.id}"]`);
+      if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.animate([{opacity:.35},{opacity:1}],{duration:900})}
+    });
+  }catch(e){console.error(e);alert("前後のメッセージを読み込めませんでした")}
+}
+$("messageSearchInput").addEventListener("input",e=>{
+  clearTimeout(searchTimer);const v=e.target.value;
+  searchTimer=setTimeout(()=>renderMessageSearchResults(v),450);
+});
 $("closeMessageSearch").onclick=()=>$("messageSearchPanel").classList.add("hidden");
-
 function localDayRange(base){
   const start=new Date(base);start.setHours(0,0,0,0);
   const end=new Date(start);end.setDate(end.getDate()+1);
@@ -2626,11 +2790,17 @@ function renderMessages(){
     }
 
     const body=document.createElement("div");
-    body.textContent=data.text||"";
-    const ec=getEmojiCount(data.text||"");
-    if(ec>=1&&ec<=3){
-      bubble.classList.add("emojiBubble");
-      body.className=`emojiText ${ec===1?"one":ec===2?"two":"three"}`;
+    if(data.type==="image"&&data.imageId){
+      body.className="imagePlaceholder";
+      body.textContent="🖼 写真\nタップして表示";
+      body.onclick=()=>loadMessageImage(body,data);
+    }else{
+      body.textContent=data.text||"";
+      const ec=getEmojiCount(data.text||"");
+      if(ec>=1&&ec<=3){
+        bubble.classList.add("emojiBubble");
+        body.className=`emojiText ${ec===1?"one":ec===2?"two":"three"}`;
+      }
     }
     bubble.appendChild(body);
     stack.appendChild(bubble);
@@ -2750,6 +2920,66 @@ async function removeMessageCompletely(data){
   await deleteDoc(doc(db,"messages",data.id));
   messageDocs.delete(data.id);renderMessages();
 }
+
+function approxBytes(s){return new Blob([String(s||"")]).size}
+async function compressImage(file,maxBytes=280*1024){
+  const bitmap=await createImageBitmap(file);
+  let scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));
+  let quality=.78, blob=null, canvas=document.createElement("canvas");
+  for(let i=0;i<8;i++){
+    canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+    canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+    canvas.getContext("2d").drawImage(bitmap,0,0,canvas.width,canvas.height);
+    blob=await new Promise(r=>canvas.toBlob(r,"image/jpeg",quality));
+    if(blob&&blob.size<=maxBytes)break;
+    if(quality>.45)quality-=.1; else scale*=.82;
+  }
+  if(!blob)throw new Error("画像圧縮に失敗");
+  const dataUrl=await new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(blob)});
+  return {dataUrl,width:canvas.width,height:canvas.height,size:blob.size};
+}
+$("pickImage").onclick=()=>$("imageInput").click();
+$("imageInput").onchange=async()=>{
+  const file=$("imageInput").files?.[0];$("imageInput").value="";
+  if(!file)return;
+  try{
+    $("pickImage").disabled=true;$("pickImage").textContent="…";
+    const im=await compressImage(file);
+    const imageRef=await addDoc(collection(db,"messageImages"),{
+      data:im.dataUrl,size:im.size,width:im.width,height:im.height,
+      uid:currentUID,senderId:currentId,createdAt:serverTimestamp(),
+      expiresAt:Timestamp.fromDate(new Date(Date.now()+30*24*60*60*1000))
+    });
+    await addDoc(collection(db,"messages"),{
+      text:"",type:"image",imageId:imageRef.id,imageSize:im.size,imageWidth:im.width,imageHeight:im.height,
+      senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),edited:false,reactions:{},
+      replyTo:replyTarget?{id:replyTarget.id,senderId:replyTarget.senderId,text:(replyTarget.text||"画像").slice(0,150)}:null
+    });
+    replyTarget=null;$("replyBar").classList.add("hidden");scrollToLatest(true);
+  }catch(e){console.error(e);alert("画像を送信できませんでした")}
+  finally{$("pickImage").disabled=false;$("pickImage").textContent="＋"}
+};
+async function loadMessageImage(holder,data){
+  if(holder.dataset.loaded)return;
+  holder.textContent="画像を読み込み中…";
+  try{
+    const snap=await getDoc(doc(db,"messageImages",data.imageId));
+    if(!snap.exists()){holder.textContent="🖼 この画像は保存期限が終了しました";return}
+    const im=snap.data(),img=document.createElement("img");img.src=im.data;img.alt="共有画像";
+    holder.innerHTML="";holder.appendChild(img);holder.dataset.loaded="1";
+  }catch(e){console.error(e);holder.textContent="画像を読み込めませんでした　タップして再試行"}
+}
+async function cleanupExpiredImages(){
+  const key="pb.imageCleanup";const last=Number(localStorage.getItem(key)||0);
+  if(Date.now()-last<24*60*60*1000)return;
+  localStorage.setItem(key,String(Date.now()));
+  try{
+    const q=query(collection(db,"messageImages"),where("expiresAt","<=",Timestamp.now()),limit(20));
+    const snap=await getDocs(q);
+    await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
+  }catch(e){console.warn("image cleanup",e)}
+}
+
 $("sendMessage").onclick=sendMessage;
 async function sendMessage(){
   const text=$("messageInput").value.trim();if(!text)return;
@@ -2771,7 +3001,7 @@ async function sendMessage(){
 $("loadMore").onclick=async()=>{
   if(!oldestMessage)return;
   const box=$("messages"),oldHeight=box.scrollHeight,oldTop=box.scrollTop;
-  const q=query(collection(db,"messages"),orderBy("createdAt","desc"),startAfter(oldestMessage),limit(50));
+  const q=query(collection(db,"messages"),orderBy("createdAt","desc"),startAfter(oldestMessage),limit(100));
   const snap=await getDocs(q);
   if(snap.empty){$("loadMore").textContent="これより前のトークはありません";return}
   snap.docs.forEach(d=>messageDocs.set(d.id,{id:d.id,...d.data()}));
@@ -3530,6 +3760,7 @@ function toggleComments(post,data){
     const t=input.value.trim();if(!t)return;
     const comments=[...(data.comments||[]),{id:`${currentUID}-${Date.now()}`,uid:currentUID,senderId:currentId,text:t,createdAt:Date.now()}];
     await updateDoc(doc(db,"solo",data.id),{comments});
+    if(data.uid!==currentUID)await createNotice("solo_comment",data.uid,"ひとりごとにコメント",`${currentId}：${t}`,data.id);
   };
   comp.append(input,send);box.appendChild(comp);post.appendChild(box);
 }
@@ -3652,6 +3883,75 @@ function scheduleRangeText(s){
   return `終日 ${sd.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}〜${ed.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}`;
 }
 
+
+/* 日本の祝日判定（固定祝日・ハッピーマンデー・春秋分・振替休日・国民の休日） */
+function nthMonday(year,month,n){
+  const d=new Date(year,month,1);
+  const offset=(8-d.getDay())%7;
+  return new Date(year,month,1+offset+(n-1)*7);
+}
+function equinoxDay(year,type){
+  if(type==="spring")return Math.floor(20.8431+0.242194*(year-1980)-Math.floor((year-1980)/4));
+  return Math.floor(23.2488+0.242194*(year-1980)-Math.floor((year-1980)/4));
+}
+function baseJapaneseHolidays(year){
+  const map={};
+  const add=(m,d,name)=>map[`${year}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`]=name;
+  add(1,1,"元日");
+  let d=nthMonday(year,0,2);add(1,d.getDate(),"成人の日");
+  add(2,11,"建国記念の日");
+  add(2,23,"天皇誕生日");
+  add(3,equinoxDay(year,"spring"),"春分の日");
+  add(4,29,"昭和の日");
+  add(5,3,"憲法記念日");
+  add(5,4,"みどりの日");
+  add(5,5,"こどもの日");
+  d=nthMonday(year,6,3);add(7,d.getDate(),"海の日");
+  add(8,11,"山の日");
+  d=nthMonday(year,8,3);add(9,d.getDate(),"敬老の日");
+  add(9,equinoxDay(year,"autumn"),"秋分の日");
+  d=nthMonday(year,9,2);add(10,d.getDate(),"スポーツの日");
+  add(11,3,"文化の日");
+  add(11,23,"勤労感謝の日");
+  return map;
+}
+function japaneseHolidays(year){
+  const map=baseJapaneseHolidays(year);
+  const keys=()=>Object.keys(map).sort();
+
+  /* 国民の祝日にはさまれた平日は休日 */
+  let changed=true;
+  while(changed){
+    changed=false;
+    const start=new Date(year,0,2),end=new Date(year,11,30);
+    for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){
+      const id=dateId(d);
+      if(map[id]||d.getDay()===0)continue;
+      const p=new Date(d);p.setDate(p.getDate()-1);
+      const n=new Date(d);n.setDate(n.getDate()+1);
+      if(map[dateId(p)]&&map[dateId(n)]){
+        map[id]="休日";changed=true;
+      }
+    }
+  }
+
+  /* 日曜に当たる祝日の振替休日 */
+  for(const id of [...keys()]){
+    const d=new Date(`${id}T00:00:00`);
+    if(d.getDay()!==0)continue;
+    let x=new Date(d);
+    do{x.setDate(x.getDate()+1)}while(map[dateId(x)]);
+    if(x.getFullYear()===year)map[dateId(x)]="振替休日";
+  }
+  return map;
+}
+const holidayCache=new Map();
+function holidayNameFor(d){
+  const y=d.getFullYear();
+  if(!holidayCache.has(y))holidayCache.set(y,japaneseHolidays(y));
+  return holidayCache.get(y)[dateId(d)]||"";
+}
+
 function renderCalendar(){
   $("calendarTitle").textContent=calendarDate.toLocaleDateString("ja-JP",{year:"numeric",month:"long"});
   const grid=$("calendarGrid");grid.innerHTML="";
@@ -3665,7 +3965,15 @@ function renderCalendar(){
     if(d.getMonth()!==m)cell.classList.add("otherMonth");
     if(dateId(d)===dateId(selectedDate))cell.classList.add("selected");
     if(dateId(d)===today)cell.classList.add("today");
-    const n=document.createElement("div");n.className="dayNumber";n.textContent=d.getDate();cell.appendChild(n);
+    const n=document.createElement("div");n.className="dayNumber";n.textContent=d.getDate();
+    const holiday=holidayNameFor(d);
+    if(holiday)n.classList.add("holiday");
+    else if(d.getDay()===0)n.classList.add("sunday");
+    else if(d.getDay()===6)n.classList.add("saturday");
+    cell.appendChild(n);
+    if(holiday&&d.getMonth()===m){
+      const h=document.createElement("div");h.className="holidayName";h.textContent=holiday;cell.appendChild(h);
+    }
     const events=list.filter(s=>eventCoversDate(s,d));
     if((pbSettings.calendarMode||"titles")==="simple"){
       events.slice(0,3).forEach(s=>{
@@ -3711,6 +4019,23 @@ function renderSelectedDay(){
     const memo=document.createElement("div");memo.className="scheduleMemo";memo.textContent=s.memo||"";
     const owner=document.createElement("div");owner.className="scheduleOwner";owner.textContent=`${s.uid===currentUID?"🔵":"🔴"} ${s.senderId}${s.privateOnly?"　🔒自分のみ":""}`;
     c.append(t,title);if(s.memo)c.appendChild(memo);c.appendChild(owner);
+    const sc=document.createElement("div");sc.className="scheduleComments";
+    (s.comments||[]).forEach(cm=>{
+      const r=document.createElement("div");r.className="comment";
+      const meta=document.createElement("div");meta.className="commentMeta";
+      meta.textContent=`${cm.uid===currentUID?"自分":cm.senderId||""}　${cm.createdAt?new Date(cm.createdAt).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):""}`;
+      const tx=document.createElement("div");tx.className="commentText";tx.textContent=cm.text||"";r.append(meta,tx);sc.appendChild(r);
+    });
+    const cc=document.createElement("div");cc.className="commentComposer";
+    const ci=document.createElement("input");ci.placeholder="予定にコメント…";
+    const cb=document.createElement("button");cb.textContent="送信";
+    cb.onclick=async()=>{
+      const val=ci.value.trim();if(!val)return;
+      const comments=[...(s.comments||[]),{id:`${currentUID}-${Date.now()}`,uid:currentUID,senderId:currentId,text:val,createdAt:Date.now()}];
+      await updateDoc(doc(db,"schedules",s.id),{comments});
+      if(s.uid!==currentUID)await createNotice("schedule_comment",s.uid,"予定にコメント",`${currentId}：${val}`,s.id);
+    };
+    cc.append(ci,cb);sc.appendChild(cc);c.appendChild(sc);
     if(s.uid===currentUID){
       const a=document.createElement("div");a.className="scheduleActions";
       const e=document.createElement("button");e.textContent="編集";e.onclick=()=>openScheduleEditor(s);
@@ -3797,36 +4122,89 @@ $("saveSchedule").onclick=async()=>{
 
   const payload={title,memo,startsAt,endsAt,allDay,startDate:date,endDate,privateOnly};
   if(editingSchedule)await updateDoc(doc(db,"schedules",editingSchedule.id),payload);
-  else await addDoc(collection(db,"schedules"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
+  else await addDoc(collection(db,"schedules"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp(),comments:[]});
   $("scheduleModal").classList.add("hidden");editingSchedule=null;
 };
 
 /* LOCATION */
+
+$("locationSharingIcon").onclick=()=>{
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  const tab=document.querySelector('.tab[data-page="locationPage"]');
+  tab?.classList.add("active");
+  ["talkPage","soloPage","schedulePage","locationPage","updatesPage"].forEach(p=>$(p).classList.add("hidden"));
+  $("locationPage").classList.remove("hidden");
+};
+
 $("locationSwitch").onclick=async()=>{
   if(locationWatch!==null){
-    navigator.geolocation.clearWatch(locationWatch);locationWatch=null;$("locationSwitch").classList.remove("on");
+    navigator.geolocation.clearWatch(locationWatch);locationWatch=null;locationStartNotified=false;$("locationSwitch").classList.remove("on");
     await setDoc(doc(db,"locations",currentUID),{uid:currentUID,senderId:currentId,sharing:false,updatedAt:serverTimestamp()},{merge:true});return;
   }
   if(!navigator.geolocation){alert("位置情報を利用できません");return}
   $("locationSwitch").classList.add("on");
   locationWatch=navigator.geolocation.watchPosition(async p=>{
     await setDoc(doc(db,"locations",currentUID),{uid:currentUID,senderId:currentId,sharing:true,latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy,updatedAt:serverTimestamp()},{merge:true});
+    if(!locationStartNotified){
+      locationStartNotified=true;
+      await createNotice("location_start","all","位置情報共有を開始",`${currentId}が位置情報の共有を開始しました`,currentUID);
+    }
   },e=>{console.error(e);alert("位置情報を取得できませんでした");$("locationSwitch").classList.remove("on");locationWatch=null},{enableHighAccuracy:true,maximumAge:15000,timeout:15000});
 };
 function listenLocations(){
   if(unsubscribeLocations)unsubscribeLocations();
   unsubscribeLocations=onSnapshot(collection(db,"locations"),snap=>{
-    const box=$("locations");box.innerHTML="";let count=0;
-    snap.forEach(d=>{
-      const x=d.data();if(!x.sharing)return;count++;
-      const div=document.createElement("div");div.className="memberLocation";
-      const n=document.createElement("strong");n.textContent=x.uid===currentUID?`${x.senderId}（自分）`:x.senderId;
-      const u=document.createElement("div");u.className="small";u.textContent=x.updatedAt?.toDate?`最終更新：${x.updatedAt.toDate().toLocaleString("ja-JP")}`:"位置情報を取得中";
-      const a=document.createElement("a");a.className="mapLink";a.target="_blank";a.rel="noopener";a.textContent="地図で見る";
-      if(typeof x.latitude==="number"&&typeof x.longitude==="number")a.href=`https://www.google.com/maps?q=${x.latitude},${x.longitude}`;
-      div.append(n,u,a);box.appendChild(div);
+    const box=$("locations");box.innerHTML="";
+    const rows=[];
+    let anySharing=false,otherSharing=false,selfSharing=false;
+
+    snap.forEach(ds=>{
+      const x={id:ds.id,...ds.data()};
+      if(x.sharing){
+        anySharing=true;
+        if(x.uid===currentUID)selfSharing=true; else otherSharing=true;
+      }
+      if(typeof x.latitude==="number"&&typeof x.longitude==="number")rows.push(x);
     });
-    if(!count)box.innerHTML='<div class="small" style="margin-top:14px">現在共有している人はいません。</div>';
+
+    const icon=$("locationSharingIcon");
+    icon.classList.toggle("hidden",!anySharing);
+    icon.classList.toggle("sharingPulse",anySharing);
+    icon.title=selfSharing&&otherSharing?"自分と相手が位置情報共有中":selfSharing?"自分が位置情報共有中":"相手が位置情報共有中";
+
+    rows.sort((a,b)=>{
+      if(!!a.sharing!==!!b.sharing)return a.sharing?-1:1;
+      const at=a.updatedAt?.toMillis?.()||0,bt=b.updatedAt?.toMillis?.()||0;
+      return bt-at;
+    });
+
+    if(!rows.length){
+      box.innerHTML='<div class="small" style="margin-top:14px">まだ共有された位置情報はありません。</div>';
+      return;
+    }
+
+    rows.forEach(x=>{
+      const div=document.createElement("div");div.className="memberLocation";
+      const top=document.createElement("div");
+      const n=document.createElement("strong");
+      n.textContent=x.uid===currentUID?`${x.senderId}（自分）`:x.senderId;
+
+      const status=document.createElement("span");
+      status.className=`locationStatus ${x.sharing?"live":"last"}`;
+      status.textContent=x.sharing?"共有中":"最終共有位置";
+      top.append(n,status);
+
+      const u=document.createElement("div");u.className="small";
+      u.textContent=x.updatedAt?.toDate
+        ?`${x.sharing?"最終更新":"共有終了時の位置"}：${x.updatedAt.toDate().toLocaleString("ja-JP")}`
+        :(x.sharing?"位置情報を取得中":"最終位置");
+
+      const a=document.createElement("a");a.className="mapLink";a.target="_blank";a.rel="noopener";
+      a.textContent=x.sharing?"現在地を地図で見る":"最終共有位置を地図で見る";
+      a.href=`https://www.google.com/maps?q=${x.latitude},${x.longitude}`;
+
+      div.append(top,u,a);box.appendChild(div);
+    });
   });
 }
 
