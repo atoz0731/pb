@@ -1494,6 +1494,23 @@ body.pinLocked{
 .noticeItem.unread{background:#fff9e8}
 .noticeTitle{font-weight:800;font-size:13px}.noticeBody{font-size:12px;margin-top:3px}.noticeTime{font-size:9px;color:#999;margin-top:4px}
 
+
+/* v3.6.1 予定表示・コメント操作 */
+.scheduleCard{padding:6px 8px!important;margin:4px 0!important}
+.scheduleTime{font-size:10px!important;line-height:1.1!important}
+.scheduleTitle{font-size:12px!important;line-height:1.2!important}
+.scheduleMemo{font-size:10px!important;line-height:1.2!important;margin-top:2px!important}
+.scheduleOwner{font-size:9px!important;margin-top:2px!important}
+.scheduleComments{margin-top:4px!important;padding-top:4px!important}
+.scheduleCommentMenu{position:relative;margin-left:auto}
+.scheduleCommentMenuButton{border:0;background:none;padding:0 4px;font-size:16px;color:#777}
+.scheduleCommentPopup{position:absolute;right:0;top:20px;background:#fff;border:1px solid #ddd;border-radius:9px;box-shadow:0 4px 15px #0002;z-index:30;min-width:80px;padding:3px}
+.scheduleCommentPopup button{width:100%;border:0;background:#fff;text-align:left;padding:7px 8px;font-size:11px}
+.scheduleCommentPopup .danger{color:#c33}
+.scheduleCommentAdd{display:flex;justify-content:flex-end;margin-top:2px}
+.scheduleCommentAdd button{border:0;background:none;font-size:17px;padding:1px 5px}
+.scheduleCommentComposer.hidden{display:none!important}
+
 </style>
 </head>
 <body>
@@ -1844,7 +1861,7 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -2089,7 +2106,7 @@ let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsub
 let notifications=[], notificationReadAt=0, locationStartNotified=false;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.6.0";
+const APP_VERSION="3.6.1";
 
 const shortcutWeatherCheck=new URLSearchParams(location.search).get("weathercheck")==="1";
 if(shortcutWeatherCheck){
@@ -4024,18 +4041,38 @@ function renderSelectedDay(){
       const r=document.createElement("div");r.className="comment";
       const meta=document.createElement("div");meta.className="commentMeta";
       meta.textContent=`${cm.uid===currentUID?"自分":cm.senderId||""}　${cm.createdAt?new Date(cm.createdAt).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):""}`;
-      const tx=document.createElement("div");tx.className="commentText";tx.textContent=cm.text||"";r.append(meta,tx);sc.appendChild(r);
+      const tx=document.createElement("div");tx.className="commentText";tx.textContent=cm.text||"";
+      r.append(meta,tx);
+      if(cm.uid===currentUID){
+        const menu=document.createElement("div");menu.className="scheduleCommentMenu";
+        const dots=document.createElement("button");dots.className="scheduleCommentMenuButton";dots.textContent="…";
+        const pop=document.createElement("div");pop.className="scheduleCommentPopup hidden";
+        const del=document.createElement("button");del.className="danger";del.textContent="削除";
+        del.onclick=async e=>{
+          e.stopPropagation();
+          if(!confirm("このコメントを削除しますか？"))return;
+          try{await updateDoc(doc(db,"schedules",s.id),{comments:(s.comments||[]).filter(x=>x.id!==cm.id)})}
+          catch(err){console.error(err);alert("コメントを削除できませんでした")}
+        };
+        dots.onclick=e=>{e.stopPropagation();document.querySelectorAll(".scheduleCommentPopup").forEach(x=>{if(x!==pop)x.classList.add("hidden")});pop.classList.toggle("hidden")};
+        pop.appendChild(del);menu.append(dots,pop);r.appendChild(menu);
+      }
+      sc.appendChild(r);
     });
-    const cc=document.createElement("div");cc.className="commentComposer";
-    const ci=document.createElement("input");ci.placeholder="予定にコメント…";
+    const add=document.createElement("div");add.className="scheduleCommentAdd";
+    const dots=document.createElement("button");dots.textContent="…";dots.title="コメント";
+    const cc=document.createElement("div");cc.className="commentComposer scheduleCommentComposer hidden";
+    const ci=document.createElement("input");ci.placeholder="コメント…";
     const cb=document.createElement("button");cb.textContent="送信";
-    cb.onclick=async()=>{
-      const val=ci.value.trim();if(!val)return;
+    dots.onclick=e=>{e.stopPropagation();cc.classList.toggle("hidden");if(!cc.classList.contains("hidden"))ci.focus()};
+    cb.onclick=async e=>{
+      e.stopPropagation();const val=ci.value.trim();if(!val)return;
       const comments=[...(s.comments||[]),{id:`${currentUID}-${Date.now()}`,uid:currentUID,senderId:currentId,text:val,createdAt:Date.now()}];
       await updateDoc(doc(db,"schedules",s.id),{comments});
       if(s.uid!==currentUID)await createNotice("schedule_comment",s.uid,"予定にコメント",`${currentId}：${val}`,s.id);
     };
-    cc.append(ci,cb);sc.appendChild(cc);c.appendChild(sc);
+    ci.onclick=e=>e.stopPropagation();cc.onclick=e=>e.stopPropagation();
+    cc.append(ci,cb);add.appendChild(dots);sc.append(add,cc);c.appendChild(sc);
     if(s.uid===currentUID){
       const a=document.createElement("div");a.className="scheduleActions";
       const e=document.createElement("button");e.textContent="編集";e.onclick=()=>openScheduleEditor(s);
