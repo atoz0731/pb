@@ -8,6 +8,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Private</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
 <style>
 :root{
   --bg:#f3f3f3;--panel:#fff;--text:#222;--muted:#8a8a8a;--line:#e5e5e5;
@@ -119,61 +122,6 @@ html{background:#111}
 #pinError{height:22px;margin-top:18px;color:#999;font-size:13px}
 
 
-
-/* SHORTCUT BADGE CHECK
-   - メッセージ / ひとりごとコメント / 予定コメントのみ
-   - 位置共有開始はホーム画面バッジ対象外
-   - 何件あっても「1」
-   - readStates / お知らせ既読時刻は更新しない
-*/
-async function runShortcutBadgeCheck(user){
-  currentUID=user.uid;
-  currentId=(user.email||"").replace("@pb.local","");
-  try{
-    let hasUnread=false;
-
-    /* 新着メッセージ：自分の最後の既読時刻より後に相手のメッセージがあるか */
-    let lastReadMs=0;
-    try{
-      const rs=await getDoc(doc(db,"readStates",currentUID));
-      lastReadMs=rs.data()?.lastReadAt?.toMillis?.()||0;
-    }catch(e){console.warn("badge readState",e)}
-
-    try{
-      const mq=query(collection(db,"messages"),orderBy("createdAt","desc"),limit(30));
-      const ms=await getDocs(mq);
-      hasUnread=ms.docs.some(d=>{
-        const x=d.data();
-        const created=x.createdAt?.toMillis?.()||0;
-        return x.uid!==currentUID && created>lastReadMs;
-      });
-    }catch(e){console.warn("badge messages",e)}
-
-    /* コメント通知。位置共有開始は除外 */
-    if(!hasUnread){
-      const noticeReadAt=Number(localStorage.getItem(`pb.noticeRead.${currentUID}`)||0);
-      try{
-        const nq=query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(50));
-        const ns=await getDocs(nq);
-        hasUnread=ns.docs.some(d=>{
-          const x=d.data();
-          const created=x.createdAt?.toMillis?.()||0;
-          const forMe=x.actorUid!==currentUID&&(x.targetUid==="all"||x.targetUid===currentUID);
-          const relevant=x.type==="solo_comment"||x.type==="schedule_comment";
-          return forMe&&relevant&&created>noticeReadAt;
-        });
-      }catch(e){console.warn("badge notices",e)}
-    }
-
-    if("setAppBadge" in navigator){
-      if(hasUnread)await navigator.setAppBadge(1);
-      else if("clearAppBadge" in navigator)await navigator.clearAppBadge();
-    }
-    document.body.dataset.badgecheck=hasUnread?"1":"0";
-  }catch(e){
-    console.warn("badgecheck",e);
-  }
-}
 
 /* LOGIN */
 #loginScreen{min-height:100dvh;background:#111;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -549,51 +497,6 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .modalBtns button{flex:1;border:0;border-radius:10px;padding:11px}
 .modalSave{background:#111;color:#fff;font-weight:700}
 
-
-/* APP-INTERNAL NOTIFICATIONS */
-async function createNotice(type,targetUid,title,body,targetId){
-  try{await addDoc(collection(db,"notifications"),{type,targetUid,title,body,targetId,actorUid:currentUID,actorId:currentId,createdAt:serverTimestamp()})}catch(e){console.warn("notice",e)}
-}
-function listenNotifications(){
-  if(unsubscribeNotifications)unsubscribeNotifications();
-  notificationReadAt=Number(localStorage.getItem(`pb.noticeRead.${currentUID}`)||0);
-  unsubscribeNotifications=onSnapshot(query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(100)),snap=>{
-    notifications=snap.docs.map(d=>({id:d.id,...d.data()})).filter(n=>n.actorUid!==currentUID&&(n.targetUid==="all"||n.targetUid===currentUID));
-    renderNotifications();updateNotificationBadge();
-  },e=>console.warn("notifications",e));
-}
-function noticeMillis(n){return n.createdAt?.toMillis?.()||0}
-function updateNotificationBadge(){
-  const menuCount=notifications.filter(n=>noticeMillis(n)>notificationReadAt).length;
-  const b=$("notificationMenuBadge");
-  b.textContent=menuCount>99?"99+":String(menuCount);
-  b.classList.toggle("hidden",!menuCount);
-
-  /* ホーム画面バッジは「読むものがあるか」だけ。位置共有開始は除外 */
-  const hasCommentNotice=notifications.some(n=>
-    (n.type==="solo_comment"||n.type==="schedule_comment") &&
-    noticeMillis(n)>notificationReadAt
-  );
-  const hasBadge=!!(pbSettings.badge&&(unreadTalkCount>0||hasCommentNotice));
-  if("setAppBadge" in navigator){
-    if(hasBadge)navigator.setAppBadge(1).catch(()=>{});
-    else if("clearAppBadge" in navigator)navigator.clearAppBadge().catch(()=>{});
-  }
-}
-function renderNotifications(){
-  const box=$("notificationsList");if(!box)return;box.innerHTML="";
-  if(!notifications.length){box.innerHTML='<div class="small" style="padding:14px">お知らせはありません。</div>';return}
-  notifications.forEach(n=>{
-    const b=document.createElement("button");b.className="noticeItem"+(noticeMillis(n)>notificationReadAt?" unread":"");
-    b.innerHTML=`<div class="noticeTitle">${escapeHtml(n.title||"お知らせ")}</div><div class="noticeBody">${escapeHtml(n.body||"")}</div><div class="noticeTime">${n.createdAt?.toDate?n.createdAt.toDate().toLocaleString("ja-JP"):""}</div>`;
-    b.onclick=()=>{
-      $("notificationsPanel").classList.add("hidden");
-      if(n.type==="location_start")$("locationSharingIcon").click();
-      else if(n.type==="schedule_comment"){document.querySelector('.tab[data-page="schedulePage"]')?.click()}
-      else if(n.type==="solo_comment"){document.querySelector('.tab[data-page="soloPage"]')?.click()}
-    };box.appendChild(b);
-  });
-}
 
 /* LOCATION */
 .locationCard{margin:15px;padding:18px;background:#fff;border-radius:18px}
@@ -1691,6 +1594,10 @@ body.pinLocked{
 .mine .messageLink{color:#075db3}
 #camoScreen .messageLink{color:#8ab4f8}
 
+
+/* v3.6.5 */
+.settingRow button{white-space:nowrap}
+
 </style>
 </head>
 <body>
@@ -2041,7 +1948,7 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -2174,6 +2081,38 @@ body.pinLocked{
     </div>
     <div class="settingsNote">Firebaseコンソールの実使用量ではなく、PBが読み取れるドキュメントサイズからの概算です。計算時は全件読み取りが発生します。画像は30日で削除対象になります。</div>
 
+    <div class="settingsGroup">通知・バッジ診断</div>
+    <div class="settingRow">
+      <div>
+        <div class="settingText">Badging API</div>
+        <div id="badgeApiStatus" class="settingSub">確認中…</div>
+      </div>
+    </div>
+    <div class="settingRow">
+      <div>
+        <div class="settingText">お知らせ購読</div>
+        <div id="noticeListenerStatus" class="settingSub">未開始</div>
+      </div>
+    </div>
+    <div class="settingRow">
+      <div>
+        <div class="settingText">最後に受信したお知らせ</div>
+        <div id="lastNoticeStatus" class="settingSub">なし</div>
+      </div>
+    </div>
+    <div class="settingRow">
+      <div>
+        <div class="settingText">最後のbadgecheck</div>
+        <div id="badgeCheckStatus" class="settingSub">まだ実行されていません</div>
+      </div>
+    </div>
+    <div class="settingRow" style="gap:6px;justify-content:flex-end">
+      <button id="testBadgeOne" type="button">バッジ1テスト</button>
+      <button id="clearBadgeTest" type="button">バッジ解除</button>
+      <button id="testNotice" type="button">お知らせテスト</button>
+    </div>
+    <div class="settingsNote">切り分け用です。badgetest=1 は未読判定をせず、ホーム画面バッジを強制的に「1」にします。</div>
+
     <div class="settingsGroup">音声通話</div>
     <button id="resetVoiceRoom" class="dangerButton">音声通話をリセット</button>
     <div class="settingsNote">通話表示がおかしい場合だけ使用してください。</div>
@@ -2287,9 +2226,11 @@ let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsub
 let notifications=[], notificationReadAt=0, locationStartNotified=false;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.6.4";
+const APP_VERSION="3.6.5";
 
-const shortcutBadgeCheck=new URLSearchParams(location.search).get("badgecheck")==="1";
+const urlParams=new URLSearchParams(location.search);
+const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
+const shortcutBadgeTest=urlParams.get("badgetest")==="1";
 if(shortcutBadgeCheck){
   /* Shortcut専用。通常PBを表示せず、既読処理も起動しない */
   pinPassed=true;
@@ -2314,6 +2255,166 @@ const VOICE_STALE_MS=2*60*1000;
 
 
 
+
+/* =========================================================
+   v3.6.5 Notifications / Badge diagnostics
+   ========================================================= */
+function saveBadgeDebug(data){
+  const payload={at:Date.now(),...data};
+  try{localStorage.setItem("pb.badgeDebug",JSON.stringify(payload))}catch(e){}
+  refreshDiagnosticUI();
+}
+function badgeDebugText(){
+  try{
+    const d=JSON.parse(localStorage.getItem("pb.badgeDebug")||"null");
+    if(!d)return "まだ実行されていません";
+    const when=new Date(d.at).toLocaleString("ja-JP");
+    const state=d.error?`失敗：${d.error}`:`${d.hasUnread?"新着あり→1":"新着なし→解除"}${d.badgeResult?` / ${d.badgeResult}`:""}`;
+    return `${when}　${state}`;
+  }catch(e){return "履歴を読み込めません"}
+}
+function refreshDiagnosticUI(){
+  const api=$("badgeApiStatus");
+  if(api)api.textContent=("setAppBadge" in navigator)?"対応":"非対応";
+  const bc=$("badgeCheckStatus");
+  if(bc)bc.textContent=badgeDebugText();
+}
+async function setHomeBadgeOne(){
+  if(!("setAppBadge" in navigator))throw new Error("Badging API 非対応");
+  await navigator.setAppBadge(1);
+}
+async function clearHomeBadge(){
+  if("clearAppBadge" in navigator)await navigator.clearAppBadge();
+}
+
+async function createNotice(type,targetUid,title,body,targetId){
+  try{
+    return await addDoc(collection(db,"notifications"),{
+      type,targetUid,title,body,targetId,
+      actorUid:currentUID,actorId:currentId,createdAt:serverTimestamp()
+    });
+  }catch(e){
+    console.warn("notice",e);
+    const s=$("noticeListenerStatus");if(s)s.textContent=`書込エラー：${e.code||e.message||e}`;
+    throw e;
+  }
+}
+function noticeMillis(n){return n.createdAt?.toMillis?.()||0}
+function listenNotifications(){
+  if(unsubscribeNotifications)unsubscribeNotifications();
+  notificationReadAt=Number(localStorage.getItem(`pb.noticeRead.${currentUID}`)||0);
+  const status=$("noticeListenerStatus");if(status)status.textContent="接続中…";
+  unsubscribeNotifications=onSnapshot(
+    query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(100)),
+    snap=>{
+      const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+      notifications=all.filter(n=>n.actorUid!==currentUID&&(n.targetUid==="all"||n.targetUid===currentUID));
+      const status=$("noticeListenerStatus");if(status)status.textContent=`OK（自分宛 ${notifications.length}件）`;
+      if(notifications[0]){
+        const last=$("lastNoticeStatus");
+        if(last)last.textContent=`${notifications[0].title||"お知らせ"} / ${notifications[0].createdAt?.toDate?notifications[0].createdAt.toDate().toLocaleString("ja-JP"):"受信"}`;
+      }
+      renderNotifications();
+      updateNotificationBadge();
+    },
+    e=>{
+      console.warn("notifications",e);
+      const status=$("noticeListenerStatus");if(status)status.textContent=`エラー：${e.code||e.message||e}`;
+    }
+  );
+}
+function updateNotificationBadge(){
+  const menuCount=notifications.filter(n=>noticeMillis(n)>notificationReadAt).length;
+  const b=$("notificationMenuBadge");
+  if(b){
+    b.textContent=menuCount>99?"99+":String(menuCount);
+    b.classList.toggle("hidden",!menuCount);
+  }
+
+  const hasCommentNotice=notifications.some(n=>
+    (n.type==="solo_comment"||n.type==="schedule_comment") &&
+    noticeMillis(n)>notificationReadAt
+  );
+  const hasBadge=!!(pbSettings.badge&&(unreadTalkCount>0||hasCommentNotice));
+  if("setAppBadge" in navigator){
+    if(hasBadge)navigator.setAppBadge(1).catch(e=>console.warn("setAppBadge",e));
+    else navigator.clearAppBadge?.().catch(e=>console.warn("clearAppBadge",e));
+  }
+}
+function renderNotifications(){
+  const box=$("notificationsList");if(!box)return;
+  box.innerHTML="";
+  if(!notifications.length){
+    box.innerHTML='<div class="small" style="padding:14px">お知らせはありません。</div>';
+    return;
+  }
+  notifications.forEach(n=>{
+    const b=document.createElement("button");
+    b.className="noticeItem"+(noticeMillis(n)>notificationReadAt?" unread":"");
+    b.innerHTML=`<div class="noticeTitle">${escapeHtml(n.title||"お知らせ")}</div><div class="noticeBody">${escapeHtml(n.body||"")}</div><div class="noticeTime">${n.createdAt?.toDate?n.createdAt.toDate().toLocaleString("ja-JP"):""}</div>`;
+    b.onclick=()=>{
+      $("notificationsPanel").classList.add("hidden");
+      if(n.type==="location_start")$("locationSharingIcon").click();
+      else if(n.type==="schedule_comment")document.querySelector('.tab[data-page="schedulePage"]')?.click();
+      else if(n.type==="solo_comment")document.querySelector('.tab[data-page="soloPage"]')?.click();
+    };
+    box.appendChild(b);
+  });
+}
+
+/* Shortcut専用。既読処理・通常リスナーは起動しない。 */
+async function runShortcutBadgeCheck(user){
+  currentUID=user.uid;
+  currentId=(user.email||"").replace("@pb.local","");
+  let hasUnread=false;
+  const debug={mode:"badgecheck",api:("setAppBadge" in navigator),hasUnread:false,badgeResult:""};
+  try{
+    let lastReadMs=0;
+    try{
+      const rs=await getDoc(doc(db,"readStates",currentUID));
+      lastReadMs=rs.data()?.lastReadAt?.toMillis?.()||0;
+    }catch(e){console.warn("badge readState",e)}
+
+    const mq=query(collection(db,"messages"),orderBy("createdAt","desc"),limit(50));
+    const ms=await getDocs(mq);
+    hasUnread=ms.docs.some(d=>{
+      const x=d.data(),created=x.createdAt?.toMillis?.()||0;
+      return x.uid!==currentUID&&created>lastReadMs;
+    });
+
+    if(!hasUnread){
+      const noticeReadAt=Number(localStorage.getItem(`pb.noticeRead.${currentUID}`)||0);
+      const nq=query(collection(db,"notifications"),orderBy("createdAt","desc"),limit(50));
+      const ns=await getDocs(nq);
+      hasUnread=ns.docs.some(d=>{
+        const x=d.data(),created=x.createdAt?.toMillis?.()||0;
+        const forMe=x.actorUid!==currentUID&&(x.targetUid==="all"||x.targetUid===currentUID);
+        return forMe&&(x.type==="solo_comment"||x.type==="schedule_comment")&&created>noticeReadAt;
+      });
+    }
+
+    debug.hasUnread=hasUnread;
+    if("setAppBadge" in navigator){
+      if(hasUnread){await navigator.setAppBadge(1);debug.badgeResult="setAppBadge(1)成功";}
+      else {await navigator.clearAppBadge?.();debug.badgeResult="clearAppBadge成功";}
+    }else debug.badgeResult="Badging API非対応";
+    document.body.dataset.badgecheck=hasUnread?"1":"0";
+    saveBadgeDebug(debug);
+  }catch(e){
+    console.warn("badgecheck",e);
+    saveBadgeDebug({...debug,hasUnread,error:String(e?.code||e?.message||e)});
+  }
+}
+async function runShortcutBadgeTest(){
+  const debug={mode:"badgetest",api:("setAppBadge" in navigator),hasUnread:true};
+  try{
+    await setHomeBadgeOne();
+    saveBadgeDebug({...debug,badgeResult:"強制setAppBadge(1)成功"});
+  }catch(e){
+    saveBadgeDebug({...debug,error:String(e?.message||e)});
+  }
+}
+
 /* v3.4.8 typing presence */
 let typingTimer=null,typingUnsub=null;
 async function setTypingState(on){
@@ -2327,7 +2428,11 @@ function listenTyping(){
   typingUnsub=onSnapshot(collection(db,"typing"),snap=>{
     let on=false,now=Date.now();
     snap.forEach(s=>{const d=s.data(),t=d.updatedAt?.toMillis?.()||0;if(d.uid!==currentUID&&d.typing===true&&now-t<5000)on=true});
+    const keepBottom=typeof followLatestMode!=="undefined"&&followLatestMode;
     $("typingIndicator")?.classList.toggle("show",on);
+    if(keepBottom&&activePage?.()==="talkPage"&&!talkDateFilter){
+      requestAnimationFrame(()=>{$("messages")?.scrollTo({top:$("messages").scrollHeight,behavior:"auto"})});
+    }
     $("camoTypingIndicator")?.classList.toggle("show",on);
     $("newsTypingIndicator")?.classList.toggle("show",on);
     $("weatherTypingIndicator")?.classList.toggle("show",on);
@@ -2492,9 +2597,15 @@ $("camoLoginPassword").addEventListener("keydown",e=>{
 });
 $("logoutButton").onclick=async()=>{await leaveVoiceRoom(false);await signOut(auth);$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")};
 onAuthStateChanged(auth,user=>{
+  if(shortcutBadgeTest){
+    ["pinScreen","appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","loginScreen","camoLoginScreen"].forEach(id=>$(id)?.classList.add("hidden"));
+    runShortcutBadgeTest();
+    return;
+  }
   if(shortcutBadgeCheck){
     ["pinScreen","appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","loginScreen","camoLoginScreen"].forEach(id=>$(id)?.classList.add("hidden"));
     if(user)runShortcutBadgeCheck(user);
+    else saveBadgeDebug({mode:"badgecheck",hasUnread:false,error:"Firebase未ログイン"});
     return;
   }
   if(user&&pinPassed)showApp(user);
@@ -2636,6 +2747,35 @@ $("resetVoiceRoom").onclick=async()=>{
   alert("音声通話をリセットしました。");
 };
 
+
+refreshDiagnosticUI();
+$("testBadgeOne").onclick=async()=>{
+  try{await setHomeBadgeOne();saveBadgeDebug({mode:"manual",hasUnread:true,badgeResult:"setAppBadge(1)成功"});alert("バッジ「1」を設定しました。ホーム画面で確認してください。")}
+  catch(e){saveBadgeDebug({mode:"manual",error:String(e?.message||e)});alert(`バッジを設定できませんでした：${e?.message||e}`)}
+};
+$("clearBadgeTest").onclick=async()=>{
+  try{await clearHomeBadge();saveBadgeDebug({mode:"manual",hasUnread:false,badgeResult:"バッジ解除成功"});alert("バッジを解除しました。")}
+  catch(e){alert(`バッジ解除に失敗しました：${e?.message||e}`)}
+};
+$("testNotice").onclick=async()=>{
+  try{
+    await addDoc(collection(db,"notifications"),{
+      type:"debug_notice",
+      targetUid:currentUID,
+      title:"テスト通知",
+      body:"PBのお知らせ購読テストです",
+      targetId:"debug",
+      actorUid:"__pb_debug__",
+      actorId:"debug",
+      createdAt:serverTimestamp()
+    });
+    alert("テスト通知を書き込みました。三点メニュー → お知らせ を確認してください。");
+  }catch(e){
+    console.error(e);
+    alert(`テスト通知を書き込めませんでした：${e.code||e.message||e}`);
+  }
+};
+
 $("calculateStorage").onclick=async()=>{
   const btn=$("calculateStorage");btn.disabled=true;btn.textContent="計算中…";
   try{
@@ -2733,6 +2873,7 @@ function handleIncomingMessage(data){
   }
 }
 document.addEventListener("visibilitychange",updateNotificationUI);
+window.addEventListener("pagehide",()=>{try{updateNotificationBadge()}catch(e){}});
 
 
 
@@ -2775,11 +2916,13 @@ function getEmojiCount(text){
   return m.join("").replace(/\uFE0F/g,"")===cleaned?m.length:0;
 }
 
+let followLatestMode=true;
 /* SCROLL */
 function isNearBottom(){
   const b=$("messages");return (b.scrollHeight-b.scrollTop-b.clientHeight)<120;
 }
 function scrollToLatest(smooth=false){
+  followLatestMode=true;
   const b=$("messages");
   requestAnimationFrame(()=>{
     b.scrollTo({top:b.scrollHeight,behavior:smooth?"smooth":"auto"});
@@ -2791,7 +2934,9 @@ function scrollToLatest(smooth=false){
 $("newMessageButton").onclick=()=>scrollToLatest(true);
 $("messages").addEventListener("scroll",()=>{
   if(adjustingMessageMenu) return;
-  if(isNearBottom()){$("newMessageButton").classList.add("hidden");markTalkRead();clearUnreadTalk()}
+  const near=isNearBottom();
+  followLatestMode=near;
+  if(near){$("newMessageButton").classList.add("hidden");markTalkRead();clearUnreadTalk()}
 },{passive:true});
 
 
@@ -2891,7 +3036,7 @@ function listenMessages(){
   if(unsubscribeMessages)unsubscribeMessages();
   const q=query(collection(db,"messages"),orderBy("createdAt","desc"),limit(50));
   unsubscribeMessages=onSnapshot(q,snapshot=>{
-    const wasNearBottom=pinPassed&&isNearBottom();
+    const wasNearBottom=pinPassed&&(followLatestMode||isNearBottom());
     const newest=snapshot.docs[0]||null, newestId=newest?.id||null, newestData=newest?.data()||null;
     const hasNew=previousNewestMessageId!==null&&newestId!==previousNewestMessageId;
     const newMine=newestData?.uid===currentUID;
