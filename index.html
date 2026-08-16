@@ -1602,38 +1602,6 @@ body.pinLocked{
 #headerNoticeButton{position:relative;border:0;background:none;color:inherit;font-size:17px;line-height:1;padding:6px}
 #headerNoticeBadge{position:absolute;top:-1px;right:-2px;min-width:15px;height:15px;padding:0 3px;border-radius:9px;background:#e53935;color:#fff;font-size:9px;font-weight:800;line-height:15px;text-align:center}
 #headerNoticeBadge.hidden{display:none!important}
-
-/* v3.6.9 — iOS入力補助バー軽減テスト
-   メインのトーク入力欄だけ textarea → contenteditable に変更 */
-.composer .messageInputEditable{
-  flex:1;
-  box-sizing:border-box;
-  min-height:40px;
-  max-height:95px;
-  overflow-y:auto;
-  border:1px solid #ccc;
-  border-radius:19px;
-  padding:9px 13px;
-  font-size:16px;
-  line-height:1.35;
-  background:#fff;
-  color:#111;
-  outline:none;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  -webkit-user-select:text;
-  user-select:text;
-}
-.composer .messageInputEditable:focus{
-  border-color:#5eb5ef;
-  box-shadow:0 0 0 2px rgba(69,169,235,.22);
-}
-.composer .messageInputEditable:empty::before{
-  content:attr(data-placeholder);
-  color:#aaa;
-  pointer-events:none;
-}
-
 </style>
 </head>
 <body>
@@ -1902,7 +1870,7 @@ body.pinLocked{
 <div class="composer">
     <button id="pickImage" class="imagePickButton" aria-label="画像を送信">＋</button>
     <input id="imageInput" type="file" accept="image/*" class="hidden">
-    <div id="messageInput" class="messageInputEditable" contenteditable="plaintext-only" role="textbox" aria-label="メッセージ" data-placeholder="メッセージ"></div>
+    <textarea id="messageInput" rows="1" placeholder="メッセージ"></textarea>
     <button id="sendMessage" class="send">➤</button>
   </div>
 </div>
@@ -1983,7 +1951,7 @@ body.pinLocked{
   </div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.6.9</div><div class="updateDate">2026/08/16</div><ul class="updateItems"><li>iPhoneの入力欄上に出る↑↓✓の入力補助バーを出にくくするため、トーク入力欄だけtextareaからcontenteditable方式へ変更</li><li>既存の送信・返信・編集・入力中表示はそのまま動くようvalue互換処理を追加</li><li>改行はこれまで通り可能、送信は送信ボタンのみ</li><li>貼り付けはプレーンテキストとして処理</li><li>ひとりごと・予定・設定など他の入力欄には変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192a.png / icon-512a.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192a.png / icon-512a.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -2247,25 +2215,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const $ = id => document.getElementById(id);
 
-/* v3.6.9
-   Existing PB code expects messageInput.value.
-   Keep that API while using contenteditable so the rest of Talk logic is untouched. */
-(function(){
-  const el=$("messageInput");
-  if(!el || el.tagName==="TEXTAREA" || el.tagName==="INPUT")return;
-  Object.defineProperty(el,"value",{
-    configurable:true,
-    get(){
-      return (el.innerText||"").replace(/\r/g,"");
-    },
-    set(v){
-      el.textContent=String(v??"");
-      el.dispatchEvent(new Event("pbvaluechange"));
-    }
-  });
-})();
-
-
 let pin="", pinPassed=false, currentUID="", currentId="";
 let camouflageMode=false, camoReplyTarget=null;
 let decoyMode="";
@@ -2284,7 +2233,7 @@ let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsub
 let notifications=[], notificationReadAt=0, locationStartNotified=false;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.6.9";
+const APP_VERSION="3.6.8";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -2554,13 +2503,6 @@ window.addEventListener("pagehide",stopTyping);
 $("camoInput")?.addEventListener("input",()=>{$("camoInput").value.trim()?pulseTyping():stopTyping()});
 
 $("messageInput")?.addEventListener("input",()=>{$("messageInput").value.trim()?pulseTyping():stopTyping()});
-$("messageInput")?.addEventListener("paste",e=>{
-  if(!$("messageInput")?.isContentEditable)return;
-  e.preventDefault();
-  const plain=e.clipboardData?.getData("text/plain")||"";
-  document.execCommand("insertText",false,plain);
-});
-
 
 /* PIN */
 function updateDots(){ document.querySelectorAll(".pinDot").forEach((d,i)=>d.classList.toggle("on",i<pin.length)); }
