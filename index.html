@@ -1814,6 +1814,39 @@ body.pinLocked{
   overflow:hidden!important;
 }
 
+
+/* v3.7.0a map hotfix */
+.miniLocationHeaderLeft{display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important}
+.miniLocationHeaderLeft>strong{flex:0 0 auto!important}
+.miniShareToggle{
+  position:relative!important;flex:0 0 38px!important;width:38px!important;height:22px!important;
+  padding:0!important;border:0!important;border-radius:999px!important;background:#555!important;
+  overflow:hidden!important;font-size:0!important
+}
+.miniShareToggle.on{background:#34c759!important}
+.miniShareKnob{
+  position:absolute!important;top:2px!important;left:2px!important;width:18px!important;height:18px!important;
+  border-radius:50%!important;background:#fff!important;transition:transform .18s ease!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.3)!important
+}
+.miniShareToggle.on .miniShareKnob{transform:translateX(16px)!important}
+.miniSelfShareTime{flex:1 1 auto!important;min-width:0!important;font-size:9px!important;color:#ddd!important}
+
+/* Leaflet must have an explicit pixel height on iOS; flex-only sizing can collapse. */
+#miniLocationMap{
+  display:block!important;position:relative!important;width:100%!important;
+  height:220px!important;min-height:220px!important;flex:0 0 220px!important;
+  background:#e8edf2!important;overflow:hidden!important
+}
+#miniLocationPanel[data-size="medium"] #miniLocationMap{
+  height:360px!important;min-height:360px!important;flex-basis:360px!important
+}
+#miniLocationPanel[data-size="large"] #miniLocationMap{
+  height:520px!important;min-height:520px!important;flex-basis:520px!important
+}
+#miniLocationMap .leaflet-container,
+#miniLocationMap .leaflet-map-pane{visibility:visible!important}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -1985,7 +2018,7 @@ body.pinLocked{
   <div class="miniLocationHeader">
     <div class="miniLocationHeaderLeft">
       <strong>位置情報</strong>
-      <button id="miniShareToggle" class="miniShareToggle" type="button">共有OFF</button>
+      <button id="miniShareToggle" class="miniShareToggle" type="button" aria-label="位置共有"><span class="miniShareKnob"></span></button>
       <span id="miniSelfShareTime" class="miniSelfShareTime">最終共有 --</span>
     </div>
     <div class="miniMapControls">
@@ -2476,7 +2509,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.0";
+const APP_VERSION="3.7.0a";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -5122,7 +5155,8 @@ function updateMiniHeaderState(){
   const btn=$("miniShareToggle");
   if(btn){
     btn.classList.toggle("on",!!locationShareActive);
-    btn.textContent=locationShareActive?"共有ON":"共有OFF";
+    btn.setAttribute("aria-pressed",locationShareActive?"true":"false");
+    btn.setAttribute("aria-label",locationShareActive?"位置共有を停止":"位置共有を開始");
   }
   const time=$("miniSelfShareTime");
   if(time){
@@ -5183,12 +5217,18 @@ function leafletCssLooksLoaded(){
 }
 
 function ensureMiniMap(){
+  const el=$("miniLocationMap");
+  if(!el)return false;
   if(!window.L){
-    $("miniLocationMap").innerHTML='<div class="small" style="padding:15px">地図ライブラリを読み込めませんでした。</div>';
+    el.innerHTML='<div class="small" style="padding:15px">地図を読み込み中です…</div>';
     return false;
   }
-  if(miniLeafletMap)return true;
-  miniLeafletMap=L.map("miniLocationMap",{
+  if(miniLeafletMap){
+    requestAnimationFrame(()=>miniLeafletMap?.invalidateSize({pan:false}));
+    return true;
+  }
+  el.innerHTML="";
+  miniLeafletMap=L.map(el,{
     zoomControl:true,attributionControl:true,touchZoom:true,dragging:true,
     scrollWheelZoom:true,doubleClickZoom:true
   });
@@ -5197,6 +5237,9 @@ function ensureMiniMap(){
   }).addTo(miniLeafletMap);
   installMiniMapResizeObserver();
   miniLeafletMap.on("dragstart zoomstart",()=>{miniMapUserMoved=true});
+  requestAnimationFrame(()=>miniLeafletMap?.invalidateSize({pan:false}));
+  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),120);
+  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),350);
   return true;
 }
 function updateMiniMapMarkers(initialFit=false){
@@ -5264,7 +5307,8 @@ $("locationSharingIcon").onclick=()=>{
     if(panel.classList.contains("hidden")){
       panel.classList.remove("hidden");
       applyMiniMapSize();
-      setTimeout(()=>renderMiniLocations(),120);
+      setTimeout(()=>renderMiniLocations(),80);
+      setTimeout(()=>{if(!$("miniLocationPanel")?.classList.contains("hidden"))renderMiniLocations()},350);
     }else{
       panel.classList.add("hidden");
       destroyMiniLeafletMap();
