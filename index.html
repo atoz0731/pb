@@ -1847,11 +1847,29 @@ body.pinLocked{
 #miniLocationMap .leaflet-container,
 #miniLocationMap .leaflet-map-pane{visibility:visible!important}
 
+
+/* v3.7.0c stable embedded map */
+#miniLocationMap{
+  display:block!important;
+  position:relative!important;
+  width:100%!important;
+  height:220px!important;
+  min-height:220px!important;
+  flex:0 0 220px!important;
+  background:#e8edf2!important;
+  overflow:hidden!important;
+}
+#miniLocationMap iframe{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  border:0!important;
+  margin:0!important;
+  padding:0!important;
+  background:#e8edf2!important;
+}
+
 </style>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
 
@@ -2505,12 +2523,10 @@ let notifications=[], notificationReadAt=0, locationStartNotified=false;
 let savedMessageIds=new Set(), savedMessagesLoaded=false;
 let latestLocationRows=[];
 let cachedOtherLocation=null;
-let miniLeafletMap=null;
-let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.0b";
+const APP_VERSION="3.7.0c";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -5143,10 +5159,6 @@ function applyMiniMapSize(){
   const panel=$("miniLocationPanel");
   ["miniMapSizeSmall","miniMapSizeMedium","miniMapSizeLarge"].forEach(c=>panel.classList.remove(c));
   panel.classList.add(miniMapSizeClass());
-  requestAnimationFrame(()=>{
-    miniLeafletMap?.invalidateSize({pan:false});
-    setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),180);
-  });
 }
 
 function getMiniSelfRow(){return latestLocationRows.find(x=>x.uid===currentUID)||null}
@@ -5165,19 +5177,7 @@ function updateMiniHeaderState(){
     else time.textContent="最終共有 --";
   }
 }
-function focusMiniMapOnRow(row,zoom=15){
-  if(!row||typeof row.latitude!=="number"||typeof row.longitude!=="number")return;
-  if(miniLeafletMap){
-    miniMapUserMoved=true;
-    miniLeafletMap.setView([row.latitude,row.longitude],zoom,{animate:true});
-    return;
-  }
-  const f=$("miniLocationMap")?.querySelector("iframe");
-  if(f){
-    const d=.012;
-    f.src=`https://www.openstreetmap.org/export/embed.html?bbox=${row.longitude-d}%2C${row.latitude-d}%2C${row.longitude+d}%2C${row.latitude+d}&layer=mapnik&marker=${row.latitude}%2C${row.longitude}`;
-  }
-}
+
 function openGoogleMapsForRow(row){
   if(!row||typeof row.latitude!=="number"||typeof row.longitude!=="number")return;
   window.open(`https://www.google.com/maps?q=${row.latitude},${row.longitude}`,"_blank","noopener");
@@ -5214,121 +5214,55 @@ function renderMiniLocationStatus(){
   row.append(main,gm);box.appendChild(row);
 }
 
-function leafletCssLooksLoaded(){
-  const probe=document.createElement("div");
-  probe.className="leaflet-control-zoom";
-  probe.style.position="absolute";
-  probe.style.visibility="hidden";
-  document.body.appendChild(probe);
-  const pos=getComputedStyle(probe).position;
-  probe.remove();
-  return pos==="absolute";
+
+let miniMapTarget="other";
+
+function miniMapRowForTarget(){
+  if(miniMapTarget==="self")return getMiniSelfRow()||getMiniOtherRow();
+  return getMiniOtherRow()||getMiniSelfRow();
 }
-
-
-function miniMapFallbackUrl(){
-  const target=getMiniOtherRow()||getMiniSelfRow();
-  const lat=Number(target?.latitude),lon=Number(target?.longitude);
+function googleEmbedUrlForRow(row){
+  const lat=Number(row?.latitude),lon=Number(row?.longitude);
   if(!Number.isFinite(lat)||!Number.isFinite(lon)){
-    return "https://www.openstreetmap.org/export/embed.html?bbox=130.34%2C33.55%2C130.46%2C33.64&layer=mapnik";
+    return "https://maps.google.com/maps?q=33.5902,130.4017&z=12&output=embed";
   }
-  const d=.012;
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${lon-d}%2C${lat-d}%2C${lon+d}%2C${lat+d}&layer=mapnik&marker=${lat}%2C${lon}`;
+  return `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
 }
-function showMiniMapFallback(message=""){
-  const el=$("miniLocationMap");if(!el)return;
-  try{miniLeafletMap?.remove()}catch(e){}
-  miniLeafletMap=null;miniLeafletLayer=null;
-  el.innerHTML="";
-  const frame=document.createElement("iframe");
-  frame.src=miniMapFallbackUrl();
-  frame.title="位置情報地図";
-  frame.loading="eager";
-  frame.referrerPolicy="no-referrer";
-  frame.style.cssText="width:100%;height:100%;border:0;display:block;background:#e8edf2";
-  el.appendChild(frame);
-  if(message)console.warn("mini map fallback:",message);
-}
-
-function ensureMiniMap(){
-  const el=$("miniLocationMap");
-  if(!el)return false;
-
-  if(!window.L){
-    showMiniMapFallback("Leaflet JS unavailable");
-    return false;
-  }
-  if(miniLeafletMap){
-    requestAnimationFrame(()=>miniLeafletMap?.invalidateSize({pan:false}));
-    return true;
-  }
-
-  el.innerHTML="";
-  try{
-    miniLeafletMap=L.map(el,{
-      zoomControl:true,attributionControl:true,touchZoom:true,dragging:true,
-      scrollWheelZoom:true,doubleClickZoom:true
-    });
-
-    let tileLoaded=false;
-    const tiles=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-      maxZoom:19,attribution:'&copy; OpenStreetMap'
-    });
-    tiles.on("tileload",()=>{tileLoaded=true});
-    tiles.addTo(miniLeafletMap);
-
-    installMiniMapResizeObserver();
-    miniLeafletMap.on("dragstart zoomstart",()=>{miniMapUserMoved=true});
-
-    requestAnimationFrame(()=>miniLeafletMap?.invalidateSize({pan:false}));
-    setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),120);
-    setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),350);
-
-    setTimeout(()=>{
-      if(!$("miniLocationPanel")?.classList.contains("hidden") && !tileLoaded){
-        showMiniMapFallback("OSM tiles did not load");
-      }
-    },1800);
-    return true;
-  }catch(err){
-    console.error("Leaflet init",err);
-    showMiniMapFallback(String(err?.message||err));
-    return false;
-  }
-}
-function updateMiniMapMarkers(initialFit=false){
+function renderStableMiniMap(force=false){
   renderMiniLocationStatus();
-  if(!ensureMiniMap())return;
-  if(miniLeafletLayer)miniLeafletLayer.remove();
-  miniLeafletLayer=L.layerGroup().addTo(miniLeafletMap);
-  const points=[];
-  latestLocationRows.forEach(x=>{
-    if(typeof x.latitude!=="number"||typeof x.longitude!=="number")return;
-    const isSelf=x.uid===currentUID;
-    const color=isSelf?"#3786d8":"#d94f5c";
-    const marker=L.circleMarker([x.latitude,x.longitude],{
-      radius:x.sharing?8:6,color:"#fff",weight:2,fillColor:color,fillOpacity:x.sharing?.95:.38
-    }).addTo(miniLeafletLayer);
-    marker.bindPopup(`<strong>${isSelf?"自分":escapeHtml(x.senderId||"相手")}</strong><br>${x.sharing?"共有中":"最終共有位置"}<br>${escapeHtml(formatMiniLocationAge(x))}`);
-    points.push([x.latitude,x.longitude]);
-  });
-  const settle=()=>{
-    if(!miniLeafletMap)return;
-    miniLeafletMap.invalidateSize({pan:false,debounceMoveend:true});
-    if(initialFit && !miniMapUserMoved){
-      if(points.length===1)miniLeafletMap.setView(points[0],15,{animate:false});
-      else if(points.length>1)miniLeafletMap.fitBounds(points,{padding:[24,24],maxZoom:16,animate:false});
-      else miniLeafletMap.setView([33.5902,130.4017],11,{animate:false});
-    }
-  };
-  requestAnimationFrame(()=>requestAnimationFrame(settle));
-  setTimeout(settle,180);
+  const el=$("miniLocationMap");
+  if(!el)return;
+  const row=miniMapRowForTarget();
+  const src=googleEmbedUrlForRow(row);
+  let frame=el.querySelector("iframe");
+  if(!frame){
+    frame=document.createElement("iframe");
+    frame.title="位置情報地図";
+    frame.loading="eager";
+    frame.referrerPolicy="no-referrer-when-downgrade";
+    frame.setAttribute("allowfullscreen","");
+    el.innerHTML="";
+    el.appendChild(frame);
+  }
+  if(force || frame.dataset.src!==src){
+    frame.dataset.src=src;
+    frame.src=src;
+  }
 }
 function renderMiniLocations(){
-  miniMapUserMoved=false;
-  updateMiniMapMarkers(true);
+  miniMapTarget=getMiniOtherRow()?"other":"self";
+  renderStableMiniMap(true);
 }
-
+function updateMiniMapMarkers(){
+  /* Footer/time can update in real time.
+     Keep the user's current map pan/zoom stable unless the target itself changes. */
+  renderMiniLocationStatus();
+}
+function focusMiniMapOnRow(row){
+  if(!row)return;
+  miniMapTarget=(row.uid===currentUID)?"self":"other";
+  renderStableMiniMap(true);
+}
 
 $("miniShareToggle").onclick=e=>{
   e.stopPropagation();
@@ -5337,32 +5271,21 @@ $("miniShareToggle").onclick=e=>{
 };
 $("miniMapMyLocation").onclick=e=>{
   e.stopPropagation();
-  const self=getMiniSelfRow();
-  if(!self)return;
-  if(miniLeafletMap)focusMiniMapOnRow(self,15);
-  else{
-    const el=$("miniLocationMap");
-    const f=el?.querySelector("iframe");
-    if(f){
-      const lat=Number(self.latitude),lon=Number(self.longitude),d=.012;
-      f.src=`https://www.openstreetmap.org/export/embed.html?bbox=${lon-d}%2C${lat-d}%2C${lon+d}%2C${lat+d}&layer=mapnik&marker=${lat}%2C${lon}`;
-    }
-  }
+  miniMapTarget="self";
+  renderStableMiniMap(true);
 };
 
 $("miniMapSmaller").onclick=e=>{
   e.stopPropagation();
   miniMapSizeIndex=Math.max(0,miniMapSizeIndex-1);
   applyMiniMapSize();
-  requestAnimationFrame(()=>miniLeafletMap?.invalidateSize({pan:false}));
-  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),220);
+  setTimeout(()=>renderStableMiniMap(false),120);
 };
 $("miniMapLarger").onclick=e=>{
   e.stopPropagation();
   miniMapSizeIndex=Math.min(2,miniMapSizeIndex+1);
   applyMiniMapSize();
-  requestAnimationFrame(()=>miniLeafletMap?.invalidateSize({pan:false}));
-  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),220);
+  setTimeout(()=>renderStableMiniMap(false),120);
 };
 $("locationSharingIcon").onclick=()=>{
   if(activePage?.()==="talkPage"){
@@ -5370,12 +5293,9 @@ $("locationSharingIcon").onclick=()=>{
     if(panel.classList.contains("hidden")){
       panel.classList.remove("hidden");
       applyMiniMapSize();
-      renderMiniLocationStatus();
-      setTimeout(()=>renderMiniLocations(),80);
-      setTimeout(()=>{if(!$("miniLocationPanel")?.classList.contains("hidden"))renderMiniLocations()},350);
+      renderMiniLocations();
     }else{
       panel.classList.add("hidden");
-      destroyMiniLeafletMap();
     }
     return;
   }
@@ -5386,7 +5306,6 @@ $("locationSharingIcon").onclick=()=>{
 };
 $("closeMiniLocation").onclick=()=>{
   $("miniLocationPanel").classList.add("hidden");
-  destroyMiniLeafletMap();
 };
 
 function setLocationShareUI(on,text=""){
@@ -5571,7 +5490,10 @@ function listenLocations(){
     }
 
     renderMiniLocationStatus();
-    if(!$("miniLocationPanel")?.classList.contains("hidden"))updateMiniMapMarkers(false);
+    if(!$("miniLocationPanel")?.classList.contains("hidden")){
+      renderMiniLocationStatus();
+      if(miniMapTarget==="other" && getMiniOtherRow())renderStableMiniMap(false);
+    }
 
     if(!rows.length){
       box.innerHTML='<div class="small" style="margin-top:14px">まだ共有された位置情報はありません。</div>';
