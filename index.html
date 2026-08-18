@@ -1761,6 +1761,28 @@ body.pinLocked{
   transform:none!important;
 }
 
+
+/* v3.7.0 mini-map frame/inner-map alignment fix */
+#miniLocationPanel{
+  box-sizing:border-box!important;
+}
+#miniLocationPanel .miniLocationMap{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  width:100%!important;
+  height:100%!important;
+  box-sizing:border-box!important;
+}
+#miniLocationMap.leaflet-container,
+#miniLocationMap .leaflet-map-pane,
+#miniLocationMap .leaflet-tile-pane,
+#miniLocationMap .leaflet-overlay-pane,
+#miniLocationMap .leaflet-marker-pane,
+#miniLocationMap .leaflet-shadow-pane{
+  width:100%!important;
+  height:100%!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIINfQ3ynhFysIK7hWn2R3BiJQpMZrxKkE0=" crossorigin="">
@@ -2125,7 +2147,7 @@ body.pinLocked{
   <div id="placesList"></div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -5083,7 +5105,24 @@ function renderMiniLocationStatus(){
   });
 }
 
+
+let miniMapResizeObserver=null;
+function installMiniMapResizeObserver(){
+  const el=$("miniLocationMap");
+  if(!el)return;
+  try{miniMapResizeObserver?.disconnect()}catch(e){}
+  miniMapResizeObserver=new ResizeObserver(()=>{
+    if(!miniLeafletMap)return;
+    requestAnimationFrame(()=>{
+      miniLeafletMap.invalidateSize({pan:false,debounceMoveend:true});
+    });
+  });
+  miniMapResizeObserver.observe(el);
+}
+
 function destroyMiniLeafletMap(){
+  try{miniMapResizeObserver?.disconnect()}catch(e){}
+  miniMapResizeObserver=null;
   try{miniLeafletMap?.off();miniLeafletMap?.remove()}catch(e){}
   miniLeafletMap=null;
   miniLeafletLayer=null;
@@ -5119,6 +5158,7 @@ function renderMiniLocations(){
       maxZoom:19,
       attribution:'&copy; OpenStreetMap'
     }).addTo(miniLeafletMap);
+    installMiniMapResizeObserver();
   }
   if(miniLeafletLayer)miniLeafletLayer.remove();
   miniLeafletLayer=L.layerGroup().addTo(miniLeafletMap);
@@ -5155,12 +5195,14 @@ $("miniMapSmaller").onclick=e=>{
   miniMapSizeIndex=Math.max(0,miniMapSizeIndex-1);
   applyMiniMapSize();
   rebuildMiniMapAfterLayout();
+  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),260);
 };
 $("miniMapLarger").onclick=e=>{
   e.stopPropagation();
   miniMapSizeIndex=Math.min(2,miniMapSizeIndex+1);
   applyMiniMapSize();
   rebuildMiniMapAfterLayout();
+  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),260);
 };
 $("locationSharingIcon").onclick=()=>{
   if(activePage?.()==="talkPage"){
