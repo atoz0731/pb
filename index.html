@@ -2518,7 +2518,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.1a";
+const APP_VERSION="3.7.1b";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -3792,16 +3792,7 @@ function editMessage(data){
   replyTarget=null;$("replyBar").classList.add("hidden");editingMessage=data;$("messageInput").value=data.text||"";
   $("editBar").classList.remove("hidden");$("messageInput").focus();
 }
-$("cancelEdit").onclick=()=>{editingMessage=null;$("messageInput").value="";
-    // v3.7.1a: 送信後にiOSキーボードを閉じ、表示領域を復帰
-    $("messageInput")?.blur();
-    try{document.activeElement?.blur?.()}catch(_){}
-    const restoreTalkViewport=()=>{
-      document.documentElement.style.removeProperty("--vvh");
-      requestAnimationFrame(()=>window.dispatchEvent(new Event("resize")));
-    };
-    setTimeout(restoreTalkViewport,80);
-    setTimeout(restoreTalkViewport,260);stopTyping();$("editBar").classList.add("hidden")};
+$("cancelEdit").onclick=()=>{editingMessage=null;$("messageInput").value="";stopTyping();$("editBar").classList.add("hidden")};
 
 /* Complete delete: delete message + clear copied quote from currently matching replies */
 async function removeMessageCompletely(data){
@@ -3889,7 +3880,22 @@ async function sendMessage(){
       replyTo:replyTarget?{id:replyTarget.id,senderId:replyTarget.senderId,text:(replyTarget.text||"").slice(0,150)}:null
     });
   }
-  $("messageInput").value="";replyTarget=null;$("replyBar").classList.add("hidden");
+  $("messageInput").value="";
+  replyTarget=null;
+  $("replyBar").classList.add("hidden");
+  stopTyping();
+
+  // v3.7.1b: Firestore送信完了後にだけキーボードを閉じる
+  $("messageInput").blur();
+  setTimeout(()=>{
+    window.scrollTo(0,0);
+    window.dispatchEvent(new Event("resize"));
+  },120);
+  setTimeout(()=>{
+    window.scrollTo(0,0);
+    window.dispatchEvent(new Event("resize"));
+  },320);
+
   scrollToLatest(true);
 }
 /* Enterは改行。送信は送信ボタンのみ。 */
