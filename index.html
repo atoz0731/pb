@@ -2518,7 +2518,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.1b";
+const APP_VERSION="3.7.1c";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -3030,9 +3030,7 @@ document.querySelectorAll('.tab[data-page="placesPanel"]').forEach(tab=>{
 function recoverPBViewportAfterKeyboard(){
   [80,220,450].forEach(ms=>setTimeout(()=>{
     document.documentElement.style.removeProperty("--pb-viewport-height");
-    if(window.scrollY!==0)window.scrollTo({top:0,left:0,behavior:"auto"});
-    document.body.scrollTop=0;
-    document.documentElement.scrollTop=0;
+
   },ms));
 }
 ["messageInput","soloInput"].forEach(id=>{
@@ -3885,18 +3883,18 @@ async function sendMessage(){
   $("replyBar").classList.add("hidden");
   stopTyping();
 
-  // v3.7.1b: Firestore送信完了後にだけキーボードを閉じる
+  // v3.7.1c: 送信後にキーボードを閉じ、iOSの高さ復帰後に最下部へ戻す
   $("messageInput").blur();
-  setTimeout(()=>{
-    window.scrollTo(0,0);
-    window.dispatchEvent(new Event("resize"));
-  },120);
-  setTimeout(()=>{
-    window.scrollTo(0,0);
-    window.dispatchEvent(new Event("resize"));
-  },320);
 
+  const settleTalkAfterSend=()=>{
+    window.dispatchEvent(new Event("resize"));
+    requestAnimationFrame(()=>scrollToLatest(true));
+  };
+
+  // まず即時、次にキーボードの閉じアニメーション後に再度最下部へ
   scrollToLatest(true);
+  setTimeout(settleTalkAfterSend,140);
+  setTimeout(settleTalkAfterSend,360);
 }
 /* Enterは改行。送信は送信ボタンのみ。 */
 
