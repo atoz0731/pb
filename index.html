@@ -2518,7 +2518,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.1c";
+const APP_VERSION="3.7.1d";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -3866,35 +3866,63 @@ async function cleanupExpiredImages(){
   }catch(e){console.warn("image cleanup",e)}
 }
 
-$("sendMessage").onclick=sendMessage;
+let sendingMessage=false;
+const sendBtn=$("sendMessage");
+
+// v3.7.1d: iOSでは送信ボタンを押した瞬間にtextareaのfocusを奪わせない。
+// 実際に送信が成功してからこちらでblurする。
+sendBtn.addEventListener("pointerdown",e=>e.preventDefault());
+sendBtn.onclick=()=>sendMessage();
+
 async function sendMessage(){
-  const text=$("messageInput").value.trim();if(!text)return;
-  if(editingMessage){
-    await updateDoc(doc(db,"messages",editingMessage.id),{text,edited:true,editedAt:serverTimestamp()});
-    editingMessage=null;$("editBar").classList.add("hidden");
-  }else{
-    await addDoc(collection(db,"messages"),{
-      text,senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),edited:false,reactions:{},
-      replyTo:replyTarget?{id:replyTarget.id,senderId:replyTarget.senderId,text:(replyTarget.text||"").slice(0,150)}:null
-    });
+  if(sendingMessage)return;
+  const input=$("messageInput");
+  const text=input.value.trim();
+  if(!text)return;
+
+  sendingMessage=true;
+  sendBtn.disabled=true;
+  try{
+    if(editingMessage){
+      await updateDoc(doc(db,"messages",editingMessage.id),{text,edited:true,editedAt:serverTimestamp()});
+      editingMessage=null;$("editBar").classList.add("hidden");
+    }else{
+      await addDoc(collection(db,"messages"),{
+        text,senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),edited:false,reactions:{},
+        replyTo:replyTarget?{id:replyTarget.id,senderId:replyTarget.senderId,text:(replyTarget.text||"").slice(0,150)}:null
+      });
+    }
+
+    // Firestore成功後だけ入力欄を消してキーボードを閉じる
+    input.value="";
+    replyTarget=null;
+    $("replyBar").classList.add("hidden");
+    stopTyping();
+    input.blur();
+
+    const bottom=()=>requestAnimationFrame(()=>scrollToLatest(true));
+    bottom();
+
+    // iOSのキーボードが閉じてVisualViewportが戻った瞬間を優先して最下部へ
+    if(window.visualViewport){
+      const onVVResize=()=>{
+        window.visualViewport.removeEventListener("resize",onVVResize);
+        bottom();
+        setTimeout(bottom,80);
+      };
+      window.visualViewport.addEventListener("resize",onVVResize,{once:true});
+    }
+    setTimeout(bottom,220);
+    setTimeout(bottom,500);
+  }catch(err){
+    console.error("message send failed",err);
+    // 失敗時は文章を残し、キーボードも勝手に閉じない
+    alert("送信できませんでした。通信状態を確認して、もう一度送信してください。");
+    input.focus();
+  }finally{
+    sendingMessage=false;
+    sendBtn.disabled=false;
   }
-  $("messageInput").value="";
-  replyTarget=null;
-  $("replyBar").classList.add("hidden");
-  stopTyping();
-
-  // v3.7.1c: 送信後にキーボードを閉じ、iOSの高さ復帰後に最下部へ戻す
-  $("messageInput").blur();
-
-  const settleTalkAfterSend=()=>{
-    window.dispatchEvent(new Event("resize"));
-    requestAnimationFrame(()=>scrollToLatest(true));
-  };
-
-  // まず即時、次にキーボードの閉じアニメーション後に再度最下部へ
-  scrollToLatest(true);
-  setTimeout(settleTalkAfterSend,140);
-  setTimeout(settleTalkAfterSend,360);
 }
 /* Enterは改行。送信は送信ボタンのみ。 */
 
