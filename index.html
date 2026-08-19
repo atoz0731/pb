@@ -1788,88 +1788,80 @@ body.pinLocked{
 }
 
 
-/* v3.7.0 final map UI */
-.miniLocationHeaderLeft{display:flex;align-items:center;gap:6px;min-width:0}
-.miniShareToggle{border:0;border-radius:12px;padding:4px 8px;font-size:10px;background:#555;color:#fff;white-space:nowrap}
-.miniShareToggle.on{background:#2f9e44}
-.miniSelfShareTime{font-size:9px;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.miniMapMyLocation{position:absolute;right:9px;bottom:52px;z-index:650;width:34px;height:34px;border:0;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:19px;line-height:34px}
-.miniLocationStatus{height:44px!important;padding:5px 8px!important}
-.miniOtherCard{width:100%;display:flex;align-items:center;gap:7px}
-.miniOtherMainButton{flex:1;display:flex;align-items:center;gap:7px;border:0;background:#fff;text-align:left;padding:0;min-width:0}
-.miniOtherMain{flex:1;min-width:0}
-.miniOtherName{font-size:11px;font-weight:800}
-.miniOtherMeta{font-size:9px;color:#777;margin-top:1px}
-.miniGoogleButton{flex:0 0 auto;border:1px solid #ddd;background:#fff;border-radius:12px;padding:5px 8px;font-size:10px;color:#2767b0}
-
-
-/* v3.7.0 map visibility hotfix */
+/* v3.7.0e: stable Leaflet base + compact controls */
 #miniLocationPanel{position:fixed!important}
-#miniLocationPanel .miniLocationMap{
-  flex:1 1 auto!important;
-  min-height:120px!important;
-  width:100%!important;
-  height:auto!important;
-  position:relative!important;
-  overflow:hidden!important;
-}
-
-
-/* v3.7.0a map hotfix */
-.miniLocationHeaderLeft{display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important}
-.miniLocationHeaderLeft>strong{flex:0 0 auto!important}
+.miniLocationHeaderLeft{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
+.miniLocationHeaderLeft>strong{flex:0 0 auto;font-size:12px}
 .miniShareToggle{
-  position:relative!important;flex:0 0 38px!important;width:38px!important;height:22px!important;
-  padding:0!important;border:0!important;border-radius:999px!important;background:#555!important;
-  overflow:hidden!important;font-size:0!important
+  position:relative;flex:0 0 30px!important;width:30px!important;height:18px!important;
+  padding:0!important;border:0!important;border-radius:999px!important;
+  background:#555!important;overflow:hidden!important
+}
+.miniShareToggle span{
+  position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .16s ease
 }
 .miniShareToggle.on{background:#34c759!important}
-.miniShareKnob{
-  position:absolute!important;top:2px!important;left:2px!important;width:18px!important;height:18px!important;
-  border-radius:50%!important;background:#fff!important;transition:transform .18s ease!important;
-  box-shadow:0 1px 3px rgba(0,0,0,.3)!important
+.miniShareToggle.on span{transform:translateX(12px)}
+.miniSelfShareTime{font-size:9px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.miniMapMyLocation{
+  position:absolute;right:9px;bottom:53px;z-index:19010;
+  width:32px;height:32px;border:0;border-radius:50%;background:#fff;color:#111;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:18px;line-height:32px;padding:0
 }
-.miniShareToggle.on .miniShareKnob{transform:translateX(16px)!important}
-.miniSelfShareTime{flex:1 1 auto!important;min-width:0!important;font-size:9px!important;color:#ddd!important}
-
-/* Leaflet must have an explicit pixel height on iOS; flex-only sizing can collapse. */
-#miniLocationMap{
-  display:block!important;position:relative!important;width:100%!important;
-  height:220px!important;min-height:220px!important;flex:0 0 220px!important;
-  background:#e8edf2!important;overflow:hidden!important
+.miniLocationStatus{overflow:hidden!important}
+.miniOtherRow{width:100%;display:flex;align-items:center;gap:7px;min-width:0}
+.miniOtherFocus{
+  flex:1;min-width:0;display:flex;align-items:center;gap:6px;
+  border:0;background:transparent;text-align:left;padding:0
 }
-#miniLocationPanel[data-size="medium"] #miniLocationMap{
-  height:360px!important;min-height:360px!important;flex-basis:360px!important
+.miniOtherText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+.miniOtherState{color:#777;font-weight:400}
+.miniMapsLink{
+  flex:0 0 auto;border:1px solid #ddd;background:#fff;border-radius:11px;
+  padding:4px 7px;font-size:9px;color:#555;text-decoration:none
 }
-#miniLocationPanel[data-size="large"] #miniLocationMap{
-  height:520px!important;min-height:520px!important;flex-basis:520px!important
-}
-#miniLocationMap .leaflet-container,
-#miniLocationMap .leaflet-map-pane{visibility:visible!important}
 
 
-/* v3.7.0c stable embedded map */
-#miniLocationMap{
-  display:block!important;
-  position:relative!important;
-  width:100%!important;
-  height:220px!important;
-  min-height:220px!important;
-  flex:0 0 220px!important;
-  background:#e8edf2!important;
+/* v3.7.1 navigation / compact windows */
+.talkSavedButton{
+  position:absolute;right:10px;top:8px;z-index:45;
+  width:30px;height:30px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.94);box-shadow:0 1px 5px rgba(0,0,0,.18);
+  font-size:19px;line-height:30px;padding:0;color:#333
+}
+#talkPage{position:relative}
+#notificationsPanel{
+  inset:auto!important;
+  left:50%!important;top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  width:min(92vw,520px)!important;
+  height:min(72dvh,620px)!important;
+  border-radius:16px!important;
   overflow:hidden!important;
+  box-shadow:0 12px 40px rgba(0,0,0,.34)!important;
+  border:1px solid rgba(0,0,0,.12)!important;
+  z-index:23000!important
 }
-#miniLocationMap iframe{
-  display:block!important;
-  width:100%!important;
-  height:100%!important;
-  border:0!important;
-  margin:0!important;
-  padding:0!important;
-  background:#e8edf2!important;
+#notificationsPanel .searchHeader{
+  padding:10px!important;
+  min-height:46px!important
 }
+#notificationsPanel #closeNotifications{font-size:0!important}
+#notificationsPanel #closeNotifications::after{content:"×";font-size:22px!important}
+#notificationsPanel .searchResults{min-height:0;overflow:auto}
+
+/* iOS: キーボード表示中は下端Safe Area分を二重に確保しない */
+#talkPage .composer:focus-within{
+  padding-bottom:7px!important;
+}
+#messageInput:focus{scroll-margin-bottom:0!important}
 
 </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
 
@@ -2036,8 +2028,8 @@ body.pinLocked{
   <div class="miniLocationHeader">
     <div class="miniLocationHeaderLeft">
       <strong>位置情報</strong>
-      <button id="miniShareToggle" class="miniShareToggle" type="button" aria-label="位置共有"><span class="miniShareKnob"></span></button>
-      <span id="miniSelfShareTime" class="miniSelfShareTime">最終共有 --</span>
+      <button id="miniShareToggle" class="miniShareToggle" type="button" aria-label="位置共有を開始"><span></span></button>
+      <span id="miniSelfShareTime" class="miniSelfShareTime">--</span>
     </div>
     <div class="miniMapControls">
       <button id="miniMapSmaller" aria-label="地図を小さく">−</button>
@@ -2045,7 +2037,8 @@ body.pinLocked{
       <button id="closeMiniLocation" aria-label="閉じる">×</button>
     </div>
   </div>
-  <div id="miniLocationMap" class="miniLocationMap"></div><button id="miniMapMyLocation" class="miniMapMyLocation" aria-label="自分の位置へ">◎</button>
+  <div id="miniLocationMap" class="miniLocationMap"></div>
+  <button id="miniMapMyLocation" class="miniMapMyLocation" type="button" aria-label="自分の位置へ">◎</button>
   <div id="miniLocationStatus" class="miniLocationStatus"></div>
 </section>
 
@@ -2094,7 +2087,6 @@ body.pinLocked{
     <button id="menuSearch">🔍 メッセージを検索</button>
     <button id="menuDateFilter">📅 日付で見る</button>
     <button id="menuVoice">📞 音声通話を開始</button>
-    <button id="menuSaved">☆ あとで見る</button>
     <button id="menuUpdates">🆕 アップデート</button>
     <button id="menuSettings">⚙️ 設定</button>
     <button id="menuLock">🔒 PIN画面に戻る</button>
@@ -2105,12 +2097,13 @@ body.pinLocked{
 <nav class="tabs">
   <button id="talkTab" class="tab active" data-page="talkPage"><span class="tabLabelWrap">トーク<span id="talkUnreadBadge" class="unreadBadge hidden">0</span></span></button>
   <button class="tab" data-page="soloPage">ひとりごと</button>
+  <button class="tab" data-page="notesPage">ノート</button>
   <button class="tab" data-page="schedulePage">予定</button>
-  <button class="tab" data-page="locationPage">位置情報</button>
-    <button class="tab" data-page="placesPanel">行きたい場所</button>
+  <button class="tab" data-page="placesPanel">行きたい場所</button>
 </nav>
 
 <div id="talkPage" class="page">
+  <button id="talkSavedButton" class="talkSavedButton" type="button" aria-label="あとで見る" title="あとで見る">☆</button>
   <div id="talkFilterBar" class="hidden">
     <span id="talkFilterLabel"></span>
     <button id="clearTalkFilter">× 絞り込み解除</button>
@@ -2148,11 +2141,6 @@ body.pinLocked{
 </div>
 
 <div id="soloPage" class="page hidden">
-  <div class="soloSubnav">
-    <button id="soloModeButton" class="soloSubBtn active">ひとりごと</button>
-    <button id="notesModeButton" class="soloSubBtn">ノート</button>
-  </div>
-
   <div id="soloView" class="page">
     <div class="soloFilters">
       <button class="soloFilterBtn active" data-solofilter="all">全員</button>
@@ -2166,7 +2154,10 @@ body.pinLocked{
     </div>
   </div>
 
-  <div id="notesView" class="hidden">
+</div>
+
+<div id="notesPage" class="page hidden">
+  <div id="notesView">
     <div class="notesToolbar"><button id="openNoteModal" class="noteAddBtn">＋ ノート</button></div>
     <div id="noteList" class="scroll"></div>
   </div>
@@ -2233,7 +2224,7 @@ body.pinLocked{
   <div id="placesList"></div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li><li>地図ウィンドウ上部に共有ON/OFFと自分の最終共有時刻を追加。地図内に自分位置ボタン、下部は相手の現在/最終位置＋Google Mapsリンクに整理。位置更新時はズームをリセットせずマーカーのみ更新</li><li>自分位置ボタン追加時のラッパーがiOSで地図領域を潰す問題を修正し、Leaflet地図を直接パネルのflex領域として表示する構造へ戻した</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -2522,11 +2513,12 @@ let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsub
 let notifications=[], notificationReadAt=0, locationStartNotified=false;
 let savedMessageIds=new Set(), savedMessagesLoaded=false;
 let latestLocationRows=[];
-let cachedOtherLocation=null;
+let miniLeafletMap=null;
+let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.0c";
+const APP_VERSION="3.7.1";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -3024,7 +3016,7 @@ document.querySelectorAll('.tab[data-page="placesPanel"]').forEach(tab=>{
     e.stopImmediatePropagation();
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     tab.classList.add("active");
-    ["talkPage","soloPage","schedulePage","locationPage","updatesPage"].forEach(p=>$(p)?.classList.add("hidden"));
+    ["talkPage","soloPage","notesPage","schedulePage","locationPage","updatesPage"].forEach(p=>$(p)?.classList.add("hidden"));
     $("placesPanel")?.classList.remove("hidden");
     if(!unsubscribePlaces)listenPlaces();
     renderPlaces();
@@ -3081,11 +3073,11 @@ $("menuVoice").onclick=async()=>{$("headerMenu").classList.add("hidden");await o
 $("menuUpdates").onclick=()=>{
   $("headerMenu").classList.add("hidden");
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  ["talkPage","soloPage","schedulePage","locationPage","placesPanel"].forEach(p=>$(p)?.classList.add("hidden"));
+  ["talkPage","soloPage","notesPage","schedulePage","locationPage","placesPanel"].forEach(p=>$(p)?.classList.add("hidden"));
   $("updatesPage").classList.remove("hidden");
   localStorage.setItem("pb.lastSeenVersion",APP_VERSION);
 };
-$("menuSaved").onclick=()=>{$("headerMenu").classList.add("hidden");$("savedMessagesPanel").classList.remove("hidden");renderSavedMessages()};
+$("talkSavedButton").onclick=()=>{$("savedMessagesPanel").classList.remove("hidden");renderSavedMessages()};
 $("closeSavedMessages").onclick=()=>$("savedMessagesPanel").classList.add("hidden");
 $("menuSettings").onclick=()=>{
   $("headerMenu").classList.add("hidden");
@@ -3318,7 +3310,7 @@ function markUpdatesSeen(){
 document.querySelectorAll(".tab").forEach(tab=>{
   tab.onclick=()=>{
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));tab.classList.add("active");
-    ["talkPage","soloPage","schedulePage","locationPage","placesPanel","updatesPage"].forEach(p=>$(p)?.classList.add("hidden"));
+    ["talkPage","soloPage","notesPage","schedulePage","locationPage","placesPanel","updatesPage"].forEach(p=>$(p)?.classList.add("hidden"));
     $(tab.dataset.page).classList.remove("hidden");
     if(tab.dataset.page==="talkPage"){
       requestAnimationFrame(()=>{
@@ -3328,6 +3320,9 @@ document.querySelectorAll(".tab").forEach(tab=>{
     }
     if(tab.dataset.page==="placesPanel"){
       renderPlaces();
+    }
+    if(tab.dataset.page==="notesPage"){
+      renderNotes();
     }
     if(tab.dataset.page==="updatesPage"){
       markUpdatesSeen();
@@ -4682,14 +4677,7 @@ document.querySelectorAll(".soloFilterBtn").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".soloFilterBtn").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");soloFilter=b.dataset.solofilter;renderSolo();
 });
-$("soloModeButton").onclick=()=>{
-  $("soloModeButton").classList.add("active");$("notesModeButton").classList.remove("active");
-  $("soloView").classList.remove("hidden");$("notesView").classList.add("hidden");
-};
-$("notesModeButton").onclick=()=>{
-  $("notesModeButton").classList.add("active");$("soloModeButton").classList.remove("active");
-  $("notesView").classList.remove("hidden");$("soloView").classList.add("hidden");
-};
+
 
 function listenNotes(){
   if(unsubscribeNotes)unsubscribeNotes();
@@ -5159,10 +5147,26 @@ function applyMiniMapSize(){
   const panel=$("miniLocationPanel");
   ["miniMapSizeSmall","miniMapSizeMedium","miniMapSizeLarge"].forEach(c=>panel.classList.remove(c));
   panel.classList.add(miniMapSizeClass());
+  requestAnimationFrame(()=>{
+    miniLeafletMap?.invalidateSize({pan:false});
+    setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),180);
+  });
 }
-
-function getMiniSelfRow(){return latestLocationRows.find(x=>x.uid===currentUID)||null}
-function getMiniOtherRow(){return latestLocationRows.find(x=>x.uid!==currentUID)||cachedOtherLocation||null}
+function formatMiniLocationAge(x){
+  const t=x.updatedAt?.toDate?.();
+  if(!t)return "更新時刻不明";
+  const sec=Math.max(0,Math.floor((Date.now()-t.getTime())/1000));
+  if(sec<60)return `${sec}秒前`;
+  const min=Math.floor(sec/60);
+  if(min<60)return `${min}分前`;
+  return t.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+}
+function getMiniSelfRow(){
+  return latestLocationRows.find(x=>x.uid===currentUID)||null;
+}
+function getMiniOtherRow(){
+  return latestLocationRows.find(x=>x.uid!==currentUID)||null;
+}
 function updateMiniHeaderState(){
   const self=getMiniSelfRow();
   const btn=$("miniShareToggle");
@@ -5171,121 +5175,151 @@ function updateMiniHeaderState(){
     btn.setAttribute("aria-pressed",locationShareActive?"true":"false");
     btn.setAttribute("aria-label",locationShareActive?"位置共有を停止":"位置共有を開始");
   }
-  const time=$("miniSelfShareTime");
-  if(time){
-    if(self)time.textContent=`${self.sharing?"共有中":"最終共有"} ${formatMiniLocationAge(self)}`;
-    else time.textContent="最終共有 --";
-  }
+  const tm=$("miniSelfShareTime");
+  if(tm)tm.textContent=self?formatMiniLocationAge(self):"--";
 }
-
-function openGoogleMapsForRow(row){
-  if(!row||typeof row.latitude!=="number"||typeof row.longitude!=="number")return;
-  window.open(`https://www.google.com/maps?q=${row.latitude},${row.longitude}`,"_blank","noopener");
-}
-
-function formatMiniLocationAge(x){
-  const t=x.updatedAt?.toDate?.() || (x.updatedAtMs?new Date(x.updatedAtMs):null);
-  if(!t)return "更新時刻不明";
-  const sec=Math.max(0,Math.floor((Date.now()-t.getTime())/1000));
-  if(sec<60)return `${sec}秒前`;
-  const min=Math.floor(sec/60);
-  if(min<60)return `${min}分前`;
-  return t.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+function focusMiniMapOnRow(row,zoom=15){
+  if(!miniLeafletMap||!row)return;
+  miniLeafletMap.setView([row.latitude,row.longitude],zoom,{animate:true});
 }
 function renderMiniLocationStatus(){
   updateMiniHeaderState();
   const box=$("miniLocationStatus");box.innerHTML="";
   const other=getMiniOtherRow();
   if(!other){
-    box.innerHTML='<span class="small">相手の共有位置はまだありません。</span>';
+    box.innerHTML='<span class="small">相手の位置情報なし</span>';
     return;
   }
-  const row=document.createElement("div");row.className="miniOtherCard";
-  const main=document.createElement("button");main.type="button";main.className="miniOtherMainButton";
-  const dot=document.createElement("span");dot.className=`miniLocDot other ${other.sharing?"":"last"}`;
-  const body=document.createElement("div");body.className="miniOtherMain";
-  const name=document.createElement("div");name.className="miniOtherName";name.textContent=other.senderId||"相手";
-  const meta=document.createElement("div");meta.className="miniOtherMeta";
-  meta.textContent=`${other.sharing?"共有中":"最終位置"}・${formatMiniLocationAge(other)}`;
-  body.append(name,meta);main.append(dot,body);
-  main.onclick=()=>focusMiniMapOnRow(other,15);
-  const gm=document.createElement("button");gm.className="miniGoogleButton";gm.textContent="Google Maps ↗";
-  gm.onclick=e=>{e.stopPropagation();openGoogleMapsForRow(other)};
-  row.append(main,gm);box.appendChild(row);
+  const row=document.createElement("div");row.className="miniOtherRow";
+  const focus=document.createElement("button");focus.type="button";focus.className="miniOtherFocus";
+  const dot=document.createElement("span");
+  dot.className=`miniLocDot other ${other.sharing?"":"last"}`;
+  const txt=document.createElement("span");txt.className="miniOtherText";
+  const id=document.createElement("strong");id.textContent=other.senderId||"相手";
+  const state=document.createElement("span");state.className="miniOtherState";
+  state.textContent=` ${other.sharing?"・共有中":"・最終"} ${formatMiniLocationAge(other)}`;
+  txt.append(id,state);focus.append(dot,txt);
+  focus.onclick=()=>focusMiniMapOnRow(other,15);
+
+  const maps=document.createElement("a");maps.className="miniMapsLink";
+  maps.target="_blank";maps.rel="noopener";maps.textContent="↗";
+  maps.href=`https://www.google.com/maps?q=${other.latitude},${other.longitude}`;
+  row.append(focus,maps);box.appendChild(row);
 }
 
 
-let miniMapTarget="other";
-
-function miniMapRowForTarget(){
-  if(miniMapTarget==="self")return getMiniSelfRow()||getMiniOtherRow();
-  return getMiniOtherRow()||getMiniSelfRow();
-}
-function googleEmbedUrlForRow(row){
-  const lat=Number(row?.latitude),lon=Number(row?.longitude);
-  if(!Number.isFinite(lat)||!Number.isFinite(lon)){
-    return "https://maps.google.com/maps?q=33.5902,130.4017&z=12&output=embed";
-  }
-  return `https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
-}
-function renderStableMiniMap(force=false){
-  renderMiniLocationStatus();
+let miniMapResizeObserver=null;
+function installMiniMapResizeObserver(){
   const el=$("miniLocationMap");
   if(!el)return;
-  const row=miniMapRowForTarget();
-  const src=googleEmbedUrlForRow(row);
-  let frame=el.querySelector("iframe");
-  if(!frame){
-    frame=document.createElement("iframe");
-    frame.title="位置情報地図";
-    frame.loading="eager";
-    frame.referrerPolicy="no-referrer-when-downgrade";
-    frame.setAttribute("allowfullscreen","");
-    el.innerHTML="";
-    el.appendChild(frame);
-  }
-  if(force || frame.dataset.src!==src){
-    frame.dataset.src=src;
-    frame.src=src;
-  }
-}
-function renderMiniLocations(){
-  miniMapTarget=getMiniOtherRow()?"other":"self";
-  renderStableMiniMap(true);
-}
-function updateMiniMapMarkers(){
-  /* Footer/time can update in real time.
-     Keep the user's current map pan/zoom stable unless the target itself changes. */
-  renderMiniLocationStatus();
-}
-function focusMiniMapOnRow(row){
-  if(!row)return;
-  miniMapTarget=(row.uid===currentUID)?"self":"other";
-  renderStableMiniMap(true);
+  try{miniMapResizeObserver?.disconnect()}catch(e){}
+  miniMapResizeObserver=new ResizeObserver(()=>{
+    if(!miniLeafletMap)return;
+    requestAnimationFrame(()=>{
+      miniLeafletMap.invalidateSize({pan:false,debounceMoveend:true});
+    });
+  });
+  miniMapResizeObserver.observe(el);
 }
 
+function destroyMiniLeafletMap(){
+  try{miniMapResizeObserver?.disconnect()}catch(e){}
+  miniMapResizeObserver=null;
+  try{miniLeafletMap?.off();miniLeafletMap?.remove()}catch(e){}
+  miniLeafletMap=null;
+  miniLeafletLayer=null;
+  const el=$("miniLocationMap");
+  if(el)el.innerHTML="";
+}
+let miniMapOpenTimer=null;
+function rebuildMiniMapAfterLayout(){
+  clearTimeout(miniMapOpenTimer);
+  miniMapOpenTimer=setTimeout(()=>{
+    if($("miniLocationPanel")?.classList.contains("hidden"))return;
+    destroyMiniLeafletMap();
+    renderMiniLocations();
+  },140);
+}
+
+
+function leafletCssLooksLoaded(){
+  const probe=document.createElement("div");
+  probe.className="leaflet-control-zoom";
+  probe.style.position="absolute";
+  probe.style.visibility="hidden";
+  document.body.appendChild(probe);
+  const pos=getComputedStyle(probe).position;
+  probe.remove();
+  return pos==="absolute";
+}
+
+function renderMiniLocations(){
+  renderMiniLocationStatus();
+  if(!window.L){
+    $("miniLocationMap").innerHTML='<div class="small" style="padding:15px">地図ライブラリを読み込めませんでした。</div>';
+    return;
+  }
+  if(!leafletCssLooksLoaded())console.warn("Leaflet CSS is not loaded correctly.");
+
+  if(!miniLeafletMap){
+    miniLeafletMap=L.map("miniLocationMap",{
+      zoomControl:true,attributionControl:true,touchZoom:true,dragging:true,
+      scrollWheelZoom:true,doubleClickZoom:true
+    });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      maxZoom:19,attribution:'&copy; OpenStreetMap'
+    }).addTo(miniLeafletMap);
+    installMiniMapResizeObserver();
+  }
+
+  if(miniLeafletLayer)miniLeafletLayer.remove();
+  miniLeafletLayer=L.layerGroup().addTo(miniLeafletMap);
+
+  const points=[];
+  latestLocationRows.forEach(x=>{
+    if(typeof x.latitude!=="number"||typeof x.longitude!=="number")return;
+    const isSelf=x.uid===currentUID;
+    const marker=L.circleMarker([x.latitude,x.longitude],{
+      radius:x.sharing?8:6,color:"#fff",weight:2,
+      fillColor:isSelf?"#3786d8":"#d94f5c",
+      fillOpacity:x.sharing?.95:.38
+    }).addTo(miniLeafletLayer);
+    marker.bindPopup(`<strong>${isSelf?"自分":escapeHtml(x.senderId||"相手")}</strong><br>${x.sharing?"共有中":"最終共有位置"}<br>${escapeHtml(formatMiniLocationAge(x))}`);
+    points.push([x.latitude,x.longitude]);
+  });
+
+  requestAnimationFrame(()=>miniLeafletMap?.invalidateSize({pan:false}));
+  if(!miniLeafletMap.__pbInitialFitDone){
+    miniLeafletMap.__pbInitialFitDone=true;
+    if(points.length===1)miniLeafletMap.setView(points[0],15,{animate:false});
+    else if(points.length>1)miniLeafletMap.fitBounds(points,{padding:[24,24],maxZoom:16,animate:false});
+    else miniLeafletMap.setView([33.5902,130.4017],11,{animate:false});
+  }
+}
 $("miniShareToggle").onclick=e=>{
   e.stopPropagation();
   $("locationSwitch")?.click();
-  setTimeout(updateMiniHeaderState,120);
+  setTimeout(updateMiniHeaderState,100);
 };
 $("miniMapMyLocation").onclick=e=>{
   e.stopPropagation();
-  miniMapTarget="self";
-  renderStableMiniMap(true);
+  const self=getMiniSelfRow();
+  if(self)focusMiniMapOnRow(self,15);
 };
 
 $("miniMapSmaller").onclick=e=>{
   e.stopPropagation();
   miniMapSizeIndex=Math.max(0,miniMapSizeIndex-1);
   applyMiniMapSize();
-  setTimeout(()=>renderStableMiniMap(false),120);
+  rebuildMiniMapAfterLayout();
+  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),260);
 };
 $("miniMapLarger").onclick=e=>{
   e.stopPropagation();
   miniMapSizeIndex=Math.min(2,miniMapSizeIndex+1);
   applyMiniMapSize();
-  setTimeout(()=>renderStableMiniMap(false),120);
+  rebuildMiniMapAfterLayout();
+  setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),260);
 };
 $("locationSharingIcon").onclick=()=>{
   if(activePage?.()==="talkPage"){
@@ -5293,19 +5327,19 @@ $("locationSharingIcon").onclick=()=>{
     if(panel.classList.contains("hidden")){
       panel.classList.remove("hidden");
       applyMiniMapSize();
-      renderMiniLocations();
+      rebuildMiniMapAfterLayout();
     }else{
       panel.classList.add("hidden");
+      destroyMiniLeafletMap();
     }
     return;
   }
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  const tab=document.querySelector('.tab[data-page="locationPage"]');tab?.classList.add("active");
-  ["talkPage","soloPage","schedulePage","locationPage","updatesPage","placesPanel"].forEach(p=>$(p)?.classList.add("hidden"));
-  $("locationPage").classList.remove("hidden");
+  document.querySelector('.tab[data-page="talkPage"]')?.click();
+  setTimeout(()=>{$("miniLocationPanel")?.classList.remove("hidden");applyMiniMapSize();rebuildMiniMapAfterLayout()},40);
 };
 $("closeMiniLocation").onclick=()=>{
   $("miniLocationPanel").classList.add("hidden");
+  destroyMiniLeafletMap();
 };
 
 function setLocationShareUI(on,text=""){
@@ -5441,7 +5475,6 @@ function listenLocations(){
 
     snap.forEach(ds=>{
       const x={id:ds.id,...ds.data()};
-      if(!x.uid)x.uid=ds.id;
       if(x.sharing){
         anySharing=true;
         if(x.uid===currentUID)selfSharing=true; else otherSharing=true;
@@ -5463,8 +5496,8 @@ function listenLocations(){
     const icon=$("locationSharingIcon");
     icon.classList.remove("hidden");
     icon.classList.toggle("sharingPulse",anySharing);
-    updateMiniHeaderState();
     icon.title=selfSharing&&otherSharing?"自分と相手が位置情報共有中":selfSharing?"自分が位置情報共有中":otherSharing?"相手が位置情報共有中":"位置情報を見る";
+    updateMiniHeaderState();
 
     rows.sort((a,b)=>{
       if(!!a.sharing!==!!b.sharing)return a.sharing?-1:1;
@@ -5472,28 +5505,7 @@ function listenLocations(){
       return bt-at;
     });
     latestLocationRows=rows.map(x=>({...x}));
-
-    const otherNow=latestLocationRows.find(x=>x.uid!==currentUID);
-    if(otherNow){
-      cachedOtherLocation={...otherNow,updatedAtMs:otherNow.updatedAt?.toMillis?.()||Date.now()};
-      try{
-        localStorage.setItem(`pb.lastOtherLocation.${currentUID}`,JSON.stringify({
-          ...cachedOtherLocation,
-          updatedAt:null
-        }));
-      }catch(e){}
-    }else if(!cachedOtherLocation){
-      try{
-        const saved=JSON.parse(localStorage.getItem(`pb.lastOtherLocation.${currentUID}`)||"null");
-        if(saved)cachedOtherLocation=saved;
-      }catch(e){}
-    }
-
-    renderMiniLocationStatus();
-    if(!$("miniLocationPanel")?.classList.contains("hidden")){
-      renderMiniLocationStatus();
-      if(miniMapTarget==="other" && getMiniOtherRow())renderStableMiniMap(false);
-    }
+    if(!$("miniLocationPanel")?.classList.contains("hidden"))renderMiniLocations();
 
     if(!rows.length){
       box.innerHTML='<div class="small" style="margin-top:14px">まだ共有された位置情報はありません。</div>';
