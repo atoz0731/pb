@@ -1954,6 +1954,11 @@ body.standbyMode #standbyStatus{display:inline-flex}
 #standbyFlash.flashNow{display:block;animation:pbStandbyFlash .42s ease-in-out 0s 3 alternate}
 @keyframes pbStandbyFlash{from{opacity:0}to{opacity:.58}}
 
+
+/* ===== v3.7.2b close-button tuning ===== */
+#savedMessagesPanel .windowCloseX{top:1px!important}
+#messageSearchPanel .windowCloseX{top:28px!important}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -2637,7 +2642,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.2a";
+const APP_VERSION="3.7.2b";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -2682,6 +2687,16 @@ async function setStandbyMode(on){
     standbyWakeLock=null;
   }
 }
+function forceStandbyOff(){
+  if(standbyMode || standbyWakeLock){
+    setStandbyMode(false);
+  }else{
+    document.body.classList.remove("standbyMode");
+    const menu=$("menuStandby");
+    if(menu)menu.textContent="👁 待機モード";
+  }
+}
+
 function flashStandbyScreen(){
   if(!standbyMode||document.hidden)return;
   const f=$("standbyFlash");if(!f)return;
@@ -2953,6 +2968,7 @@ function checkPin(){
     return;
   }
   if(pin==="0814"){
+    forceStandbyOff();
     camouflageMode=false;decoyMode="";
     pinPassed=true;clearHiddenStamp();$("pinScreen").classList.add("hidden");
     if(auth.currentUser)showApp(auth.currentUser);else $("loginScreen").classList.remove("hidden");
@@ -3016,6 +3032,7 @@ function clearHiddenStamp(){
   try{localStorage.removeItem("pb.hiddenAt.fallback")}catch(e){}
 }
 function lockToPin(){
+  forceStandbyOff();
   if(standbyMode)setStandbyMode(false);
   if(!auth.currentUser || !pinPassed)return;
   pinPassed=false;
@@ -3100,7 +3117,8 @@ $("camoLoginButton").onclick=async()=>{
 $("camoLoginPassword").addEventListener("keydown",e=>{
   if(e.key==="Enter")$("camoLoginButton").click();
 });
-$("logoutButton").onclick=async()=>{await leaveVoiceRoom(false);await signOut(auth);$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")};
+$("logoutButton").onclick=async()=>{
+  forceStandbyOff();await leaveVoiceRoom(false);await signOut(auth);$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")};
 onAuthStateChanged(auth,user=>{
   if(shortcutBadgeTest){
     ["pinScreen","appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","loginScreen","camoLoginScreen"].forEach(id=>$(id)?.classList.add("hidden"));
@@ -3246,6 +3264,7 @@ $("menuSettings").onclick=()=>{
 
 
 $("quickWeather").onclick=()=>{
+  forceStandbyOff();
   camouflageMode=true;decoyMode="weather";pinPassed=true;
   ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen"].forEach(id=>$(id)?.classList.add("hidden"));
   $("weatherScreen").classList.remove("hidden");
@@ -3406,7 +3425,8 @@ function playIncomingSound(force=false){
     const now=audioContext.currentTime;
     const gain=audioContext.createGain();
     gain.gain.setValueAtTime(0.0001,now);
-    const level=Math.min(0.18,0.012+(Math.min(10,Math.max(1,Number(pbSettings.soundVolume)||5))-1)*0.018);gain.gain.exponentialRampToValueAtTime(level,now+0.01);
+    const vol=Math.min(10,Math.max(1,Number(pbSettings.soundVolume)||5));
+    const level=[0,0.03,0.05,0.075,0.10,0.14,0.19,0.25,0.32,0.40,0.50][vol];gain.gain.exponentialRampToValueAtTime(level,now+0.01);
     gain.gain.exponentialRampToValueAtTime(0.0001,now+0.22);
     gain.connect(audioContext.destination);
     [660,880].forEach((freq,i)=>{
@@ -4405,6 +4425,7 @@ $("weatherCurrent").onclick=()=>loadWeather("current");
    v3.5.1 UX / PIN lock / 9405 / Places
    ========================================================= */
 function returnToPin(){
+  forceStandbyOff();
   try{stopTyping()}catch(e){}
   if(typeof voiceJoined!=="undefined"&&voiceJoined){finishVoiceCall("ended").catch(()=>{})}
   camouflageMode=false;decoyMode="";
@@ -4422,6 +4443,7 @@ function returnToPin(){
 $("menuLock").onclick=e=>{
   e.preventDefault();
   e.stopPropagation();
+  forceStandbyOff();
   $("headerMenu")?.classList.add("hidden");
   $("miniLocationPanel")?.classList.add("hidden");
   $("savedMessagesPanel")?.classList.add("hidden");
