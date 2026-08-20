@@ -1857,6 +1857,103 @@ body.pinLocked{
 }
 #messageInput:focus{scroll-margin-bottom:0!important}
 
+
+/* ===== v3.7.2 ===== */
+.brandRow{display:flex;align-items:center;gap:8px}
+.quickWeatherBtn{border:0;background:transparent;font-size:18px;padding:2px 3px;line-height:1}
+.dayCounter{font-size:9px;color:#999;margin-left:5px}
+.talkTools{position:absolute;right:10px;top:8px;z-index:45;display:flex;flex-direction:column;gap:7px}
+.talkToolBtn{width:30px;height:30px;border:0;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:0 1px 5px rgba(0,0,0,.18);font-size:17px;line-height:30px;padding:0;color:#333}
+.talkSavedButton{position:static!important}
+.notesToolbar{justify-content:space-between!important;align-items:center;gap:8px}
+.ownerFilters{display:flex;gap:5px}
+.ownerFilter{border:1px solid #ddd;background:#fff;border-radius:15px;padding:6px 9px;font-size:10px}
+.ownerFilter.active{background:#111;color:#fff;border-color:#111}
+.noteCard.mine{border-left:4px solid #2f6fed}
+.noteCard.other{border-left:4px solid #e24a4a}
+.noteFlags{display:flex;gap:8px;align-items:center}
+.noteChecklist{margin-top:7px;border-top:1px solid #eee;padding-top:6px}
+.noteCheckRow{display:flex;align-items:flex-start;gap:6px;padding:4px 0;font-size:12px}
+.noteCheckRow input{width:18px!important;height:18px!important;flex:0 0 auto}
+.noteCheckText.done{text-decoration:line-through;color:#999}
+.checklistEditor{margin-top:8px;padding-top:8px;border-top:1px solid #eee}
+.checklistEditRow{display:flex;gap:6px;margin-top:6px}
+.checklistEditRow input{flex:1;min-width:0}
+.checklistEditRow button{border:0;background:#eee;border-radius:8px;padding:5px 8px}
+.settingsModalBox{position:relative}
+.settingsCloseX{position:absolute;right:12px;top:10px;border:0;background:transparent;font-size:24px;line-height:1;z-index:2}
+#notificationsPanel .searchHeader{position:relative;padding-right:42px!important}
+#notificationsPanel #closeNotifications{position:absolute;right:9px;top:7px;width:32px;height:32px;border:0;background:transparent}
+.soundVolumeControl{display:flex;align-items:center;gap:7px}
+.soundVolumeControl select{min-width:58px;padding:6px;border:1px solid #ccc;border-radius:8px;background:#fff}
+.soundTestBtn{border:0;border-radius:9px;background:#111;color:#fff;padding:7px 9px;font-size:10px}
+
+
+/* ===== v3.7.2a UI consistency / standby ===== */
+.noteCard.privateNote{border-left-color:#8e8e93!important}
+.noteCard.collabNote{border-left-color:#8e44ad!important}
+
+/* common compact window header */
+.windowHeader{
+  flex:0 0 auto;position:sticky;top:0;z-index:5;
+  min-height:46px;box-sizing:border-box;
+  background:#111;color:#fff;padding:10px 46px 10px 12px;
+  display:flex;align-items:center
+}
+.windowHeaderTitle{font-weight:800;font-size:14px}
+.windowCloseX{
+  position:absolute;right:8px;top:5px;width:36px;height:36px;
+  border:0;background:transparent;color:#fff;font-size:23px;line-height:36px;padding:0
+}
+
+/* search / saved windows use the same close rule */
+#messageSearchPanel .searchHeader,#savedMessagesPanel .searchHeader{
+  position:sticky;top:0;z-index:5;padding:8px 46px 8px 10px!important
+}
+#messageSearchPanel .searchHeader{display:grid;grid-template-columns:1fr;gap:5px}
+#messageSearchPanel .searchHeader .windowHeaderTitle{font-size:12px}
+#messageSearchPanel .windowCloseX,#savedMessagesPanel .windowCloseX{top:5px}
+
+/* date window */
+#dateFilterModal .modal{position:relative;padding-top:0!important}
+#dateFilterModal .windowHeader{margin:0 -16px 12px;border-radius:20px 20px 0 0}
+
+/* settings: fixed header, only body scrolls */
+#settingsModal{align-items:center!important;padding:env(safe-area-inset-top) 12px 12px!important}
+#settingsModal .settingsModalBox{
+  padding:0!important;overflow:hidden!important;
+  max-height:min(86dvh,760px)!important;
+  display:flex;flex-direction:column
+}
+.settingsFixedHeader{
+  flex:0 0 auto;position:relative;background:#111;color:#fff;
+  min-height:48px;display:flex;align-items:center;padding:0 48px 0 16px;
+  border-radius:20px 20px 0 0
+}
+.settingsFixedHeader h3{margin:0;color:#fff}
+.settingsFixedHeader .settingsCloseX{
+  position:absolute;right:8px;top:5px;color:#fff;width:36px;height:36px;padding:0
+}
+.settingsScrollBody{
+  min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:4px 16px calc(18px + env(safe-area-inset-bottom))
+}
+
+/* standby mode */
+#standbyStatus{
+  display:none;align-items:center;gap:5px;margin-left:6px;
+  font-size:9px;color:#b9f6ca;font-weight:700;white-space:nowrap
+}
+body.standbyMode #standbyStatus{display:inline-flex}
+.standbyDot{width:6px;height:6px;border-radius:50%;background:#69f0ae;animation:standbyPulse 1.6s ease-in-out infinite}
+@keyframes standbyPulse{0%,100%{opacity:.45}50%{opacity:1}}
+#standbyFlash{
+  position:fixed;inset:0;z-index:50000;pointer-events:none;
+  background:#fff;opacity:0;display:none
+}
+#standbyFlash.flashNow{display:block;animation:pbStandbyFlash .42s ease-in-out 0s 3 alternate}
+@keyframes pbStandbyFlash{from{opacity:0}to{opacity:.58}}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -2072,11 +2169,13 @@ body.pinLocked{
   </div>
 </div>
 
+<div id="standbyFlash" aria-hidden="true"></div>
+
 <section id="appScreen" class="hidden">
 <header>
   <div>
-    <div class="brand">PB</div>
-    <div class="userLabel"><span id="userLabel"></span>　<span id="appVersionLabel"></span></div>
+    <div class="brandRow"><div class="brand">PB</div><button id="quickWeather" class="quickWeatherBtn" type="button" aria-label="天気へ">🌤️</button></div>
+    <div class="userLabel"><span id="userLabel"></span>　<span id="appVersionLabel"></span><span id="dayCounter" class="dayCounter"></span><span id="standbyStatus"><span class="standbyDot"></span>待機中</span></div>
   </div>
   <div class="headerRight">
     <button id="locationSharingIcon" class="headerLocationIcon" aria-label="位置情報共有中" title="位置情報共有中">📍</button>
@@ -2084,8 +2183,7 @@ body.pinLocked{
     <button id="headerMenuButton" class="headerIcon" aria-label="メニュー">⋯</button>
   </div>
   <div id="headerMenu" class="headerMenu hidden">
-    <button id="menuSearch">🔍 メッセージを検索</button>
-    <button id="menuDateFilter">📅 日付で見る</button>
+    <button id="menuStandby">👁 待機モード</button>
     <button id="menuVoice">📞 音声通話を開始</button>
     <button id="menuUpdates">🆕 アップデート</button>
     <button id="menuSettings">⚙️ 設定</button>
@@ -2103,7 +2201,11 @@ body.pinLocked{
 </nav>
 
 <div id="talkPage" class="page">
-  <button id="talkSavedButton" class="talkSavedButton" type="button" aria-label="あとで見る" title="あとで見る">☆</button>
+  <div class="talkTools">
+    <button id="talkSavedButton" class="talkSavedButton talkToolBtn" type="button" aria-label="あとで見る" title="あとで見る">☆</button>
+    <button id="talkSearchButton" class="talkToolBtn" type="button" aria-label="メッセージを検索" title="メッセージを検索">🔍</button>
+    <button id="talkDateButton" class="talkToolBtn" type="button" aria-label="日付で見る" title="日付で見る">📅</button>
+  </div>
   <div id="talkFilterBar" class="hidden">
     <span id="talkFilterLabel"></span>
     <button id="clearTalkFilter">× 絞り込み解除</button>
@@ -2158,7 +2260,13 @@ body.pinLocked{
 
 <div id="notesPage" class="page hidden">
   <div id="notesView">
-    <div class="notesToolbar"><button id="openNoteModal" class="noteAddBtn">＋ ノート</button></div>
+    <div class="notesToolbar">
+      <div class="ownerFilters">
+        <button id="noteFilterMine" class="ownerFilter active" type="button">自分</button>
+        <button id="noteFilterOther" class="ownerFilter active" type="button">相手</button>
+      </div>
+      <button id="openNoteModal" class="noteAddBtn">＋ 作成</button>
+    </div>
     <div id="noteList" class="scroll"></div>
   </div>
 </div>
@@ -2174,9 +2282,8 @@ body.pinLocked{
       </div>
     </div>
     <div class="filters">
-      <button class="filterBtn active" data-filter="all">全員</button>
-      <button class="filterBtn" data-filter="mine">自分</button>
-      <button class="filterBtn" data-filter="others">相手</button>
+      <button id="scheduleMineBtn" class="filterBtn active" type="button">自分</button>
+      <button id="scheduleOtherBtn" class="filterBtn active" type="button">相手</button>
     </div>
   </div>
   <div class="calendar">
@@ -2224,7 +2331,7 @@ body.pinLocked{
   <div id="placesList"></div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.1</div><div class="updateDate">2026/08/20</div><ul class="updateItems"><li>位置情報タブを廃止し、トーク内の地図ウィンドウへ統合</li><li>ノートを上部の独立タブへ移動し、ひとりごと内のノートタブを廃止</li><li>あとで見るをトーク内の☆アイコンから開く方式へ変更し、三点リーダー内から削除</li><li>お知らせを全画面表示からウィンドウ表示へ変更</li><li>iOSでメッセージ入力欄とフォーム補助バーの間にできる余白を縮小</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.2</div><div class="updateDate">2026/08/21</div><ul class="updateItems"><li>トーク専用の「あとで見る・検索・日付で見る」を右側アイコンへ整理</li><li>トークタブ再タップで最新メッセージへ移動</li><li>トーク内未読バッジをホーム画面バッジ設定から分離</li><li>ノートと予定に自分／相手の表示切替を追加</li><li>ノートの作成者を左端の色で判別できるよう変更</li><li>ノートに共同編集とチェックリストを追加</li><li>設定・お知らせの閉じる操作を右上×へ統一</li><li>通知音量を1〜10で調整しテスト再生できる設定を追加</li><li>通常PBから9403へすぐ切り替えられるショートカットを追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.1</div><div class="updateDate">2026/08/20</div><ul class="updateItems"><li>位置情報タブを廃止し、トーク内の地図ウィンドウへ統合</li><li>ノートを上部の独立タブへ移動し、ひとりごと内のノートタブを廃止</li><li>あとで見るをトーク内の☆アイコンから開く方式へ変更し、三点リーダー内から削除</li><li>お知らせを全画面表示からウィンドウ表示へ変更</li><li>iOSでメッセージ入力欄とフォーム補助バーの間にできる余白を縮小</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -2240,8 +2347,9 @@ body.pinLocked{
 
 <div id="messageSearchPanel" class="searchPanel hidden">
   <div class="searchHeader">
-    <button id="closeMessageSearch">‹ 戻る</button>
-    <input id="messageSearchInput" type="search" placeholder="メッセージを検索">
+    <span class="windowHeaderTitle">メッセージを検索</span>
+    <input id="messageSearchInput" type="search" placeholder="キーワード">
+    <button id="closeMessageSearch" class="windowCloseX" aria-label="閉じる">×</button>
   </div>
   <div id="messageSearchHint" class="searchHint">全履歴を検索します。検索時だけFirestoreを追加で読み込みます。</div>
   <div id="messageSearchResults" class="searchResults"></div>
@@ -2249,21 +2357,20 @@ body.pinLocked{
 
 <div id="notificationsPanel" class="searchPanel hidden">
   <div class="searchHeader">
-    <button id="closeNotifications">‹ 戻る</button>
     <strong style="flex:1">お知らせ</strong>
-    <button id="markAllNotificationsRead">すべて既読</button>
+    <button id="closeNotifications" aria-label="閉じる">×</button>
   </div>
   <div id="notificationsList" class="searchResults"></div>
 </div>
 
 <div id="savedMessagesPanel" class="searchPanel hidden">
-  <div class="searchHeader"><button id="closeSavedMessages">‹ 戻る</button><strong style="flex:1">あとで見る</strong></div>
+  <div class="searchHeader"><strong style="flex:1">あとで見る</strong><button id="closeSavedMessages" class="windowCloseX" aria-label="閉じる">×</button></div>
   <div id="savedMessagesList" class="searchResults"></div>
 </div>
 
 <div id="dateFilterModal" class="modalOverlay hidden">
   <div class="modal">
-    <h3>日付で見る</h3>
+    <div class="windowHeader"><span class="windowHeaderTitle">日付で見る</span><button id="cancelDateFilter" class="windowCloseX" aria-label="閉じる">×</button></div>
     <div class="dateFilterChoices">
       <button data-datefilter="today">今日のメッセージ</button>
       <button data-datefilter="yesterday">昨日のメッセージ</button>
@@ -2273,16 +2380,14 @@ body.pinLocked{
       <input id="customFilterDate" type="date">
       <button id="applyCustomDate">この日を見る</button>
     </div>
-    <div class="modalBtns">
-      <button id="cancelDateFilter">キャンセル</button>
-    </div>
   </div>
 </div>
 
 
 <div id="settingsModal" class="modalOverlay hidden">
-  <div class="modal">
-    <h3>設定</h3>
+  <div class="modal settingsModalBox">
+    <div class="settingsFixedHeader"><h3>設定</h3><button id="settingsCloseX" class="settingsCloseX" type="button" aria-label="閉じる">×</button></div>
+    <div class="settingsScrollBody">
 
     <div class="settingsGroup">トーク簡易通知</div>
 
@@ -2290,9 +2395,16 @@ body.pinLocked{
       <div><div class="settingText">受信音</div><div class="settingSub">PBを開いている間、相手の新着で小さく鳴らします</div></div>
       <input id="settingSound" class="settingCheck" type="checkbox">
     </div>
+    <div class="settingRow">
+      <div><div class="settingText">通知音量</div><div class="settingSub">1〜10で調整できます</div></div>
+      <div class="soundVolumeControl">
+        <select id="settingSoundVolume"></select>
+        <button id="testIncomingSound" class="soundTestBtn" type="button">▶ テスト</button>
+      </div>
+    </div>
 
     <div class="settingRow">
-      <div><div class="settingText">未読バッジ</div><div class="settingSub">トークタブと対応端末のアプリアイコンに未読数を表示</div></div>
+      <div><div class="settingText">未読バッジ</div><div class="settingSub">対応端末のホーム画面アイコンに未読を表示</div></div>
       <input id="settingBadge" class="settingCheck" type="checkbox">
     </div>
 
@@ -2403,8 +2515,6 @@ body.pinLocked{
     <button id="resetVoiceRoom" class="dangerButton">音声通話をリセット</button>
     <div class="settingsNote">通話表示がおかしい場合だけ使用してください。</div>
 
-    <div class="modalBtns">
-      <button id="closeSettings">閉じる</button>
     </div>
   </div>
 </div>
@@ -2417,6 +2527,15 @@ body.pinLocked{
     <div class="notePrivateRow">
       <label for="notePrivateInput">自分のみに表示</label>
       <input id="notePrivateInput" class="privateCheck" type="checkbox">
+    </div>
+    <div class="notePrivateRow">
+      <label for="noteCollaborativeInput">共同編集</label>
+      <input id="noteCollaborativeInput" class="privateCheck" type="checkbox">
+    </div>
+    <div id="checklistEditor" class="checklistEditor">
+      <div class="settingText">チェックリスト</div>
+      <div id="checklistEditRows"></div>
+      <button id="addChecklistItem" type="button">＋ 項目を追加</button>
     </div>
     <div class="notePrivateRow">
       <label for="notePinnedInput">ピン留め</label>
@@ -2505,8 +2624,8 @@ let messageDocs=new Map(), previousNewestMessageId=null, firstMessageLoad=true;
 const loadedImageCache=new Map();
 let readStates={}, locationWatch=null;
 let locationShareActive=false, locationShareBusy=false;
-let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleFilter="all", editingSchedule=null;
-let soloPosts=[], soloFilter="all", notes=[], editingNote=null;
+let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
+let soloPosts=[], soloFilter="all", notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, editingChecklist=[];
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -2518,7 +2637,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.1d";
+const APP_VERSION="3.7.2a";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -2531,6 +2650,7 @@ if(shortcutBadgeCheck){
 
 const DEFAULT_SETTINGS={
   sound:true,
+  soundVolume:5,
   badge:true,
   tabFlash:true,
   title:true,
@@ -2541,6 +2661,34 @@ const DEFAULT_SETTINGS={
 };
 let pbSettings={...DEFAULT_SETTINGS};
 let unreadTalkCount=0;
+let standbyMode=false, standbyWakeLock=null;
+
+async function acquireStandbyWakeLock(){
+  if(!standbyMode||document.hidden||!("wakeLock" in navigator))return;
+  try{
+    standbyWakeLock=await navigator.wakeLock.request("screen");
+    standbyWakeLock.addEventListener("release",()=>{standbyWakeLock=null},{once:true});
+  }catch(e){console.debug("wakeLock",e)}
+}
+async function setStandbyMode(on){
+  standbyMode=!!on;
+  document.body.classList.toggle("standbyMode",standbyMode);
+  const menu=$("menuStandby");
+  if(menu)menu.textContent=standbyMode?"👁 待機モードを終了":"👁 待機モード";
+  if(standbyMode){
+    await acquireStandbyWakeLock();
+  }else{
+    try{await standbyWakeLock?.release()}catch(e){}
+    standbyWakeLock=null;
+  }
+}
+function flashStandbyScreen(){
+  if(!standbyMode||document.hidden)return;
+  const f=$("standbyFlash");if(!f)return;
+  f.classList.remove("flashNow");void f.offsetWidth;f.classList.add("flashNow");
+  setTimeout(()=>f.classList.remove("flashNow"),1500);
+}
+
 let audioContext=null;
 let voiceHeartbeatTimer=null;
 const VOICE_STALE_MS=2*60*1000;
@@ -2868,6 +3016,7 @@ function clearHiddenStamp(){
   try{localStorage.removeItem("pb.hiddenAt.fallback")}catch(e){}
 }
 function lockToPin(){
+  if(standbyMode)setStandbyMode(false);
   if(!auth.currentUser || !pinPassed)return;
   pinPassed=false;
   pin="";
@@ -2881,6 +3030,7 @@ function lockToPin(){
   clearHiddenStamp();
 }
 function rememberHiddenTime(){
+  if(standbyMode)return;
   if(!pinPassed || !auth.currentUser)return;
   hiddenAt=Date.now();
   try{sessionStorage.setItem("pb.hiddenAt",String(hiddenAt))}catch(e){}
@@ -2894,6 +3044,7 @@ function readHiddenTime(){
   return t;
 }
 function checkRelock(){
+  if(standbyMode){clearHiddenStamp();return;}
   if(!pinPassed || !auth.currentUser)return;
   const delay=relockDelayMs();
   if(delay<0){
@@ -2910,10 +3061,15 @@ function checkRelock(){
   }
 }
 document.addEventListener("visibilitychange",()=>{
-  if(document.hidden)rememberHiddenTime();
-  else setTimeout(checkRelock,0);
+  if(document.hidden){
+    if(standbyMode)setStandbyMode(false);
+    rememberHiddenTime();
+  }else setTimeout(checkRelock,0);
 });
-window.addEventListener("pagehide",rememberHiddenTime);
+window.addEventListener("pagehide",()=>{
+  if(standbyMode)setStandbyMode(false);
+  rememberHiddenTime();
+});
 window.addEventListener("pageshow",()=>setTimeout(checkRelock,0));
 window.addEventListener("blur",()=>{
   // iOS Safariで visibilitychange が遅れるケースの補助。
@@ -2977,6 +3133,8 @@ function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
   $("userLabel").textContent=`ID：${currentId}`;
   $("appVersionLabel").textContent=`v${APP_VERSION}`;
+  const pbStart=new Date(2026,7,8),today=new Date();pbStart.setHours(0,0,0,0);today.setHours(0,0,0,0);
+  $("dayCounter").textContent=`day ${Math.max(1,Math.floor((today-pbStart)/86400000)+1)}`;
   $("loginScreen").classList.add("hidden");
   $("camoLoginScreen").classList.add("hidden");
   $("pinScreen").classList.add("hidden");
@@ -3049,22 +3207,22 @@ $("reloadButton").onclick=()=>{
 };
 
 $("closeNotifications").onclick=()=>$("notificationsPanel").classList.add("hidden");
-$("markAllNotificationsRead").onclick=()=>{
-  notificationReadAt=Date.now();
-  localStorage.setItem(`pb.noticeRead.${currentUID}`,String(notificationReadAt));
-  renderNotifications();updateNotificationBadge();
-};
 
-$("menuSearch").onclick=()=>{
+function openTalkSearch(){
   $("headerMenu").classList.add("hidden");
   $("messageSearchPanel").classList.remove("hidden");
   $("messageSearchInput").value="";
   renderMessageSearchResults("");
   setTimeout(()=>$("messageSearchInput").focus(),50);
-};
-$("menuDateFilter").onclick=()=>{
+}
+function openTalkDateFilter(){
   $("headerMenu").classList.add("hidden");
   $("dateFilterModal").classList.remove("hidden");
+}
+
+$("menuStandby").onclick=async()=>{
+  $("headerMenu").classList.add("hidden");
+  await setStandbyMode(!standbyMode);
 };
 $("menuVoice").onclick=async()=>{$("headerMenu").classList.add("hidden");await openVoiceRoom()};
 
@@ -3076,6 +3234,8 @@ $("menuUpdates").onclick=()=>{
   localStorage.setItem("pb.lastSeenVersion",APP_VERSION);
 };
 $("talkSavedButton").onclick=()=>{$("savedMessagesPanel").classList.remove("hidden");renderSavedMessages()};
+$("talkSearchButton").onclick=openTalkSearch;
+$("talkDateButton").onclick=openTalkDateFilter;
 $("closeSavedMessages").onclick=()=>$("savedMessagesPanel").classList.add("hidden");
 $("menuSettings").onclick=()=>{
   $("headerMenu").classList.add("hidden");
@@ -3083,6 +3243,14 @@ $("menuSettings").onclick=()=>{
   $("settingsModal").classList.remove("hidden");
 };
 
+
+
+$("quickWeather").onclick=()=>{
+  camouflageMode=true;decoyMode="weather";pinPassed=true;
+  ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen"].forEach(id=>$(id)?.classList.add("hidden"));
+  $("weatherScreen").classList.remove("hidden");
+  loadWeather("current");
+};
 
 /* SETTINGS / OPEN-PAGE NOTIFICATIONS */
 function settingsKey(){return `pb.settings.${currentUID||"guest"}`}
@@ -3097,6 +3265,11 @@ function saveSettings(){
 }
 function syncSettingsControls(){
   $("settingSound").checked=!!pbSettings.sound;
+  const vol=$("settingSoundVolume");
+  if(vol){
+    if(!vol.options.length)for(let i=1;i<=10;i++)vol.add(new Option(String(i),String(i)));
+    vol.value=String(Math.min(10,Math.max(1,Number(pbSettings.soundVolume)||5)));
+  }
   $("settingBadge").checked=!!pbSettings.badge;
   $("settingTabFlash").checked=!!pbSettings.tabFlash;
   $("settingTitle").checked=!!pbSettings.title;
@@ -3114,6 +3287,11 @@ function syncSettingsControls(){
     pbSettings[key]=el.checked;saveSettings();
   };
 });
+$("settingSoundVolume").onchange=()=>{
+  pbSettings.soundVolume=Math.min(10,Math.max(1,Number($("settingSoundVolume").value)||5));
+  saveSettings();
+};
+$("testIncomingSound").onclick=()=>playIncomingSound(true);
 $("settingRelockSeconds").onchange=()=>{
   pbSettings.relockSeconds=Number($("settingRelockSeconds").value);
   saveSettings();
@@ -3209,7 +3387,7 @@ $("calculateStorage").onclick=async()=>{
   finally{btn.disabled=false;btn.textContent="計算"}
 };
 
-$("closeSettings").onclick=()=>$("settingsModal").classList.add("hidden");
+$("settingsCloseX").onclick=()=>$("settingsModal").classList.add("hidden");
 $("settingsModal").addEventListener("click",e=>{if(e.target===$("settingsModal"))$("settingsModal").classList.add("hidden")});
 
 function unlockAudio(){
@@ -3220,15 +3398,15 @@ function unlockAudio(){
 }
 document.addEventListener("pointerdown",unlockAudio,{once:true});
 
-function playIncomingSound(){
-  if(!pbSettings.sound)return;
+function playIncomingSound(force=false){
+  if(!force&&!pbSettings.sound)return;
   try{
     unlockAudio();
     if(!audioContext)return;
     const now=audioContext.currentTime;
     const gain=audioContext.createGain();
     gain.gain.setValueAtTime(0.0001,now);
-    gain.gain.exponentialRampToValueAtTime(0.035,now+0.01);
+    const level=Math.min(0.18,0.012+(Math.min(10,Math.max(1,Number(pbSettings.soundVolume)||5))-1)*0.018);gain.gain.exponentialRampToValueAtTime(level,now+0.01);
     gain.gain.exponentialRampToValueAtTime(0.0001,now+0.22);
     gain.connect(audioContext.destination);
     [660,880].forEach((freq,i)=>{
@@ -3241,7 +3419,7 @@ function playIncomingSound(){
 function updateNotificationUI(){
   setTimeout(()=>{if(typeof updateNotificationBadge==="function")updateNotificationBadge()},0);
   const b=$("talkUnreadBadge");
-  if(pbSettings.badge&&unreadTalkCount>0){
+  if(unreadTalkCount>0){
     b.textContent=unreadTalkCount>99?"99+":String(unreadTalkCount);b.classList.remove("hidden");
   }else b.classList.add("hidden");
 
@@ -3257,6 +3435,7 @@ function clearUnreadTalk(){
 }
 function handleIncomingMessage(data){
   playIncomingSound();
+  flashStandbyScreen();
 
   const shouldCount=!pinPassed || activePage()!=="talkPage" || !isNearBottom() || document.hidden;
   if(shouldCount){
@@ -3307,6 +3486,10 @@ function markUpdatesSeen(){
 /* TABS */
 document.querySelectorAll(".tab").forEach(tab=>{
   tab.onclick=()=>{
+    const wasActive=tab.classList.contains("active");
+    if(tab.dataset.page==="talkPage"&&wasActive&&!$("talkPage").classList.contains("hidden")){
+      scrollToLatest(true);return;
+    }
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));tab.classList.add("active");
     ["talkPage","soloPage","notesPage","schedulePage","locationPage","placesPanel","updatesPage"].forEach(p=>$(p)?.classList.add("hidden"));
     $(tab.dataset.page).classList.remove("hidden");
@@ -4733,47 +4916,97 @@ function listenNotes(){
 }
 function renderNotes(){
   const list=$("noteList");list.innerHTML="";
-  const visible=[...notes].sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0)));
-  if(!visible.length){list.innerHTML='<div class="small" style="padding:14px">ノートはまだありません。</div>';return}
+  const visible=[...notes]
+    .filter(n=>(n.uid===currentUID?noteShowMine:noteShowOther))
+    .sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0)));
+  $("noteFilterMine")?.classList.toggle("active",noteShowMine);
+  $("noteFilterOther")?.classList.toggle("active",noteShowOther);
+  if(!visible.length){list.innerHTML='<div class="small" style="padding:14px">表示するノートはありません。</div>';return}
   visible.forEach(n=>{
-    const card=document.createElement("div");card.className="noteCard";
+    const mine=n.uid===currentUID, canEdit=mine||!!n.collaborative;
+    const card=document.createElement("div");
+    const stateClass=n.privateOnly?"privateNote":(n.collaborative?"collabNote":"");
+    card.className=`noteCard ${mine?"mine":"other"} ${stateClass}`;
     const head=document.createElement("div");head.className="noteHead";
     const title=document.createElement("div");title.className="noteTitle";title.textContent=n.title||"無題";
     const pin=document.createElement("div");pin.className="notePin";pin.textContent=n.pinned?"📌":"";
     head.append(title,pin);
     const body=document.createElement("div");body.className="noteBody";body.textContent=n.body||"";
+    card.append(head,body);
+
+    const checks=Array.isArray(n.checklist)?n.checklist:[];
+    if(checks.length){
+      const cb=document.createElement("div");cb.className="noteChecklist";
+      checks.forEach((item,idx)=>{
+        const row=document.createElement("label");row.className="noteCheckRow";
+        const input=document.createElement("input");input.type="checkbox";input.checked=!!item.done;input.disabled=!canEdit;
+        const tx=document.createElement("span");tx.className=`noteCheckText ${item.done?"done":""}`;tx.textContent=item.text||"";
+        input.onchange=async()=>{
+          if(!canEdit)return;
+          const next=checks.map((x,i)=>i===idx?{...x,done:input.checked}:x);
+          await updateDoc(doc(db,"notes",n.id),{checklist:next,updatedAt:serverTimestamp(),updatedBy:currentId});
+        };
+        row.append(input,tx);cb.appendChild(row);
+      });
+      card.appendChild(cb);
+    }
+
     const meta=document.createElement("div");meta.className="noteMeta";
-    meta.textContent=`${n.uid===currentUID?"自分":(n.senderId||"")}${n.privateOnly?"　🔒自分のみ":""}${n.updatedAt?.toDate?`　更新 ${n.updatedAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
-    card.append(head,body,meta);
-    if(n.uid===currentUID){
+    const updatedBy=n.updatedBy?`　更新:${n.updatedBy}`:"";
+    meta.textContent=`${mine?"自分":(n.senderId||"")}${n.privateOnly?"　🔒自分のみ":""}${n.collaborative?"　共同編集":""}${updatedBy}${n.updatedAt?.toDate?`　${n.updatedAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
+    card.appendChild(meta);
+    if(canEdit){
       const acts=document.createElement("div");acts.className="noteActions";
       const edit=document.createElement("button");edit.textContent="編集";edit.onclick=()=>openNoteEditor(n);
-      const del=document.createElement("button");del.textContent="削除";del.onclick=async()=>{if(confirm("このノートを削除しますか？"))await deleteDoc(doc(db,"notes",n.id))};
-      acts.append(edit,del);card.appendChild(acts);
+      acts.append(edit);
+      if(mine){
+        const del=document.createElement("button");del.textContent="削除";del.onclick=async()=>{if(confirm("このノートを削除しますか？"))await deleteDoc(doc(db,"notes",n.id))};
+        acts.append(del);
+      }
+      card.appendChild(acts);
     }
     list.appendChild(card);
+  });
+}
+function renderChecklistEditor(){
+  const box=$("checklistEditRows");if(!box)return;box.innerHTML="";
+  editingChecklist.forEach((item,idx)=>{
+    const row=document.createElement("div");row.className="checklistEditRow";
+    const input=document.createElement("input");input.value=item.text||"";input.placeholder="チェック項目";
+    input.oninput=()=>editingChecklist[idx].text=input.value;
+    const del=document.createElement("button");del.type="button";del.textContent="×";del.onclick=()=>{editingChecklist.splice(idx,1);renderChecklistEditor()};
+    row.append(input,del);box.appendChild(row);
   });
 }
 function openNoteEditor(n=null){
   editingNote=n;$("noteModalTitle").textContent=n?"ノートを編集":"ノートを追加";
   $("noteTitleInput").value=n?.title||"";$("noteBodyInput").value=n?.body||"";
-  $("notePrivateInput").checked=!!n?.privateOnly;$("notePinnedInput").checked=!!n?.pinned;
-  $("noteModal").classList.remove("hidden");
+  $("notePrivateInput").checked=!!n?.privateOnly;$("noteCollaborativeInput").checked=!!n?.collaborative;$("notePinnedInput").checked=!!n?.pinned;
+  editingChecklist=(Array.isArray(n?.checklist)?n.checklist:[]).map(x=>({text:x.text||"",done:!!x.done}));
+  renderChecklistEditor();$("noteModal").classList.remove("hidden");
 }
+$("notePrivateInput").onchange=()=>{if($("notePrivateInput").checked)$("noteCollaborativeInput").checked=false};
+$("noteCollaborativeInput").onchange=()=>{if($("noteCollaborativeInput").checked)$("notePrivateInput").checked=false};
+$("addChecklistItem").onclick=()=>{editingChecklist.push({text:"",done:false});renderChecklistEditor()};
+$("noteFilterMine").onclick=()=>{if(noteShowMine&& !noteShowOther)return;noteShowMine=!noteShowMine;renderNotes()};
+$("noteFilterOther").onclick=()=>{if(noteShowOther&& !noteShowMine)return;noteShowOther=!noteShowOther;renderNotes()};
 $("openNoteModal").onclick=()=>openNoteEditor();
 $("cancelNoteModal").onclick=()=>$("noteModal").classList.add("hidden");
 $("noteModal").addEventListener("click",e=>{if(e.target===$("noteModal"))$("noteModal").classList.add("hidden")});
 $("saveNote").onclick=async()=>{
   const title=$("noteTitleInput").value.trim(),body=$("noteBodyInput").value.trim();
-  if(!title&&!body){alert("タイトルか本文を入力してください");return}
-  const payload={title,body,privateOnly:$("notePrivateInput").checked,pinned:$("notePinnedInput").checked,updatedAt:serverTimestamp()};
+  const checklist=editingChecklist.map(x=>({text:(x.text||"").trim(),done:!!x.done})).filter(x=>x.text);
+  if(!title&&!body&&!checklist.length){alert("タイトル・本文・チェック項目のいずれかを入力してください");return}
+  const privateOnly=$("notePrivateInput").checked,collaborative=!privateOnly&&$("noteCollaborativeInput").checked;
+  const payload={title,body,checklist,privateOnly,collaborative,pinned:$("notePinnedInput").checked,updatedAt:serverTimestamp(),updatedBy:currentId};
   try{
-    if(editingNote)await updateDoc(doc(db,"notes",editingNote.id),payload);
-    else await addDoc(collection(db,"notes"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
-    editingNote=null;$("noteModal").classList.add("hidden");
-  }catch(e){console.error(e);alert("ノートを保存できませんでした。Firestoreルールを確認してください。");}
+    if(editingNote){
+      if(editingNote.uid!==currentUID&&!editingNote.collaborative)throw new Error("このノートは共同編集ではありません");
+      await updateDoc(doc(db,"notes",editingNote.id),payload);
+    }else await addDoc(collection(db,"notes"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
+    editingNote=null;editingChecklist=[];$("noteModal").classList.add("hidden");
+  }catch(e){console.error(e);alert("ノートを保存できませんでした。Firestoreルールも確認してください。");}
 };
-
 /* CALENDAR */
 function startOfDay(d){const x=new Date(d);x.setHours(0,0,0,0);return x}
 function dateId(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
@@ -4791,10 +5024,7 @@ function visibleSchedules(){
   return schedules.filter(s=>!s.privateOnly || s.uid===currentUID);
 }
 function filteredSchedules(){
-  const visible=visibleSchedules();
-  if(scheduleFilter==="mine")return visible.filter(s=>s.uid===currentUID);
-  if(scheduleFilter==="others")return visible.filter(s=>s.uid!==currentUID);
-  return visible;
+  return visibleSchedules().filter(s=>(s.uid===currentUID?scheduleShowMine:scheduleShowOther));
 }
 
 function eventCoversDate(s,d){
@@ -5107,9 +5337,13 @@ $("todayButton").onclick=()=>{
   renderSelectedDay();
 };
 $("nextMonth").onclick=()=>{calendarDate=new Date(calendarDate.getFullYear(),calendarDate.getMonth()+1,1);renderCalendar()};
-document.querySelectorAll(".filterBtn").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll(".filterBtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");scheduleFilter=b.dataset.filter;renderCalendar();renderSelectedDay();
-});
+function syncScheduleFilterButtons(){
+  $("scheduleMineBtn")?.classList.toggle("active",scheduleShowMine);
+  $("scheduleOtherBtn")?.classList.toggle("active",scheduleShowOther);
+}
+$("scheduleMineBtn").onclick=()=>{if(scheduleShowMine&&!scheduleShowOther)return;scheduleShowMine=!scheduleShowMine;syncScheduleFilterButtons();renderCalendar();renderSelectedDay()};
+$("scheduleOtherBtn").onclick=()=>{if(scheduleShowOther&&!scheduleShowMine)return;scheduleShowOther=!scheduleShowOther;syncScheduleFilterButtons();renderCalendar();renderSelectedDay()};
+syncScheduleFilterButtons();
 function openScheduleEditor(s=null){
   editingSchedule=s;
   $("scheduleModalTitle").textContent=s?"予定を編集":"予定を追加";
