@@ -2076,6 +2076,100 @@ body.standbyMode #standbyStatus{display:inline-flex}
 #savedMessagesPanel .windowCloseX,
 #messageSearchPanel .windowCloseX{top:6px!important}
 
+
+/* ===== v3.7.2d ===== */
+
+/* お知らせの古い疑似×を完全撤去 */
+#notificationsPanel #closeNotifications::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* ノートチェック行：チェックボックスと文字の高さを揃える */
+.noteCheckRow{
+  align-items:center!important;
+  line-height:1.35!important;
+}
+.noteCheckRow input{
+  margin:0!important;
+  align-self:center!important;
+}
+.noteCheckText{
+  display:inline-block;
+  line-height:18px!important;
+}
+
+/* ノート並び替え */
+.notesToolbar{position:relative!important}
+.noteToolbarActions{display:flex;align-items:center;gap:6px}
+.noteSortButton{
+  width:32px;height:32px;border:1px solid #ddd;border-radius:50%;
+  background:#fff;color:#333;font-size:17px;padding:0
+}
+.noteSortMenu{
+  position:absolute;right:64px;top:43px;z-index:80;
+  min-width:152px;background:#fff;border:1px solid #ddd;border-radius:12px;
+  box-shadow:0 5px 18px rgba(0,0,0,.16);overflow:hidden
+}
+.noteSortMenu button{
+  display:block;width:100%;border:0;border-bottom:1px solid #eee;
+  background:#fff;text-align:left;padding:10px 12px;font-size:11px
+}
+.noteSortMenu button:last-child{border-bottom:0}
+.noteSortMenu button.active{font-weight:800;background:#f4f4f4}
+
+/* ひとりごと長文編集 */
+#soloEditModal .modal{max-height:min(72dvh,560px)}
+#soloEditText{
+  width:100%;box-sizing:border-box;resize:none;
+  min-height:120px;max-height:300px;overflow-y:auto;
+  font-size:16px;line-height:1.5;padding:11px 12px;
+  border:1px solid #ccc;border-radius:12px
+}
+
+/* iOS入力中もPBヘッダー＋タブを画面上部に残す */
+body.talkKeyboardOpen{
+  overflow:hidden!important;
+}
+body.talkKeyboardOpen #appScreen{
+  position:fixed!important;
+  inset:0 auto auto 0!important;
+  width:100%!important;
+  height:var(--pb-visible-height,100dvh)!important;
+  min-height:0!important;
+  max-height:var(--pb-visible-height,100dvh)!important;
+  overflow:hidden!important;
+}
+body.talkKeyboardOpen #appScreen > header,
+body.talkKeyboardOpen #appScreen > .tabs{
+  flex-shrink:0!important;
+}
+body.talkKeyboardOpen #talkPage{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+
+/* 送信中を視覚的に明確化 */
+#sendMessage.sending{
+  opacity:.55!important;
+  pointer-events:none!important;
+}
+
+
+/* ===== v3.7.2d related links ===== */
+.noteLinks{margin-top:8px;border-top:1px solid #eee;padding-top:7px;display:flex;flex-wrap:wrap;gap:6px}
+.noteLinkItem{
+  display:inline-flex;align-items:center;gap:4px;
+  border:1px solid #ddd;background:#fff;border-radius:12px;
+  padding:5px 8px;font-size:10px;text-decoration:none;color:#2767b0;
+  max-width:100%
+}
+.linkEditor{margin-top:8px;padding-top:8px;border-top:1px solid #eee}
+.linkEditRow{display:grid;grid-template-columns:1fr 1.4fr auto;gap:6px;margin-top:6px;align-items:center}
+.linkEditRow input{min-width:0}
+.linkEditRow button{border:0;background:#eee;border-radius:8px;padding:5px 8px}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -2387,7 +2481,16 @@ body.standbyMode #standbyStatus{display:inline-flex}
         <button id="noteFilterMine" class="ownerFilter active" type="button">自分</button>
         <button id="noteFilterOther" class="ownerFilter active" type="button">相手</button>
       </div>
-      <button id="openNoteModal" class="noteAddBtn">＋ 作成</button>
+      <div class="noteToolbarActions">
+        <button id="noteSortButton" class="noteSortButton" type="button" aria-label="並び替え" title="並び替え">⇅</button>
+        <button id="openNoteModal" class="noteAddBtn">＋ 作成</button>
+      </div>
+      <div id="noteSortMenu" class="noteSortMenu hidden">
+        <button type="button" data-note-sort="updated">更新が新しい順</button>
+        <button type="button" data-note-sort="createdNew">作成が新しい順</button>
+        <button type="button" data-note-sort="createdOld">作成が古い順</button>
+        <button type="button" data-note-sort="title">タイトル順</button>
+      </div>
     </div>
     <div id="noteList" class="scroll"></div>
   </div>
@@ -2641,6 +2744,18 @@ body.standbyMode #standbyStatus{display:inline-flex}
   </div>
 </div>
 
+
+<div id="soloEditModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3>ひとりごとを編集</h3>
+    <textarea id="soloEditText" rows="6" placeholder="ひとりごと"></textarea>
+    <div class="modalBtns">
+      <button id="cancelSoloEdit" type="button">キャンセル</button>
+      <button id="saveSoloEdit" class="modalSave" type="button">保存</button>
+    </div>
+  </div>
+</div>
+
 <div id="noteModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="noteModalTitle">ノートを追加</h3>
@@ -2658,6 +2773,12 @@ body.standbyMode #standbyStatus{display:inline-flex}
       <div class="settingText">チェックリスト</div>
       <div id="checklistEditRows"></div>
       <button id="addChecklistItem" type="button">＋ 項目を追加</button>
+    </div>
+    <div id="linkEditor" class="linkEditor">
+      <div class="settingText">関連リンク</div>
+      <div class="settingSub">Google Drive・OneDrive・Dropboxなどの共有URLを登録できます</div>
+      <div id="linkEditRows"></div>
+      <button id="addRelatedLink" type="button">＋ リンク追加</button>
     </div>
     <div class="notePrivateRow">
       <label for="notePinnedInput">ピン留め</label>
@@ -2747,7 +2868,7 @@ const loadedImageCache=new Map();
 let readStates={}, locationWatch=null;
 let locationShareActive=false, locationShareBusy=false;
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
-let soloPosts=[], soloFilter="all", notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, editingChecklist=[];
+let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -2759,7 +2880,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.2c";
+const APP_VERSION="3.7.2d";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -3773,6 +3894,32 @@ $("applyCustomDate").onclick=()=>{
 };
 
 
+
+function syncTalkKeyboardViewport(){
+  const vv=window.visualViewport;
+  const input=$("messageInput");
+  const focused=document.activeElement===input;
+  const keyboardOpen=!!(focused&&vv&&vv.height<window.innerHeight*0.88);
+  document.body.classList.toggle("talkKeyboardOpen",keyboardOpen);
+  if(keyboardOpen){
+    document.documentElement.style.setProperty("--pb-visible-height",`${Math.round(vv.height)}px`);
+    requestAnimationFrame(()=>scrollToLatest(false));
+  }else{
+    document.documentElement.style.removeProperty("--pb-visible-height");
+  }
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",syncTalkKeyboardViewport);
+  window.visualViewport.addEventListener("scroll",syncTalkKeyboardViewport);
+}
+$("messageInput").addEventListener("focus",()=>setTimeout(syncTalkKeyboardViewport,50));
+$("messageInput").addEventListener("blur",()=>{
+  setTimeout(()=>{
+    document.body.classList.remove("talkKeyboardOpen");
+    document.documentElement.style.removeProperty("--pb-visible-height");
+  },80);
+});
+
 /* MESSAGE REALTIME */
 function listenMessages(){
   if(unsubscribeMessages)unsubscribeMessages();
@@ -4187,12 +4334,38 @@ async function cleanupExpiredImages(){
 }
 
 let sendingMessage=false;
+let pendingMessageRef=null;
+let pendingMessageText="";
+let lastSuccessfulSendText="";
+let lastSuccessfulSendAt=0;
 const sendBtn=$("sendMessage");
 
-// v3.7.1d: iOSでは送信ボタンを押した瞬間にtextareaのfocusを奪わせない。
-// 実際に送信が成功してからこちらでblurする。
 sendBtn.addEventListener("pointerdown",e=>e.preventDefault());
 sendBtn.onclick=()=>sendMessage();
+
+function promiseTimeout(promise,ms){
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error("send-timeout")),ms))
+  ]);
+}
+async function writeWithOneRetry(writeFn){
+  let firstError=null;
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      return await promiseTimeout(writeFn(),6500);
+    }catch(e){
+      firstError=firstError||e;
+      if(attempt===0)await new Promise(r=>setTimeout(r,500));
+    }
+  }
+  throw firstError||new Error("send-failed");
+}
+function setSendingUI(on){
+  sendingMessage=on;
+  sendBtn.disabled=on;
+  sendBtn.classList.toggle("sending",on);
+}
 
 async function sendMessage(){
   if(sendingMessage)return;
@@ -4200,20 +4373,37 @@ async function sendMessage(){
   const text=input.value.trim();
   if(!text)return;
 
-  sendingMessage=true;
-  sendBtn.disabled=true;
+  // 成功直後の同一文連打も念のため抑止
+  if(text===lastSuccessfulSendText && Date.now()-lastSuccessfulSendAt<1800)return;
+
+  setSendingUI(true);
   try{
     if(editingMessage){
-      await updateDoc(doc(db,"messages",editingMessage.id),{text,edited:true,editedAt:serverTimestamp()});
-      editingMessage=null;$("editBar").classList.add("hidden");
+      await writeWithOneRetry(()=>updateDoc(doc(db,"messages",editingMessage.id),{
+        text,edited:true,editedAt:serverTimestamp()
+      }));
+      editingMessage=null;
+      $("editBar").classList.add("hidden");
     }else{
-      await addDoc(collection(db,"messages"),{
+      // 同じ未完了本文は同じFirestore document IDを使う。
+      // タイムアウト→再タップになっても複数投稿にならない。
+      if(!pendingMessageRef || pendingMessageText!==text){
+        pendingMessageRef=doc(collection(db,"messages"));
+        pendingMessageText=text;
+      }
+      const ref=pendingMessageRef;
+      const payload={
         text,senderId:currentId,uid:currentUID,createdAt:serverTimestamp(),edited:false,reactions:{},
         replyTo:replyTarget?{id:replyTarget.id,senderId:replyTarget.senderId,text:(replyTarget.text||"").slice(0,150)}:null
-      });
+      };
+      await writeWithOneRetry(()=>setDoc(ref,payload));
+      pendingMessageRef=null;
+      pendingMessageText="";
     }
 
-    // Firestore成功後だけ入力欄を消してキーボードを閉じる
+    lastSuccessfulSendText=text;
+    lastSuccessfulSendAt=Date.now();
+
     input.value="";
     replyTarget=null;
     $("replyBar").classList.add("hidden");
@@ -4222,13 +4412,10 @@ async function sendMessage(){
 
     const bottom=()=>requestAnimationFrame(()=>scrollToLatest(true));
     bottom();
-
-    // iOSのキーボードが閉じてVisualViewportが戻った瞬間を優先して最下部へ
     if(window.visualViewport){
       const onVVResize=()=>{
         window.visualViewport.removeEventListener("resize",onVVResize);
-        bottom();
-        setTimeout(bottom,80);
+        bottom();setTimeout(bottom,80);
       };
       window.visualViewport.addEventListener("resize",onVVResize,{once:true});
     }
@@ -4236,12 +4423,11 @@ async function sendMessage(){
     setTimeout(bottom,500);
   }catch(err){
     console.error("message send failed",err);
-    // 失敗時は文章を残し、キーボードも勝手に閉じない
-    alert("送信できませんでした。通信状態を確認して、もう一度送信してください。");
+    // 入力文とpendingMessageRefを残すので、再タップしても同じIDへ再送＝重複しない
+    alert("送信できませんでした。文章は残しています。もう一度送信してください。");
     input.focus();
   }finally{
-    sendingMessage=false;
-    sendBtn.disabled=false;
+    setSendingUI(false);
   }
 }
 /* Enterは改行。送信は送信ボタンのみ。 */
@@ -4951,10 +5137,17 @@ function toggleSoloPopup(post,data){
     const edit=document.createElement("button");
     edit.textContent="📝";
     edit.title="編集";
-    edit.onclick=async()=>{
+    edit.onclick=()=>{
       pop.remove();
-      const n=prompt("ひとりごとを編集",data.text||"");
-      if(n?.trim())await updateDoc(doc(db,"solo",data.id),{text:n.trim(),edited:true});
+      editingSoloPost=data;
+      $("soloEditText").value=data.text||"";
+      $("soloEditModal").classList.remove("hidden");
+      setTimeout(()=>{
+        const el=$("soloEditText");
+        el.focus();
+        el.style.height="auto";
+        el.style.height=Math.min(300,Math.max(120,el.scrollHeight))+"px";
+      },40);
     };
 
     const del=document.createElement("button");
@@ -5042,6 +5235,37 @@ document.querySelectorAll(".soloFilterBtn").forEach(b=>b.onclick=()=>{
 });
 
 
+$("soloEditText").addEventListener("input",e=>{
+  const el=e.currentTarget;
+  el.style.height="auto";
+  el.style.height=Math.min(300,Math.max(120,el.scrollHeight))+"px";
+});
+$("cancelSoloEdit").onclick=()=>{
+  editingSoloPost=null;
+  $("soloEditModal").classList.add("hidden");
+};
+$("soloEditModal").addEventListener("click",e=>{
+  if(e.target===$("soloEditModal")){
+    editingSoloPost=null;
+    $("soloEditModal").classList.add("hidden");
+  }
+});
+$("saveSoloEdit").onclick=async()=>{
+  if(!editingSoloPost)return;
+  const value=$("soloEditText").value.trim();
+  if(!value)return;
+  const btn=$("saveSoloEdit");btn.disabled=true;
+  try{
+    await updateDoc(doc(db,"solo",editingSoloPost.id),{text:value,edited:true});
+    editingSoloPost=null;
+    $("soloEditModal").classList.add("hidden");
+  }catch(e){
+    console.error("solo edit",e);
+    alert("保存できませんでした。");
+  }finally{btn.disabled=false}
+};
+
+
 function listenNotes(){
   if(unsubscribeNotes)unsubscribeNotes();
   const q=query(collection(db,"notes"),orderBy("updatedAt","desc"),limit(100));
@@ -5055,9 +5279,18 @@ function listenNotes(){
 }
 function renderNotes(){
   const list=$("noteList");list.innerHTML="";
+  const noteTime=(n,key)=>n?.[key]?.toMillis?.() ?? ((n?.[key]?.seconds||0)*1000);
+  const sorter=(a,b)=>{
+    const pin=Number(b.pinned)-Number(a.pinned);
+    if(pin)return pin;
+    if(noteSortMode==="createdNew")return noteTime(b,"createdAt")-noteTime(a,"createdAt");
+    if(noteSortMode==="createdOld")return noteTime(a,"createdAt")-noteTime(b,"createdAt");
+    if(noteSortMode==="title")return String(a.title||"").localeCompare(String(b.title||""),"ja");
+    return noteTime(b,"updatedAt")-noteTime(a,"updatedAt");
+  };
   const visible=[...notes]
     .filter(n=>(n.uid===currentUID?noteShowMine:noteShowOther))
-    .sort((a,b)=>(Number(b.pinned)-Number(a.pinned))||((b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0)));
+    .sort(sorter);
   $("noteFilterMine")?.classList.toggle("active",noteShowMine);
   $("noteFilterOther")?.classList.toggle("active",noteShowOther);
   if(!visible.length){list.innerHTML='<div class="small" style="padding:14px">表示するノートはありません。</div>';return}
@@ -5089,6 +5322,19 @@ function renderNotes(){
       });
       card.appendChild(cb);
     }
+    const links=Array.isArray(n.links)?n.links:[];
+    if(links.length){
+      const lb=document.createElement("div");lb.className="noteLinks";
+      links.forEach(item=>{
+        if(!item?.url)return;
+        const a=document.createElement("a");a.className="noteLinkItem";
+        a.href=item.url;a.target="_blank";a.rel="noopener";
+        a.textContent=`${item.label||"関連資料"} ↗`;
+        a.onclick=e=>e.stopPropagation();
+        lb.appendChild(a);
+      });
+      if(lb.children.length)card.appendChild(lb);
+    }
 
     const meta=document.createElement("div");meta.className="noteMeta";
     const updatedBy=n.updatedBy?`　更新:${n.updatedBy}`:"";
@@ -5117,16 +5363,54 @@ function renderChecklistEditor(){
     row.append(input,del);box.appendChild(row);
   });
 }
+function renderLinkEditor(){
+  const box=$("linkEditRows");if(!box)return;box.innerHTML="";
+  editingLinks.forEach((item,idx)=>{
+    const row=document.createElement("div");row.className="linkEditRow";
+    const label=document.createElement("input");label.value=item.label||"";label.placeholder="表示名";
+    const url=document.createElement("input");url.value=item.url||"";url.placeholder="https://...";url.inputMode="url";
+    label.oninput=()=>editingLinks[idx].label=label.value;
+    url.oninput=()=>editingLinks[idx].url=url.value;
+    const del=document.createElement("button");del.type="button";del.textContent="×";
+    del.onclick=()=>{editingLinks.splice(idx,1);renderLinkEditor()};
+    row.append(label,url,del);box.appendChild(row);
+  });
+}
+
 function openNoteEditor(n=null){
   editingNote=n;$("noteModalTitle").textContent=n?"ノートを編集":"ノートを追加";
   $("noteTitleInput").value=n?.title||"";$("noteBodyInput").value=n?.body||"";
   $("notePrivateInput").checked=!!n?.privateOnly;$("noteCollaborativeInput").checked=!!n?.collaborative;$("notePinnedInput").checked=!!n?.pinned;
   editingChecklist=(Array.isArray(n?.checklist)?n.checklist:[]).map(x=>({text:x.text||"",done:!!x.done}));
-  renderChecklistEditor();$("noteModal").classList.remove("hidden");
+  editingLinks=(Array.isArray(n?.links)?n.links:[]).map(x=>({label:x.label||"",url:x.url||""}));
+  renderChecklistEditor();renderLinkEditor();$("noteModal").classList.remove("hidden");
 }
 $("notePrivateInput").onchange=()=>{if($("notePrivateInput").checked)$("noteCollaborativeInput").checked=false};
 $("noteCollaborativeInput").onchange=()=>{if($("noteCollaborativeInput").checked)$("notePrivateInput").checked=false};
 $("addChecklistItem").onclick=()=>{editingChecklist.push({text:"",done:false});renderChecklistEditor()};
+$("addRelatedLink").onclick=()=>{editingLinks.push({label:"",url:""});renderLinkEditor()};
+
+function syncNoteSortMenu(){
+  document.querySelectorAll("#noteSortMenu [data-note-sort]").forEach(b=>
+    b.classList.toggle("active",b.dataset.noteSort===noteSortMode)
+  );
+}
+$("noteSortButton").onclick=e=>{
+  e.stopPropagation();
+  syncNoteSortMenu();
+  $("noteSortMenu").classList.toggle("hidden");
+};
+document.querySelectorAll("#noteSortMenu [data-note-sort]").forEach(b=>b.onclick=e=>{
+  e.stopPropagation();
+  noteSortMode=b.dataset.noteSort;
+  localStorage.setItem("pb.noteSort",noteSortMode);
+  $("noteSortMenu").classList.add("hidden");
+  renderNotes();
+});
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#noteSortMenu")&&!e.target.closest("#noteSortButton"))$("noteSortMenu")?.classList.add("hidden");
+});
+
 $("noteFilterMine").onclick=()=>{if(noteShowMine&& !noteShowOther)return;noteShowMine=!noteShowMine;renderNotes()};
 $("noteFilterOther").onclick=()=>{if(noteShowOther&& !noteShowMine)return;noteShowOther=!noteShowOther;renderNotes()};
 $("openNoteModal").onclick=()=>openNoteEditor();
@@ -5135,15 +5419,18 @@ $("noteModal").addEventListener("click",e=>{if(e.target===$("noteModal"))$("note
 $("saveNote").onclick=async()=>{
   const title=$("noteTitleInput").value.trim(),body=$("noteBodyInput").value.trim();
   const checklist=editingChecklist.map(x=>({text:(x.text||"").trim(),done:!!x.done})).filter(x=>x.text);
-  if(!title&&!body&&!checklist.length){alert("タイトル・本文・チェック項目のいずれかを入力してください");return}
+  const links=editingLinks.map(x=>({label:(x.label||"").trim(),url:(x.url||"").trim()}))
+    .filter(x=>x.url)
+    .map(x=>({label:x.label||"関連資料",url:x.url}));
+  if(!title&&!body&&!checklist.length&&!links.length){alert("タイトル・本文・チェック項目・関連リンクのいずれかを入力してください");return}
   const privateOnly=$("notePrivateInput").checked,collaborative=!privateOnly&&$("noteCollaborativeInput").checked;
-  const payload={title,body,checklist,privateOnly,collaborative,pinned:$("notePinnedInput").checked,updatedAt:serverTimestamp(),updatedBy:currentId};
+  const payload={title,body,checklist,links,privateOnly,collaborative,pinned:$("notePinnedInput").checked,updatedAt:serverTimestamp(),updatedBy:currentId};
   try{
     if(editingNote){
       if(editingNote.uid!==currentUID&&!editingNote.collaborative)throw new Error("このノートは共同編集ではありません");
       await updateDoc(doc(db,"notes",editingNote.id),payload);
     }else await addDoc(collection(db,"notes"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
-    editingNote=null;editingChecklist=[];$("noteModal").classList.add("hidden");
+    editingNote=null;editingChecklist=[];editingLinks=[];$("noteModal").classList.add("hidden");
   }catch(e){console.error(e);alert("ノートを保存できませんでした。Firestoreルールも確認してください。");}
 };
 /* CALENDAR */
@@ -6227,6 +6514,49 @@ document.addEventListener("visibilitychange",async()=>{
   try{const s=await getDoc(voiceRoomRef);renderVoiceSnapshot(s.data())}catch(e){}
 });
 
+
+
+let pbResumeHiddenAt=0;
+let pbLastRecoveryAt=0;
+function reconnectPBListeners(){
+  if(!auth.currentUser||!pinPassed||document.hidden)return;
+  listenMessages();
+  listenTyping();
+  listenReadStates();
+  listenSolo();
+  listenNotes();
+  listenSchedules();
+  listenLocations();
+  listenPlaces();
+  listenNotifications();
+}
+function recoverPBViewAfterResume(){
+  if(!auth.currentUser||!pinPassed||document.hidden)return;
+  const now=Date.now();
+  const away=pbResumeHiddenAt?now-pbResumeHiddenAt:0;
+  pbResumeHiddenAt=0;
+
+  const messageRows=document.querySelectorAll("#messages .messageRow").length;
+  if(messageDocs.size>0&&messageRows===0){
+    renderMessages();
+    requestAnimationFrame(()=>scrollToLatest(false));
+  }
+
+  const needsReconnect=messageDocs.size===0 || messageRows===0 || away>90000;
+  if(needsReconnect && now-pbLastRecoveryAt>3000){
+    pbLastRecoveryAt=now;
+    reconnectPBListeners();
+  }
+}
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    pbResumeHiddenAt=Date.now();
+  }else{
+    setTimeout(recoverPBViewAfterResume,120);
+    setTimeout(recoverPBViewAfterResume,700);
+  }
+});
+window.addEventListener("pageshow",()=>setTimeout(recoverPBViewAfterResume,180));
 
 /* Initial calendar */
 calendarDate=new Date();selectedDate=new Date();renderCalendar();renderSelectedDay();
