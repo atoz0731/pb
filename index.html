@@ -2127,51 +2127,27 @@ body.standbyMode #standbyStatus{display:inline-flex}
   border:1px solid #ccc;border-radius:12px
 }
 
-/* iOS keyboard experimental fix:
-   app全体を固定せず、ヘッダー・タブ・Talk領域をvisualViewportに直接固定する */
+/* iOS入力中もPBヘッダー＋タブを画面上部に残す */
 body.talkKeyboardOpen{
   overflow:hidden!important;
 }
 body.talkKeyboardOpen #appScreen{
-  overflow:visible!important;
-}
-body.talkKeyboardOpen #appScreen > header{
   position:fixed!important;
-  left:0!important;
-  right:0!important;
-  top:var(--pb-vv-top,0px)!important;
+  inset:0 auto auto 0!important;
   width:100%!important;
-  z-index:1200!important;
-  transform:none!important;
+  height:var(--pb-visible-height,100dvh)!important;
+  min-height:0!important;
+  max-height:var(--pb-visible-height,100dvh)!important;
+  overflow:hidden!important;
 }
+body.talkKeyboardOpen #appScreen > header,
 body.talkKeyboardOpen #appScreen > .tabs{
-  position:fixed!important;
-  left:0!important;
-  right:0!important;
-  top:var(--pb-tabs-top,0px)!important;
-  width:100%!important;
-  z-index:1190!important;
-  transform:none!important;
+  flex-shrink:0!important;
 }
 body.talkKeyboardOpen #talkPage{
-  position:fixed!important;
-  left:0!important;
-  right:0!important;
-  top:var(--pb-talk-top,0px)!important;
-  height:var(--pb-talk-height,50vh)!important;
+  flex:1 1 auto!important;
   min-height:0!important;
-  max-height:none!important;
   overflow:hidden!important;
-  z-index:1100!important;
-  background:#f7f7f7!important;
-  transform:none!important;
-}
-body.talkKeyboardOpen #talkPage #messages{
-  min-height:0!important;
-  overscroll-behavior:contain;
-}
-body.talkKeyboardOpen #talkPage .composer{
-  flex-shrink:0!important;
 }
 
 /* 送信中を視覚的に明確化 */
@@ -2904,7 +2880,7 @@ let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
 const REACTIONS=["👍","❤️","😂","😮","😢"];
-const APP_VERSION="3.7.2d-kbfix";
+const APP_VERSION="3.7.2d";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -3919,58 +3895,29 @@ $("applyCustomDate").onclick=()=>{
 
 
 
-let pbKeyboardWasOpen=false;
-function clearTalkKeyboardViewport(){
-  document.body.classList.remove("talkKeyboardOpen");
-  ["--pb-vv-top","--pb-tabs-top","--pb-talk-top","--pb-talk-height"].forEach(
-    name=>document.documentElement.style.removeProperty(name)
-  );
-  pbKeyboardWasOpen=false;
-}
 function syncTalkKeyboardViewport(){
   const vv=window.visualViewport;
   const input=$("messageInput");
-  if(!vv||!input)return;
-
   const focused=document.activeElement===input;
-  const keyboardOpen=!!(focused && vv.height < window.innerHeight*0.90);
-  if(!keyboardOpen){
-    if(!focused)clearTalkKeyboardViewport();
-    return;
-  }
-
-  const header=$("#appScreen > header");
-  const tabs=$("#appScreen > .tabs");
-  if(!header||!tabs)return;
-
-  const vvTop=Math.max(0,Math.round(vv.offsetTop||0));
-  const headerH=Math.round(header.getBoundingClientRect().height);
-  const tabsH=Math.round(tabs.getBoundingClientRect().height);
-  const tabsTop=vvTop+headerH;
-  const talkTop=tabsTop+tabsH;
-  const talkHeight=Math.max(120,Math.round(vv.height-headerH-tabsH));
-
-  document.documentElement.style.setProperty("--pb-vv-top",`${vvTop}px`);
-  document.documentElement.style.setProperty("--pb-tabs-top",`${tabsTop}px`);
-  document.documentElement.style.setProperty("--pb-talk-top",`${talkTop}px`);
-  document.documentElement.style.setProperty("--pb-talk-height",`${talkHeight}px`);
-  document.body.classList.add("talkKeyboardOpen");
-
-  if(!pbKeyboardWasOpen){
-    pbKeyboardWasOpen=true;
+  const keyboardOpen=!!(focused&&vv&&vv.height<window.innerHeight*0.88);
+  document.body.classList.toggle("talkKeyboardOpen",keyboardOpen);
+  if(keyboardOpen){
+    document.documentElement.style.setProperty("--pb-visible-height",`${Math.round(vv.height)}px`);
     requestAnimationFrame(()=>scrollToLatest(false));
+  }else{
+    document.documentElement.style.removeProperty("--pb-visible-height");
   }
 }
 if(window.visualViewport){
   window.visualViewport.addEventListener("resize",syncTalkKeyboardViewport);
   window.visualViewport.addEventListener("scroll",syncTalkKeyboardViewport);
 }
-$("messageInput").addEventListener("focus",()=>{
-  // iOSはkeyboard animation中にvisualViewportが数回変化するため段階的に同期
-  [0,60,160,320].forEach(ms=>setTimeout(syncTalkKeyboardViewport,ms));
-});
+$("messageInput").addEventListener("focus",()=>setTimeout(syncTalkKeyboardViewport,50));
 $("messageInput").addEventListener("blur",()=>{
-  setTimeout(clearTalkKeyboardViewport,100);
+  setTimeout(()=>{
+    document.body.classList.remove("talkKeyboardOpen");
+    document.documentElement.style.removeProperty("--pb-visible-height");
+  },80);
 });
 
 /* MESSAGE REALTIME */
