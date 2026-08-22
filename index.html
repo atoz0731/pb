@@ -2414,6 +2414,40 @@ body.night-mode .reactionMorePanel{
   border-color:#3a4048!important;
 }
 
+
+/* ===== v3.7.4b header menu text specificity fix ===== */
+/* Header-wide white button text was overriding menu labels. */
+body:not(.stealth-read-mode) #appScreen > header #headerMenu,
+body:not(.stealth-read-mode) #appScreen > header #headerMenu button,
+body:not(.stealth-read-mode) #appScreen > header #headerMenu button span,
+body:not(.stealth-read-mode) #appScreen > header #headerMenu .menuText{
+  color:#111!important;
+}
+body:not(.stealth-read-mode) #appScreen > header #headerMenu{
+  background:#fff!important;
+}
+body:not(.stealth-read-mode) #appScreen > header #headerMenu button{
+  background:#fff!important;
+}
+body:not(.stealth-read-mode) #appScreen > header #headerMenu button:hover{
+  background:#f2f2f2!important;
+}
+
+/* Night mode keeps the same menu readable with reversed contrast. */
+body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu,
+body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu button,
+body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu button span,
+body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu .menuText{
+  color:#f2f2f2!important;
+}
+body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu,
+body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu button{
+  background:#20242a!important;
+}
+body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu button:hover{
+  background:#2a3038!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -3164,7 +3198,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.4a";
+const APP_VERSION="3.7.4b";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
