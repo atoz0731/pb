@@ -2960,7 +2960,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.3";
+const APP_VERSION="3.7.3a";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -3365,6 +3365,7 @@ function checkPin(){
 
 
 document.addEventListener("click",e=>{
+  if(!$("pinScreen").classList.contains("hidden"))return;
   if(!stealthReadMode)return;
   const b=e.target.closest("button");
   if(!b)return;
@@ -3391,16 +3392,31 @@ function lockToPin(){
   forceStandbyOff();
   if(standbyMode)setStandbyMode(false);
   if(!auth.currentUser || !pinPassed)return;
+
+  // v3.7.3a: relock must leave every hidden/decoy mode before showing PIN.
+  stealthReadMode=false;
+  document.body.classList.remove("stealth-read-mode");
+  camouflageMode=false;
+  decoyMode="";
+
   pinPassed=false;
   pin="";
   updateDots();
   $("pinError").textContent="";
   $("headerMenu")?.classList.add("hidden");
   $("settingsModal")?.classList.add("hidden");
-  $("appScreen").classList.add("hidden");
-  $("loginScreen").classList.add("hidden");
+  $("decoyMenu")?.classList.add("hidden");
+  $("miniLocationPanel")?.classList.add("hidden");
+  $("savedMessagesPanel")?.classList.add("hidden");
+  $("notificationsPanel")?.classList.add("hidden");
+
+  ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen",
+   "notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"]
+    .forEach(id=>$(id)?.classList.add("hidden"));
+
   $("pinScreen").classList.remove("hidden");
   clearHiddenStamp();
+  window.scrollTo(0,0);
 }
 function rememberHiddenTime(){
   if(standbyMode)return;
@@ -6764,6 +6780,7 @@ const pinLockObserver=new MutationObserver(()=>{
     $("weatherScreen")?.classList.add("hidden");
     $("teamsScreen")?.classList.add("hidden");
     $("notesDecoyScreen")?.classList.add("hidden");
+    $("pcNotepadScreen")?.classList.add("hidden");
     $("camoLoginScreen")?.classList.add("hidden");
     $("appScreen")?.classList.add("hidden");
     $("loginScreen")?.classList.add("hidden");
