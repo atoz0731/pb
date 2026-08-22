@@ -2316,6 +2316,104 @@ body.night-mode select{background:#20242a!important;color:#f1f1f1!important}
 
 #pcNoteSendUtf8,#pcNoteClose{cursor:pointer;user-select:none}
 
+
+/* ===== v3.7.4a theme fixes ===== */
+
+/* message bubbles must use theme variables */
+body:not(.night-mode) .messageRow.mine .messageBubble{
+  background:var(--pb-accent)!important;
+  color:#fff!important;
+}
+body:not(.night-mode) .messageRow.other .messageBubble{
+  background:var(--pb-other)!important;
+  color:var(--pb-text)!important;
+}
+body.theme-yellow:not(.night-mode) .messageRow.mine .messageBubble{
+  background:#b88d00!important;
+  color:#fff!important;
+}
+body.theme-cyan:not(.night-mode) .messageRow.mine .messageBubble{
+  background:#167a8a!important;
+}
+body.theme-pink:not(.night-mode) .messageRow.mine .messageBubble{
+  background:#a33d72!important;
+}
+body.theme-red:not(.night-mode) .messageRow.mine .messageBubble{
+  background:#8b1e1e!important;
+}
+body.theme-blue:not(.night-mode) .messageRow.mine .messageBubble{
+  background:#1f4f8f!important;
+}
+
+/* Night mode: both sides readable */
+body.night-mode .messageRow.mine .messageBubble{
+  background:#242a31!important;
+  color:#f4f4f4!important;
+}
+body.night-mode .messageRow.other .messageBubble{
+  background:#1b1f24!important;
+  color:#f4f4f4!important;
+}
+body.night-mode .messageRow.other .messageBubble *{
+  color:inherit!important;
+}
+body.night-mode .sender,
+body.night-mode .time,
+body.night-mode .readState{
+  color:#aeb4bb!important;
+}
+
+/* 3-dot menu must always have readable text */
+#headerMenu,
+.messagePopup,
+.soloPopup,
+#decoyMenu{
+  background:#fff!important;
+  color:#111!important;
+}
+#headerMenu button,
+.messagePopup button,
+.soloPopup button,
+#decoyMenu button{
+  color:#111!important;
+  background:#fff!important;
+}
+#headerMenu button:hover,
+.messagePopup button:hover,
+.soloPopup button:hover,
+#decoyMenu button:hover{
+  background:#f2f2f2!important;
+}
+body.night-mode #headerMenu,
+body.night-mode .messagePopup,
+body.night-mode .soloPopup,
+body.night-mode #decoyMenu{
+  background:#20242a!important;
+  color:#f2f2f2!important;
+  border-color:#3a4048!important;
+}
+body.night-mode #headerMenu button,
+body.night-mode .messagePopup button,
+body.night-mode .soloPopup button,
+body.night-mode #decoyMenu button{
+  background:#20242a!important;
+  color:#f2f2f2!important;
+}
+body.night-mode #headerMenu button:hover,
+body.night-mode .messagePopup button:hover,
+body.night-mode .soloPopup button:hover,
+body.night-mode #decoyMenu button:hover{
+  background:#2a3038!important;
+}
+
+/* reaction popup itself */
+body.night-mode .popupReactions,
+body.night-mode .soloPopupReactions,
+body.night-mode .reactionMorePanel{
+  background:#20242a!important;
+  border-color:#3a4048!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -3066,7 +3164,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.4";
+const APP_VERSION="3.7.4a";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
