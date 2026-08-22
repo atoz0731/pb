@@ -2448,6 +2448,36 @@ body.night-mode:not(.stealth-read-mode) #appScreen > header #headerMenu button:h
   background:#2a3038!important;
 }
 
+
+/* ===== v3.7.4c bubble theme fix ===== */
+/* Actual chat bubble class is .bubble (not .messageBubble). */
+body:not(.night-mode) .messageRow.mine .bubble{
+  background:var(--pb-accent)!important;
+  color:#fff!important;
+}
+body:not(.night-mode) .messageRow:not(.mine) .bubble{
+  background:var(--pb-other)!important;
+  color:var(--pb-text)!important;
+}
+body.theme-red:not(.night-mode) .messageRow.mine .bubble{background:#8b1e1e!important}
+body.theme-blue:not(.night-mode) .messageRow.mine .bubble{background:#1f4f8f!important}
+body.theme-yellow:not(.night-mode) .messageRow.mine .bubble{background:#b88d00!important;color:#fff!important}
+body.theme-cyan:not(.night-mode) .messageRow.mine .bubble{background:#167a8a!important}
+body.theme-pink:not(.night-mode) .messageRow.mine .bubble{background:#a33d72!important}
+
+/* Night mode bubbles */
+body.night-mode .messageRow.mine .bubble{
+  background:#242a31!important;
+  color:#f4f4f4!important;
+}
+body.night-mode .messageRow:not(.mine) .bubble{
+  background:#1b1f24!important;
+  color:#f4f4f4!important;
+}
+body.night-mode .messageRow:not(.mine) .bubble *{
+  color:inherit!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -3198,7 +3228,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.4b";
+const APP_VERSION="3.7.4c";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
