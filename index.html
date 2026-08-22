@@ -2174,8 +2174,39 @@ body.talkKeyboardOpen #talkPage{
 /* ===== v3.7.3 ===== */
 .popupReactions,.soloPopupReactions{align-items:center}
 .reactionMoreBtn{min-width:30px!important;border:1px solid #ddd!important;border-radius:14px!important;font-size:15px!important;font-weight:700!important;background:#f7f7f7!important}
-.reactionMorePanel{display:flex;flex-wrap:wrap;gap:5px;width:100%;padding-top:5px;margin-top:3px;border-top:1px solid #eee}
-.reactionMorePanel button{min-width:30px;height:30px;border:0;background:transparent;border-radius:8px;font-size:19px;padding:2px}
+.reactionMorePanel{
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:44px;
+  display:grid;
+  grid-template-columns:repeat(8,minmax(28px,1fr));
+  gap:4px;
+  padding:8px;
+  margin:0;
+  border:1px solid #e3e3e3;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,.14);
+  z-index:12;
+}
+.reactionMorePanel button{
+  width:100%;
+  min-width:0;
+  height:32px;
+  border:0;
+  background:transparent;
+  border-radius:8px;
+  font-size:19px;
+  padding:2px;
+}
+.popupReactions,.soloPopupReactions{
+  position:relative;
+  padding-bottom:0;
+}
+.popupReactions.moreOpen,.soloPopupReactions.moreOpen{
+  padding-bottom:86px;
+}
 
 /* 9409: Windowsメモ帳風 */
 #pcNotepadScreen{position:fixed;inset:0;z-index:5000;background:#fff;color:#111;font-family:"Segoe UI",Meiryo,sans-serif;display:flex;flex-direction:column}
@@ -2960,7 +2991,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.3a";
+const APP_VERSION="3.7.3b";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -4391,13 +4422,18 @@ function fillReactionPicker(container,onPick){
   more.onclick=e=>{
     e.stopPropagation();
     const old=container.querySelector(".reactionMorePanel");
-    if(old){old.remove();return}
+    if(old){
+      old.remove();
+      container.classList.remove("moreOpen");
+      return;
+    }
     const panel=document.createElement("div");panel.className="reactionMorePanel";
     REACTION_MORE.forEach(em=>{
       const b=document.createElement("button");b.type="button";b.textContent=em;
       b.onclick=()=>onPick(em);panel.appendChild(b);
     });
     container.appendChild(panel);
+    container.classList.add("moreOpen");
   };
   container.appendChild(more);
 }
