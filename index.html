@@ -3366,6 +3366,70 @@ body.night-mode .statusPopupClose{
   margin:0 2px 5px!important;
 }
 
+
+/* ===== v3.7.5 popup padding / history close alignment fix ===== */
+
+/* Generic .modal padding was still being inherited here.
+   Remove it so the compact status editor actually stays compact. */
+#statusSelfModal .modal,
+#statusOtherModal .modal{
+  padding:0!important;
+}
+#statusSelfModal .statusModalBody{
+  padding:22px 9px 7px!important;
+}
+
+/* History popup: remove inherited modal padding and anchor × to the blue header. */
+#statusHistoryModal .statusHistoryWindow{
+  padding:0!important;
+  position:relative!important;
+}
+#statusHistoryModal .searchHeader{
+  position:relative!important;
+  box-sizing:border-box!important;
+  padding:0 44px 0 12px!important;
+}
+#statusHistoryModal #closeStatusHistory{
+  position:absolute!important;
+  right:6px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:34px!important;
+  height:34px!important;
+  line-height:34px!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+
+/* ===== v3.7.5 status modal isolation ===== */
+body:has(#pinScreen:not(.hidden)) #statusSelfModal,
+body:has(#pinScreen:not(.hidden)) #statusOtherModal,
+body:has(#pinScreen:not(.hidden)) #statusHistoryModal{
+  display:none!important;
+}
+
+
+/* ===== v3.7.5 overlay stacking cleanup ===== */
+#notificationsPanel{
+  z-index:1200!important;
+}
+#settingsModal,
+#savedMessagesPanel,
+#messageSearchPanel,
+#dateFilterModal,
+#statusHistoryModal,
+#statusSelfModal,
+#statusOtherModal{
+  z-index:1200!important;
+}
+#headerMenu{
+  z-index:900!important;
+}
+.hidden{
+  display:none!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -4634,7 +4698,7 @@ function lockToPin(){
   updateDots();
   $("pinError").textContent="";
   $("headerMenu")?.classList.add("hidden");
-  $("settingsModal")?.classList.add("hidden");
+  closeAuxWindows();
   $("decoyMenu")?.classList.add("hidden");
   $("miniLocationPanel")?.classList.add("hidden");
   $("savedMessagesPanel")?.classList.add("hidden");
@@ -4796,7 +4860,15 @@ function showApp(user){
   const menu=$("headerMenuButton");if(!menu||!menu.parentNode)return;
   const btn=document.createElement("button");btn.id="headerNoticeButton";btn.type="button";btn.setAttribute("aria-label","お知らせ");
   btn.innerHTML='🔔<span id="headerNoticeBadge" class="hidden">0</span>';
-  btn.onclick=e=>{e.stopPropagation();$("headerMenu")?.classList.add("hidden");$("notificationsPanel")?.classList.remove("hidden");notificationReadAt=Date.now();localStorage.setItem(`pb.noticeRead.${currentUID}`,String(notificationReadAt));renderNotifications();updateNotificationBadge()};
+  btn.onclick=e=>{
+    e.stopPropagation();
+    closeAuxWindows("notificationsPanel");
+    $("notificationsPanel")?.classList.remove("hidden");
+    notificationReadAt=Date.now();
+    localStorage.setItem(`pb.noticeRead.${currentUID}`,String(notificationReadAt));
+    renderNotifications();
+    updateNotificationBadge();
+  };
   menu.parentNode.insertBefore(btn,menu);
 })();
 
@@ -4831,7 +4903,8 @@ function recoverPBViewportAfterKeyboard(){
 });
 
 /* HEADER MENU */
-$("headerMenuButton").onclick=e=>{e.stopPropagation();$("headerMenu").classList.toggle("hidden")};
+$("headerMenuButton").onclick=e=>{e.stopPropagation();closeAuxWindows("headerMenu");
+  $("headerMenu").classList.toggle("hidden")};
 document.addEventListener("click",e=>{if(!$("headerMenu").contains(e.target)&&e.target!==$("headerMenuButton"))$("headerMenu").classList.add("hidden")});
 $(".brand")?.addEventListener("click",()=>{
   const hasDraft=($("messageInput")?.value||"").trim()||($("soloInput")?.value||"").trim()||($("noteBodyInput")?.value||"").trim();
@@ -4846,6 +4919,7 @@ $("closeNotifications").onclick=()=>$("notificationsPanel").classList.add("hidde
 
 function openTalkSearch(){
   $("headerMenu").classList.add("hidden");
+  closeAuxWindows("messageSearchPanel");
   $("messageSearchPanel").classList.remove("hidden");
   $("messageSearchInput").value="";
   renderMessageSearchResults("");
@@ -4853,6 +4927,7 @@ function openTalkSearch(){
 }
 function openTalkDateFilter(){
   $("headerMenu").classList.add("hidden");
+  closeAuxWindows("dateFilterModal");
   $("dateFilterModal").classList.remove("hidden");
 }
 
@@ -4869,12 +4944,13 @@ $("menuUpdates").onclick=()=>{
   $("updatesPage").classList.remove("hidden");
   localStorage.setItem("pb.lastSeenVersion",APP_VERSION);
 };
-$("talkSavedButton").onclick=()=>{$("savedMessagesPanel").classList.remove("hidden");renderSavedMessages()};
+$("talkSavedButton").onclick=()=>{closeAuxWindows("savedMessagesPanel");$("savedMessagesPanel").classList.remove("hidden");renderSavedMessages()};
 $("talkSearchButton").onclick=openTalkSearch;
 $("talkDateButton").onclick=openTalkDateFilter;
 $("closeSavedMessages").onclick=()=>$("savedMessagesPanel").classList.add("hidden");
 $("menuSettings").onclick=()=>{
   $("headerMenu").classList.add("hidden");
+  closeAuxWindows("settingsModal");
   syncSettingsControls();
   $("settingsModal").classList.remove("hidden");
 };
@@ -6903,6 +6979,24 @@ function updateStatusAvatarLabels(){
   if(self)self.textContent=statusInitial(currentId,"自");
   if(other)other.textContent=statusInitial(findOtherId(),"相");
 }
+
+
+function closeAuxWindows(except=""){
+  const ids=[
+    "headerMenu",
+    "settingsModal","notificationsPanel","savedMessagesPanel",
+    "messageSearchPanel","dateFilterModal","miniLocationPanel",
+    "statusSelfModal","statusOtherModal","statusHistoryModal"
+  ];
+  ids.forEach(id=>{
+    if(id!==except)$(id)?.classList.add("hidden");
+  });
+}
+function closeStatusWindows(){
+  ["statusSelfModal","statusOtherModal","statusHistoryModal"].forEach(id=>{
+    $(id)?.classList.add("hidden");
+  });
+}
 function formatStatusTime(ts){
   const d=ts?.toDate?.();if(!d)return "";
   return d.toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
@@ -6955,7 +7049,7 @@ function listenCurrentStatuses(){
 }
 function openSelfStatus(){
   if(stealthReadMode)return;
-  $("statusOtherModal")?.classList.add("hidden");
+  closeAuxWindows("statusSelfModal");
   const s=getOwnCurrentStatus();
   const current=(s?.text||"").trim();
   const prevTime=s?.updatedAt?.toDate?.()
@@ -6983,7 +7077,7 @@ function renderOtherStatus(){
   box.append(text,time);
 }
 function openOtherStatus(){
-  $("statusSelfModal")?.classList.add("hidden");
+  closeAuxWindows("statusOtherModal");
   renderOtherStatus();
   $("statusOtherModal").classList.remove("hidden");
   markOtherStatusSeen();
@@ -7028,6 +7122,7 @@ async function clearCurrentStatus(){
   }
 }
 async function loadStatusHistory(dateKey=null){
+  closeAuxWindows("statusHistoryModal");
   const box=$("statusHistoryList");
   box.innerHTML='<div class="statusHistoryEmpty">読み込み中...</div>';
   $("statusHistoryModal").classList.remove("hidden");
@@ -7694,6 +7789,7 @@ $("miniMapLarger").onclick=e=>{
   setTimeout(()=>miniLeafletMap?.invalidateSize({pan:false}),260);
 };
 $("locationSharingIcon").onclick=()=>{
+  closeAuxWindows("miniLocationPanel");
   if(activePage?.()==="talkPage"){
     const panel=$("miniLocationPanel");
     if(panel.classList.contains("hidden")){
@@ -7707,7 +7803,8 @@ $("locationSharingIcon").onclick=()=>{
     return;
   }
   document.querySelector('.tab[data-page="talkPage"]')?.click();
-  setTimeout(()=>{$("miniLocationPanel")?.classList.remove("hidden");applyMiniMapSize();rebuildMiniMapAfterLayout()},40);
+  setTimeout(()=>{closeAuxWindows("miniLocationPanel");
+  $("miniLocationPanel")?.classList.remove("hidden");applyMiniMapSize();rebuildMiniMapAfterLayout()},40);
 };
 $("closeMiniLocation").onclick=()=>{
   $("miniLocationPanel").classList.add("hidden");
