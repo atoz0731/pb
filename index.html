@@ -381,6 +381,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
   flex:1;
 }
 
+
 /* CALENDAR */
 .calendarToolbar{background:#fff;padding:10px 11px 8px;border-bottom:1px solid #ddd}
 .calendarMonthRow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -2980,6 +2981,313 @@ body.night-mode #notesPage .noteSortMenu button.active{
   color:#fff!important;
 }
 
+
+/* ===== v3.7.5 current status ===== */
+.brand{cursor:pointer;user-select:none}
+.statusDock{
+  position:absolute;left:50%;top:calc(7px + env(safe-area-inset-top));
+  transform:translateX(-50%);display:flex;gap:8px;align-items:center;z-index:35
+}
+.statusAvatar{
+  width:31px;height:31px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.12);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;padding:0;position:relative
+}
+.statusAvatar.hasStatus::after{
+  content:"";position:absolute;right:-1px;bottom:-1px;width:8px;height:8px;border-radius:50%;
+  background:#6ddf76;border:2px solid var(--pb-accent,#111)
+}
+body.night-mode .statusAvatar.hasStatus::after{border-color:#0d0f12}
+body.stealth-read-mode .statusAvatar{color:#111;border-color:#bbb;background:#f1f1f1}
+body.stealth-read-mode .statusAvatar.hasStatus::after{border-color:#fff}
+
+.statusModalBody{padding:12px}
+.statusCurrentText{font-size:17px;font-weight:800;line-height:1.45;white-space:pre-wrap;word-break:break-word;margin:4px 0 5px}
+.statusUpdatedAt{font-size:10px;color:#888;margin-bottom:12px}
+.statusEmpty{font-size:12px;color:#999;padding:16px 0;text-align:center}
+.statusInput{
+  width:100%;min-height:45px;max-height:100px;resize:none;
+  border:1px solid #ccc;border-radius:12px;padding:10px 12px;font-size:16px;line-height:1.4
+}
+.statusActions{display:flex;gap:7px;margin-top:9px}
+.statusActions button{
+  flex:1;border:1px solid var(--pb-border);background:var(--pb-surface);color:var(--pb-text);
+  border-radius:11px;padding:9px 7px;font-size:11px
+}
+.statusActions button.primaryStatus{background:var(--pb-accent);color:#fff;border-color:var(--pb-accent)}
+.statusHistoryList{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:12px;line-height:1.75;white-space:pre-wrap;padding:12px 13px;color:var(--pb-text)
+}
+.statusHistoryEmpty{text-align:center;color:var(--pb-muted);font-size:12px;padding:28px 10px}
+#openStatusHistoryForDay{
+  border:1px solid var(--pb-border);background:var(--pb-surface);color:var(--pb-accent);
+  border-radius:13px;padding:6px 9px;font-size:10px
+}
+.dayDetailActions{display:flex;align-items:center;gap:6px}
+body.night-mode #statusSelfModal .modal,
+body.night-mode #statusOtherModal .modal,
+body.night-mode #statusHistoryModal .modal{background:var(--pb-surface)!important;color:var(--pb-text)!important}
+body.night-mode .statusUpdatedAt,
+body.night-mode .statusEmpty{color:#aeb4bb!important}
+@media (max-width:420px){
+  .statusDock{gap:5px}
+  .statusAvatar{width:29px;height:29px;font-size:10px}
+}
+
+
+/* ===== v3.7.5 status avatar polish ===== */
+.statusAvatar{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+  letter-spacing:.2px;
+}
+.statusAvatar:first-child{background:rgba(255,255,255,.22)}
+.statusAvatar:last-child{background:rgba(255,255,255,.08)}
+
+
+/* ===== v3.7.5 compact status UI ===== */
+.statusAvatar{
+  background:transparent!important;
+  box-shadow:none!important;
+  border-width:2px!important;
+}
+#selfStatusButton{
+  border-color:#2f7df6!important;
+  color:#2f7df6!important;
+}
+#otherStatusButton{
+  border-color:#e04a4a!important;
+  color:#e04a4a!important;
+}
+.statusAvatar.hasStatus::after{
+  width:7px!important;
+  height:7px!important;
+  border-width:1.5px!important;
+}
+#selfStatusButton.hasStatus::after{border-color:#2f7df6!important}
+#otherStatusButton.hasStatus::after{border-color:#e04a4a!important}
+
+/* Small floating status popover */
+#statusOtherModal{
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding-top:calc(48px + env(safe-area-inset-top))!important;
+  background:transparent!important;
+  pointer-events:none;
+}
+#statusOtherModal .modal{
+  width:auto!important;
+  min-width:170px;
+  max-width:min(280px,calc(100vw - 32px));
+  margin:0!important;
+  border-radius:14px!important;
+  box-shadow:0 6px 20px rgba(0,0,0,.20)!important;
+  pointer-events:auto;
+  overflow:hidden;
+}
+#statusOtherModal .windowHeader{
+  display:none!important;
+}
+#statusOtherModal .statusModalBody{
+  padding:10px 12px!important;
+}
+#statusOtherModal .statusCurrentText{
+  font-size:14px!important;
+  font-weight:700!important;
+  margin:0!important;
+  line-height:1.35!important;
+  text-align:center;
+}
+#statusOtherModal .statusUpdatedAt{
+  font-size:9px!important;
+  margin:4px 0 0!important;
+  text-align:center;
+}
+#statusOtherModal .statusEmpty{
+  padding:2px 4px!important;
+  font-size:11px!important;
+}
+
+/* Compact own-status editor */
+#statusSelfModal{
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding-top:calc(48px + env(safe-area-inset-top))!important;
+  background:transparent!important;
+  pointer-events:none;
+}
+#statusSelfModal .modal{
+  width:min(300px,calc(100vw - 28px))!important;
+  margin:0!important;
+  border-radius:14px!important;
+  box-shadow:0 6px 20px rgba(0,0,0,.20)!important;
+  pointer-events:auto;
+  overflow:hidden;
+}
+#statusSelfModal .windowHeader{
+  display:none!important;
+}
+#statusSelfModal .statusModalBody{
+  padding:10px!important;
+}
+#statusSelfModal .statusInput{
+  min-height:40px!important;
+  max-height:72px!important;
+  padding:8px 10px!important;
+  font-size:14px!important;
+  border-radius:10px!important;
+}
+#statusSelfModal .statusUpdatedAt{
+  margin:4px 2px 0!important;
+  font-size:9px!important;
+}
+#statusSelfModal .statusActions{
+  margin-top:7px!important;
+  gap:5px!important;
+}
+#statusSelfModal .statusActions button{
+  padding:7px 6px!important;
+  border-radius:9px!important;
+  font-size:10px!important;
+}
+
+
+/* ===== v3.7.5 status interaction refinements ===== */
+#otherStatusButton.statusChanged::before{
+  content:"";
+  position:absolute;
+  top:-3px;right:-3px;
+  width:9px;height:9px;
+  border-radius:50%;
+  background:#e53935;
+  border:2px solid #111;
+  box-sizing:content-box;
+}
+body.night-mode #otherStatusButton.statusChanged::before{border-color:#0d0f12}
+.statusPrevious{
+  font-size:10px;
+  color:var(--pb-muted,#888);
+  line-height:1.35;
+  margin:0 2px 6px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.statusPrevious:empty{display:none}
+body.night-mode .statusPrevious{color:#aeb4bb!important}
+
+
+/* ===== v3.7.5 status history = common window style ===== */
+#statusHistoryModal{
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  padding:0!important;
+  background:var(--pb-bg)!important;
+}
+#statusHistoryModal .statusHistoryWindow{
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  background:var(--pb-bg)!important;
+}
+#statusHistoryModal .searchHeader{
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  flex:0 0 auto;
+  background:var(--pb-accent)!important;
+  color:#fff!important;
+  border-bottom:1px solid var(--pb-border)!important;
+}
+#statusHistoryModal .searchHeader strong{
+  color:#fff!important;
+  font-size:14px;
+}
+#statusHistoryModal #closeStatusHistory{
+  color:#fff!important;
+}
+#statusHistoryModal .statusHistoryList{
+  flex:1 1 auto;
+  overflow:auto;
+  background:var(--pb-bg)!important;
+  color:var(--pb-text)!important;
+  padding:12px 14px calc(24px + env(safe-area-inset-bottom));
+}
+body.night-mode #statusHistoryModal,
+body.night-mode #statusHistoryModal .statusHistoryWindow,
+body.night-mode #statusHistoryModal .statusHistoryList{
+  background:var(--pb-bg)!important;
+  color:var(--pb-text)!important;
+}
+body.night-mode #statusHistoryModal .searchHeader{
+  background:#0f1114!important;
+  color:#fff!important;
+  border-color:var(--pb-border)!important;
+}
+
+
+/* ===== v3.7.5 compact status history popup ===== */
+#statusHistoryModal{
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding-top:calc(58px + env(safe-area-inset-top))!important;
+  background:rgba(0,0,0,.18)!important;
+}
+#statusHistoryModal .statusHistoryWindow{
+  width:min(360px,calc(100vw - 28px))!important;
+  height:auto!important;
+  max-height:min(62vh,520px)!important;
+  margin:0!important;
+  border-radius:16px!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.24)!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  background:var(--pb-surface)!important;
+}
+#statusHistoryModal .searchHeader{
+  min-height:44px!important;
+  padding:0 12px!important;
+  background:var(--pb-accent)!important;
+  color:#fff!important;
+  border-bottom:1px solid var(--pb-border)!important;
+}
+#statusHistoryModal .searchHeader strong{
+  font-size:13px!important;
+}
+#statusHistoryModal .statusHistoryList{
+  flex:1 1 auto!important;
+  overflow:auto!important;
+  background:var(--pb-surface)!important;
+  color:var(--pb-text)!important;
+  padding:10px 12px 14px!important;
+  max-height:calc(min(62vh,520px) - 44px)!important;
+}
+body.night-mode #statusHistoryModal{
+  background:rgba(0,0,0,.36)!important;
+}
+body.night-mode #statusHistoryModal .statusHistoryWindow,
+body.night-mode #statusHistoryModal .statusHistoryList{
+  background:var(--pb-surface)!important;
+  color:var(--pb-text)!important;
+}
+body.night-mode #statusHistoryModal .searchHeader{
+  background:#0f1114!important;
+  color:#fff!important;
+  border-color:var(--pb-border)!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -3225,11 +3533,14 @@ body.night-mode #notesPage .noteSortMenu button.active{
 <header>
   <div>
     <div class="brandRow"><div class="brand">PB</div><button id="quickWeather" class="quickWeatherBtn" type="button" aria-label="天気へ">🌤️</button><button id="nightModeButton" type="button" title="ナイトモード" aria-label="ナイトモード">🌙</button></div>
-    <div class="userLabel"><span id="userLabel"></span>　<span id="appVersionLabel"></span><span id="dayCounter" class="dayCounter"></span><span id="standbyStatus"><span class="standbyDot"></span>待機中</span></div>
+    <div class="userLabel"><span id="appVersionLabel"></span><span id="dayCounter" class="dayCounter"></span><span id="standbyStatus"><span class="standbyDot"></span>待機中</span></div>
+  </div>
+  <div class="statusDock" aria-label="今なにしてる">
+    <button id="selfStatusButton" class="statusAvatar" type="button" title="自分のステータス">自</button>
+    <button id="otherStatusButton" class="statusAvatar" type="button" title="相手のステータス">相</button>
   </div>
   <div class="headerRight">
     <button id="locationSharingIcon" class="headerLocationIcon" aria-label="位置情報共有中" title="位置情報共有中">📍</button>
-    <button id="reloadButton" class="reloadIcon" aria-label="再読み込み">🔁</button>
     <button id="headerMenuButton" class="headerIcon" aria-label="メニュー">⋯</button>
   </div>
   <div id="headerMenu" class="headerMenu hidden">
@@ -3355,7 +3666,10 @@ body.night-mode #notesPage .noteSortMenu button.active{
   <div id="dayDetail" class="scroll dayDetail">
     <div class="dayDetailHeader">
       <div id="selectedDateTitle"></div>
-      <button id="openScheduleModal" class="addEventBtn">＋ 予定</button>
+      <div class="dayDetailActions">
+        <button id="openStatusHistoryForDay" type="button">履歴</button>
+        <button id="openScheduleModal" class="addEventBtn">＋ 予定</button>
+      </div>
     </div>
     <div id="selectedDateEvents"></div>
   </div>
@@ -3390,7 +3704,7 @@ body.night-mode #notesPage .noteSortMenu button.active{
   <div id="placesList"></div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.4e</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのカレンダー・ひとりごと・行きたい場所・お知らせの配色漏れを修正</li><li>ひとりごと・ノート・予定・行きたい場所の操作ボタンをテーマ色に統一</li><li>お知らせ・設定・あとで見る・メッセージ検索・日付で見るの上部バーをテーマ色に統一</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4d</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのノート・ひとりごと・予定・行きたい場所・お知らせの配色を改善</li><li>ノート本文や補助文字のコントラストを改善</li><li>送信中は既存の送信ロックに合わせて送信ボタンを薄く表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部バーに🌙ナイトモード切替を追加</li><li>設定にオリジナル・赤・青・黄・水色・ピンクのテーマ配色を追加</li><li>9409メモ帳モードで右上×からPIN画面へ戻れるように改善</li><li>9409メモ帳モードで右下のUTF-8をタップして送信できるように改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.3</div><div class="updateDate">2026/08/22</div><ul class="updateItems"><li>トーク・ひとりごとのリアクションを「レギュラー＋追加候補」方式に拡張</li><li>PIN 9409にWindowsメモ帳風のPC表示モードを追加</li><li>ノートにGoogle Drive・OneDrive・Dropbox等の関連リンクを複数登録できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.2</div><div class="updateDate">2026/08/21</div><ul class="updateItems"><li>トーク専用の「あとで見る・検索・日付で見る」を右側アイコンへ整理</li><li>トークタブ再タップで最新メッセージへ移動</li><li>トーク内未読バッジをホーム画面バッジ設定から分離</li><li>ノートと予定に自分／相手の表示切替を追加</li><li>ノートの作成者を左端の色で判別できるよう変更</li><li>ノートに共同編集とチェックリストを追加</li><li>設定・お知らせの閉じる操作を右上×へ統一</li><li>通知音量を1〜10で調整しテスト再生できる設定を追加</li><li>通常PBから9403へすぐ切り替えられるショートカットを追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.1</div><div class="updateDate">2026/08/20</div><ul class="updateItems"><li>位置情報タブを廃止し、トーク内の地図ウィンドウへ統合</li><li>ノートを上部の独立タブへ移動し、ひとりごと内のノートタブを廃止</li><li>あとで見るをトーク内の☆アイコンから開く方式へ変更し、三点リーダー内から削除</li><li>お知らせを全画面表示からウィンドウ表示へ変更</li><li>iOSでメッセージ入力欄とフォーム補助バーの間にできる余白を縮小</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.5</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部の更新ボタンを廃止し、PBロゴのタップで再読み込みするよう変更</li><li>ヘッダー中央に自分・相手の「今なにしてる」ステータスを追加</li><li>自分のステータスは自由入力し、入力日時だけを履歴として保存</li><li>予定カレンダーの日付ごとに自分のステータス履歴を確認できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4e</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのカレンダー・ひとりごと・行きたい場所・お知らせの配色漏れを修正</li><li>ひとりごと・ノート・予定・行きたい場所の操作ボタンをテーマ色に統一</li><li>お知らせ・設定・あとで見る・メッセージ検索・日付で見るの上部バーをテーマ色に統一</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4d</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのノート・ひとりごと・予定・行きたい場所・お知らせの配色を改善</li><li>ノート本文や補助文字のコントラストを改善</li><li>送信中は既存の送信ロックに合わせて送信ボタンを薄く表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部バーに🌙ナイトモード切替を追加</li><li>設定にオリジナル・赤・青・黄・水色・ピンクのテーマ配色を追加</li><li>9409メモ帳モードで右上×からPIN画面へ戻れるように改善</li><li>9409メモ帳モードで右下のUTF-8をタップして送信できるように改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.3</div><div class="updateDate">2026/08/22</div><ul class="updateItems"><li>トーク・ひとりごとのリアクションを「レギュラー＋追加候補」方式に拡張</li><li>PIN 9409にWindowsメモ帳風のPC表示モードを追加</li><li>ノートにGoogle Drive・OneDrive・Dropbox等の関連リンクを複数登録できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.2</div><div class="updateDate">2026/08/21</div><ul class="updateItems"><li>トーク専用の「あとで見る・検索・日付で見る」を右側アイコンへ整理</li><li>トークタブ再タップで最新メッセージへ移動</li><li>トーク内未読バッジをホーム画面バッジ設定から分離</li><li>ノートと予定に自分／相手の表示切替を追加</li><li>ノートの作成者を左端の色で判別できるよう変更</li><li>ノートに共同編集とチェックリストを追加</li><li>設定・お知らせの閉じる操作を右上×へ統一</li><li>通知音量を1〜10で調整しテスト再生できる設定を追加</li><li>通常PBから9403へすぐ切り替えられるショートカットを追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.1</div><div class="updateDate">2026/08/20</div><ul class="updateItems"><li>位置情報タブを廃止し、トーク内の地図ウィンドウへ統合</li><li>ノートを上部の独立タブへ移動し、ひとりごと内のノートタブを廃止</li><li>あとで見るをトーク内の☆アイコンから開く方式へ変更し、三点リーダー内から削除</li><li>お知らせを全画面表示からウィンドウ表示へ変更</li><li>iOSでメッセージ入力欄とフォーム補助バーの間にできる余白を縮小</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -3457,7 +3771,11 @@ body.night-mode #notesPage .noteSortMenu button.active{
     <div class="settingRow">
       <div>
 <div class="settingBlock">
-  <div class="settingText">テーマ配色</div>
+  <div class="settingBlock">
+  <div class="settingText">ログインID</div>
+  <div id="settingsUserId" class="settingSub">-</div>
+</div>
+<div class="settingText">テーマ配色</div>
   <div class="settingSub">この端末だけに保存されます</div>
   <div id="themeChoiceGrid" class="themeChoiceGrid">
     <button type="button" class="themeChoice" data-theme="original">オリジナル</button>
@@ -3603,6 +3921,38 @@ body.night-mode #notesPage .noteSortMenu button.active{
   </div>
 </div>
 
+
+<div id="statusSelfModal" class="modalOverlay hidden">
+  <div class="modal">
+    <div class="statusModalBody">
+      <div id="previousStatusPreview" class="statusPrevious"></div>
+      <textarea id="statusInput" class="statusInput" rows="2" maxlength="60" placeholder="ステータス"></textarea>
+      <div id="selfStatusUpdatedAt" class="statusUpdatedAt"></div>
+      <div class="statusActions">
+        <button id="clearStatusButton" type="button">空白にする</button>
+        <button id="openMyStatusHistory" type="button">履歴</button>
+        <button id="saveStatusButton" class="primaryStatus" type="button">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="statusOtherModal" class="modalOverlay hidden">
+  <div class="modal">
+    <div class="statusModalBody"><div id="otherStatusContent"></div></div>
+  </div>
+</div>
+
+<div id="statusHistoryModal" class="modalOverlay hidden">
+  <div class="modal statusHistoryWindow">
+    <div class="searchHeader">
+      <strong id="statusHistoryTitle">ステータス履歴</strong>
+      <button id="closeStatusHistory" class="windowCloseX" type="button">×</button>
+    </div>
+    <div id="statusHistoryList" class="statusHistoryList"></div>
+  </div>
+</div>
+
 <div id="noteModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="noteModalTitle">ノートを追加</h3>
@@ -3715,6 +4065,7 @@ let messageDocs=new Map(), previousNewestMessageId=null, firstMessageLoad=true;
 const loadedImageCache=new Map();
 let readStates={}, locationWatch=null;
 let locationShareActive=false, locationShareBusy=false;
+let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
@@ -3730,7 +4081,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.4e";
+const APP_VERSION="3.7.5";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -4321,7 +4672,8 @@ async function ensureUpdateNotice(){
 }
 function showApp(user){
   currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");
-  $("userLabel").textContent=`ID：${currentId}`;
+  $("settingsUserId") && ($("settingsUserId").textContent=currentId||"-");
+  updateStatusAvatarLabels();
   $("appVersionLabel").textContent=`v${APP_VERSION}`;
   const pbStart=new Date(2026,7,8),today=new Date();pbStart.setHours(0,0,0,0);today.setHours(0,0,0,0);
   $("dayCounter").textContent=`day ${Math.max(1,Math.floor((today-pbStart)/86400000)+1)}`;
@@ -4355,7 +4707,7 @@ function showApp(user){
   updateUpdateBadge();
   if(!appInitialized){
     appInitialized=true;
-    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenSchedules();listenLocations();listenVoiceRoom();listenPlaces();listenNotifications();loadSavedMessageIds();cleanupExpiredImages();
+    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenSchedules();listenCurrentStatuses();listenLocations();listenVoiceRoom();listenPlaces();listenNotifications();loadSavedMessageIds();cleanupExpiredImages();
   }
 }
 
@@ -4402,11 +4754,11 @@ function recoverPBViewportAfterKeyboard(){
 /* HEADER MENU */
 $("headerMenuButton").onclick=e=>{e.stopPropagation();$("headerMenu").classList.toggle("hidden")};
 document.addEventListener("click",e=>{if(!$("headerMenu").contains(e.target)&&e.target!==$("headerMenuButton"))$("headerMenu").classList.add("hidden")});
-$("reloadButton").onclick=()=>{
+$(".brand")?.addEventListener("click",()=>{
   const hasDraft=($("messageInput")?.value||"").trim()||($("soloInput")?.value||"").trim()||($("noteBodyInput")?.value||"").trim();
   if(hasDraft&&!confirm("入力途中の内容があります。再読み込みしますか？"))return;
   location.reload();
-};
+});
 
 $("closeNotifications").onclick=()=>$("notificationsPanel").classList.add("hidden");
 
@@ -4882,6 +5234,7 @@ function listenMessages(){
     renderMessages();
     renderCamoMessages();
     renderExtraDecoyMessages();
+    updateStatusAvatarLabels();
     if(decoyMode==="pcnotepad")renderPcNotepad();
 
     if(firstMessageLoad){
@@ -6448,6 +6801,221 @@ $("saveNote").onclick=async()=>{
     editingNote=null;editingChecklist=[];editingLinks=[];$("noteModal").classList.add("hidden");
   }catch(e){console.error(e);alert("ノートを保存できませんでした。Firestoreルールも確認してください。");}
 };
+/* CURRENT STATUS */
+
+function statusInitial(id,fallback){
+  const s=String(id||"").trim();
+  if(!s)return fallback;
+  return s.slice(0,1).toUpperCase();
+}
+function findOtherId(){
+  const status=getOtherCurrentStatus?.();
+  if(status?.senderId)return status.senderId;
+  for(const m of messageDocs.values()){
+    if(m?.uid!==currentUID && m?.senderId)return m.senderId;
+  }
+  return "";
+}
+function updateStatusAvatarLabels(){
+  const self=$("selfStatusButton"),other=$("otherStatusButton");
+  if(self)self.textContent=statusInitial(currentId,"自");
+  if(other)other.textContent=statusInitial(findOtherId(),"相");
+}
+function formatStatusTime(ts){
+  const d=ts?.toDate?.();if(!d)return "";
+  return d.toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+}
+function statusDateKey(d=new Date()){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function getOwnCurrentStatus(){return currentStatuses.get(currentUID)||null}
+function getOtherCurrentStatus(){
+  for(const [uid,data] of currentStatuses)if(uid!==currentUID)return data;
+  return null;
+}
+
+function statusVersionValue(s){
+  const ts=s?.updatedAt;
+  if(!ts)return "";
+  if(typeof ts.toMillis==="function")return String(ts.toMillis());
+  if(typeof ts.seconds==="number")return `${ts.seconds}:${ts.nanoseconds||0}`;
+  return "";
+}
+function otherStatusSeenKey(){
+  return `pb.otherStatusSeen.${currentUID||currentId||"unknown"}`;
+}
+function updateOtherStatusChangedBadge(){
+  const btn=$("otherStatusButton");
+  if(!btn)return;
+  const s=getOtherCurrentStatus();
+  const ver=statusVersionValue(s);
+  const seen=localStorage.getItem(otherStatusSeenKey())||"";
+  btn.classList.toggle("statusChanged",!!ver && ver!==seen);
+}
+function markOtherStatusSeen(){
+  const s=getOtherCurrentStatus();
+  const ver=statusVersionValue(s);
+  if(ver)localStorage.setItem(otherStatusSeenKey(),ver);
+  $("otherStatusButton")?.classList.remove("statusChanged");
+}
+function updateStatusHeader(){
+  const own=getOwnCurrentStatus(),other=getOtherCurrentStatus();
+  $("selfStatusButton")?.classList.toggle("hasStatus",!!own?.text?.trim());
+  $("otherStatusButton")?.classList.toggle("hasStatus",!!other?.text?.trim());
+  updateStatusAvatarLabels();
+  updateOtherStatusChangedBadge();
+}
+function listenCurrentStatuses(){
+  if(statusUnsub)statusUnsub();
+  statusUnsub=onSnapshot(collection(db,"userStatuses"),snap=>{
+    currentStatuses=new Map();
+    snap.forEach(d=>currentStatuses.set(d.id,{id:d.id,...d.data()}));
+    updateStatusHeader();
+    if(!$("statusOtherModal")?.classList.contains("hidden"))renderOtherStatus();
+  },e=>console.warn("status listener",e));
+}
+function openSelfStatus(){
+  if(stealthReadMode)return;
+  $("statusOtherModal")?.classList.add("hidden");
+  const s=getOwnCurrentStatus();
+  const current=(s?.text||"").trim();
+  $("previousStatusPreview").textContent=current?`前回：${current}`:"";
+  $("statusInput").value=current;
+  $("selfStatusUpdatedAt").textContent=current&&s.updatedAt?`${formatStatusTime(s.updatedAt)} 更新`:"";
+  $("statusSelfModal").classList.remove("hidden");
+  setTimeout(()=>$("statusInput")?.focus(),50);
+}
+function renderOtherStatus(){
+  const box=$("otherStatusContent");if(!box)return;
+  const s=getOtherCurrentStatus();
+  if(!s?.text?.trim()){
+    box.innerHTML='<div class="statusEmpty">現在のステータスはありません</div>';
+    return;
+  }
+  box.innerHTML="";
+  const text=document.createElement("div");text.className="statusCurrentText";text.textContent=s.text;
+  const time=document.createElement("div");time.className="statusUpdatedAt";
+  time.textContent=s.updatedAt?`${formatStatusTime(s.updatedAt)} 更新`:"";
+  box.append(text,time);
+}
+function openOtherStatus(){
+  $("statusSelfModal")?.classList.add("hidden");
+  renderOtherStatus();
+  $("statusOtherModal").classList.remove("hidden");
+  markOtherStatusSeen();
+}
+async function saveCurrentStatus(){
+  if(stealthReadMode||!currentUID)return;
+  const input=$("statusInput"),text=(input.value||"").trim();
+  const btn=$("saveStatusButton");btn.disabled=true;
+  try{
+    if(text){
+      const now=new Date();
+      await setDoc(doc(db,"userStatuses",currentUID),{
+        uid:currentUID,senderId:currentId,text,updatedAt:serverTimestamp()
+      },{merge:true});
+      await addDoc(collection(db,"statusHistory",currentUID,"items"),{
+        text,createdAt:serverTimestamp(),dateKey:statusDateKey(now)
+      });
+    }else{
+      await setDoc(doc(db,"userStatuses",currentUID),{
+        uid:currentUID,senderId:currentId,text:"",updatedAt:serverTimestamp()
+      },{merge:true});
+    }
+    $("statusSelfModal").classList.add("hidden");
+  }catch(e){
+    console.error("save status",e);
+    alert("ステータスを保存できませんでした。Firestoreルールも確認してください。");
+  }finally{btn.disabled=false}
+}
+async function clearCurrentStatus(){
+  if(stealthReadMode||!currentUID)return;
+  try{
+    await setDoc(doc(db,"userStatuses",currentUID),{
+      uid:currentUID,senderId:currentId,text:"",updatedAt:serverTimestamp()
+    },{merge:true});
+    $("statusInput").value="";
+    $("previousStatusPreview").textContent="";
+    $("selfStatusUpdatedAt").textContent="";
+    $("statusSelfModal").classList.add("hidden");
+  }catch(e){
+    console.error("clear status",e);
+    alert("ステータスを消去できませんでした。");
+  }
+}
+async function loadStatusHistory(dateKey=null){
+  const box=$("statusHistoryList");
+  box.innerHTML='<div class="statusHistoryEmpty">読み込み中...</div>';
+  $("statusHistoryModal").classList.remove("hidden");
+  try{
+    const snap=await getDocs(query(
+      collection(db,"statusHistory",currentUID,"items"),
+      orderBy("createdAt","desc"),limit(250)
+    ));
+    let items=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(dateKey)items=items.filter(x=>x.dateKey===dateKey);
+    items.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+    if(!items.length){
+      box.innerHTML=`<div class="statusHistoryEmpty">${dateKey?"この日の履歴はありません":"履歴はありません"}</div>`;
+      return;
+    }
+    box.innerHTML="";
+    items.forEach(x=>{
+      const d=x.createdAt?.toDate?.();
+      const line=document.createElement("div");
+      const tm=d?d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"}):"--:--";
+      if(dateKey){
+        line.textContent=`${tm}  ${x.text||""}`;
+      }else{
+        const date=d?d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"}):"--/--";
+        line.textContent=`${date} ${tm}  ${x.text||""}`;
+      }
+      box.appendChild(line);
+    });
+  }catch(e){
+    console.error("status history",e);
+    box.innerHTML='<div class="statusHistoryEmpty">履歴を読み込めませんでした</div>';
+  }
+}
+function openAllMyStatusHistory(){
+  $("statusHistoryTitle").textContent="ステータス履歴";
+  loadStatusHistory(null);
+}
+function openSelectedDayStatusHistory(){
+  $("statusHistoryTitle").textContent=`${selectedDate.toLocaleDateString("ja-JP",{month:"long",day:"numeric"})} の履歴`;
+  loadStatusHistory(dateId(selectedDate));
+}
+
+
+$("selfStatusButton")?.addEventListener("click",e=>{e.stopPropagation();openSelfStatus()});
+$("otherStatusButton")?.addEventListener("click",e=>{e.stopPropagation();openOtherStatus()});
+$("closeStatusHistory")?.addEventListener("click",()=>$("statusHistoryModal").classList.add("hidden"));
+$("saveStatusButton")?.addEventListener("click",saveCurrentStatus);
+$("clearStatusButton")?.addEventListener("click",clearCurrentStatus);
+$("openMyStatusHistory")?.addEventListener("click",()=>{
+  $("statusSelfModal").classList.add("hidden");
+  openAllMyStatusHistory();
+});
+$("openStatusHistoryForDay")?.addEventListener("click",openSelectedDayStatusHistory);
+
+$("statusSelfModal")?.querySelector(".modal")?.addEventListener("click",e=>e.stopPropagation());
+$("statusOtherModal")?.querySelector(".modal")?.addEventListener("click",e=>e.stopPropagation());
+document.addEventListener("click",e=>{
+  const selfOpen=!$("statusSelfModal")?.classList.contains("hidden");
+  const otherOpen=!$("statusOtherModal")?.classList.contains("hidden");
+  if(selfOpen && !e.target.closest("#selfStatusButton") && !e.target.closest("#statusSelfModal .modal")){
+    $("statusSelfModal").classList.add("hidden");
+  }
+  if(otherOpen && !e.target.closest("#otherStatusButton") && !e.target.closest("#statusOtherModal .modal")){
+    $("statusOtherModal").classList.add("hidden");
+  }
+});
+
+["statusSelfModal","statusOtherModal","statusHistoryModal"].forEach(id=>{
+  $(id)?.addEventListener("click",e=>{if(e.target===$(id))$(id).classList.add("hidden")});
+});
+
+
 /* CALENDAR */
 function startOfDay(d){const x=new Date(d);x.setHours(0,0,0,0);return x}
 function dateId(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
@@ -7541,6 +8109,7 @@ function reconnectPBListeners(){
   listenSolo();
   listenNotes();
   listenSchedules();
+  listenCurrentStatuses();
   listenLocations();
   listenPlaces();
   listenNotifications();
