@@ -3430,6 +3430,49 @@ body:has(#pinScreen:not(.hidden)) #statusHistoryModal{
   display:none!important;
 }
 
+
+/* ===== v3.7.5 latest-status editing ===== */
+#statusSelfModal .statusModalBody{
+  padding:22px 9px 7px!important;
+}
+.statusPreviousRow{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:20px;
+  margin:0 2px 5px;
+}
+#statusSelfModal .statusPrevious{
+  flex:1 1 auto;
+  min-width:0;
+  margin:0!important;
+  font-size:10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.previousStatusActions{
+  display:flex;
+  gap:3px;
+  flex:0 0 auto;
+}
+.previousStatusActions.hidden{display:none!important}
+.previousStatusActions button{
+  border:0;
+  background:transparent;
+  color:var(--pb-accent);
+  padding:2px 3px;
+  font-size:9px;
+  line-height:1.2;
+}
+body.night-mode .previousStatusActions button{
+  color:#a9c8ff!important;
+}
+#statusSelfModal .statusActions{
+  margin-top:5px!important;
+  margin-bottom:0!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -4068,11 +4111,14 @@ body:has(#pinScreen:not(.hidden)) #statusHistoryModal{
   <div class="modal">
     <button id="closeStatusSelf" class="statusPopupClose" type="button" aria-label="閉じる">×</button>
     <div class="statusModalBody">
-      <div id="previousStatusPreview" class="statusPrevious"></div>
+      <div class="statusPreviousRow">
+        <div id="previousStatusPreview" class="statusPrevious"></div>
+        <div id="previousStatusActions" class="previousStatusActions hidden">
+          <button id="editPreviousStatus" type="button">編集</button>
+        </div>
+      </div>
       <textarea id="statusInput" class="statusInput" rows="2" maxlength="60" placeholder="ステータス"></textarea>
-      <div id="selfStatusUpdatedAt" class="statusUpdatedAt"></div>
       <div class="statusActions">
-        <button id="clearStatusButton" type="button">空白にする</button>
         <button id="openMyStatusHistory" type="button">履歴</button>
         <button id="saveStatusButton" class="primaryStatus" type="button">保存</button>
       </div>
@@ -7047,22 +7093,43 @@ function listenCurrentStatuses(){
     if(!$("statusOtherModal")?.classList.contains("hidden"))renderOtherStatus();
   },e=>console.warn("status listener",e));
 }
+
+let editingPreviousStatus=false;
+
+function renderPreviousStatusPreview(s){
+  const current=(s?.text||"").trim();
+  const d=s?.updatedAt?.toDate?.();
+  const tm=d?d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"}):"";
+  $("previousStatusPreview").textContent=current
+    ? `前回　${tm ? tm+"　" : ""}${current}`
+    : "";
+  $("previousStatusActions")?.classList.toggle("hidden",!current);
+}
+
+async function getLatestOwnStatusHistory(max=1){
+  const snap=await getDocs(query(
+    collection(db,"statusHistory",currentUID,"items"),
+    orderBy("createdAt","desc"),
+    limit(max)
+  ));
+  return snap.docs.map(d=>({id:d.id,ref:d.ref,...d.data()}));
+}
+
+function resetStatusEditor(){
+  editingPreviousStatus=false;
+  $("statusInput").value="";
+  $("saveStatusButton").textContent="保存";
+}
+
 function openSelfStatus(){
   if(stealthReadMode)return;
   closeAuxWindows("statusSelfModal");
-  const s=getOwnCurrentStatus();
-  const current=(s?.text||"").trim();
-  const prevTime=s?.updatedAt?.toDate?.()
-    ? s.updatedAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})
-    : "";
-  $("previousStatusPreview").textContent=current
-    ? `前回　${prevTime ? prevTime+"　" : ""}${current}`
-    : "";
-  $("statusInput").value=current;
-  $("selfStatusUpdatedAt").textContent="";
+  renderPreviousStatusPreview(getOwnCurrentStatus());
+  resetStatusEditor();
   $("statusSelfModal").classList.remove("hidden");
   setTimeout(()=>$("statusInput")?.focus(),50);
 }
+
 function renderOtherStatus(){
   const box=$("otherStatusContent");if(!box)return;
   const s=getOtherCurrentStatus();
@@ -7076,51 +7143,92 @@ function renderOtherStatus(){
   time.textContent=s.updatedAt?`${formatStatusTime(s.updatedAt)} 更新`:"";
   box.append(text,time);
 }
+
 function openOtherStatus(){
   closeAuxWindows("statusOtherModal");
   renderOtherStatus();
   $("statusOtherModal").classList.remove("hidden");
   markOtherStatusSeen();
 }
+
 async function saveCurrentStatus(){
   if(stealthReadMode||!currentUID)return;
-  const input=$("statusInput"),text=(input.value||"").trim();
-  const btn=$("saveStatusButton");btn.disabled=true;
+  const input=$("statusInput");
+  const text=(input.value||"").trim();
+  if(!text){
+    input.focus();
+    return;
+  }
+
+  const btn=$("saveStatusButton");
+  btn.disabled=true;
+
   try{
-    if(text){
-      const now=new Date();
-      await setDoc(doc(db,"userStatuses",currentUID),{
-        uid:currentUID,senderId:currentId,text,updatedAt:serverTimestamp()
-      },{merge:true});
-      await addDoc(collection(db,"statusHistory",currentUID,"items"),{
-        text,createdAt:serverTimestamp(),dateKey:statusDateKey(now)
-      });
-    }else{
-      await setDoc(doc(db,"userStatuses",currentUID),{
-        uid:currentUID,senderId:currentId,text:"",updatedAt:serverTimestamp()
-      },{merge:true});
+    if(editingPreviousStatus){
+      const latest=(await getLatestOwnStatusHistory(1))[0];
+      if(!latest){
+        editingPreviousStatus=false;
+      }else{
+        // 内容だけ修正。createdAt（作成日時）は変更しない。
+        await updateDoc(latest.ref,{text});
+        await setDoc(doc(db,"userStatuses",currentUID),{
+          uid:currentUID,
+          senderId:currentId,
+          text,
+          historyId:latest.id,
+          updatedAt:latest.createdAt||getOwnCurrentStatus()?.updatedAt||Timestamp.now()
+        },{merge:true});
+
+        renderPreviousStatusPreview({
+          text,
+          updatedAt:latest.createdAt||getOwnCurrentStatus()?.updatedAt
+        });
+        resetStatusEditor();
+        return;
+      }
     }
-    $("statusSelfModal").classList.add("hidden");
+
+    // 新規保存：同じTimestampを「現在」と履歴の作成日時に使う。
+    const createdAt=Timestamp.now();
+    const historyRef=await addDoc(
+      collection(db,"statusHistory",currentUID,"items"),
+      {text,createdAt,dateKey:statusDateKey(createdAt.toDate())}
+    );
+
+    await setDoc(doc(db,"userStatuses",currentUID),{
+      uid:currentUID,
+      senderId:currentId,
+      text,
+      historyId:historyRef.id,
+      updatedAt:createdAt
+    },{merge:true});
+
+    // 保存した内容が「前回」へ移動し、入力欄は自動で空になる。
+    renderPreviousStatusPreview({text,updatedAt:createdAt});
+    resetStatusEditor();
+    input.focus();
   }catch(e){
     console.error("save status",e);
     alert("ステータスを保存できませんでした。Firestoreルールも確認してください。");
-  }finally{btn.disabled=false}
-}
-async function clearCurrentStatus(){
-  if(stealthReadMode||!currentUID)return;
-  try{
-    await setDoc(doc(db,"userStatuses",currentUID),{
-      uid:currentUID,senderId:currentId,text:"",updatedAt:serverTimestamp()
-    },{merge:true});
-    $("statusInput").value="";
-    $("previousStatusPreview").textContent="";
-    $("selfStatusUpdatedAt").textContent="";
-    $("statusSelfModal").classList.add("hidden");
-  }catch(e){
-    console.error("clear status",e);
-    alert("ステータスを消去できませんでした。");
+  }finally{
+    btn.disabled=false;
   }
 }
+
+async function editPreviousStatus(){
+  if(stealthReadMode||!currentUID)return;
+  const s=getOwnCurrentStatus();
+  const current=(s?.text||"").trim();
+  if(!current)return;
+
+  editingPreviousStatus=true;
+  $("statusInput").value=current;
+  $("saveStatusButton").textContent="修正保存";
+  $("statusInput").focus();
+  $("statusInput").setSelectionRange?.(current.length,current.length);
+}
+
+
 async function loadStatusHistory(dateKey=null){
   closeAuxWindows("statusHistoryModal");
   const box=$("statusHistoryList");
@@ -7170,11 +7278,12 @@ $("selfStatusButton")?.addEventListener("click",e=>{e.stopPropagation();openSelf
 $("otherStatusButton")?.addEventListener("click",e=>{e.stopPropagation();openOtherStatus()});
 $("closeStatusSelf")?.addEventListener("click",e=>{
   e.stopPropagation();
+  resetStatusEditor();
   $("statusSelfModal").classList.add("hidden");
 });
 $("closeStatusHistory")?.addEventListener("click",()=>$("statusHistoryModal").classList.add("hidden"));
 $("saveStatusButton")?.addEventListener("click",saveCurrentStatus);
-$("clearStatusButton")?.addEventListener("click",clearCurrentStatus);
+$("editPreviousStatus")?.addEventListener("click",editPreviousStatus);
 $("openMyStatusHistory")?.addEventListener("click",()=>{
   $("statusSelfModal").classList.add("hidden");
   openAllMyStatusHistory();
@@ -7187,6 +7296,7 @@ document.addEventListener("click",e=>{
   const selfOpen=!$("statusSelfModal")?.classList.contains("hidden");
   const otherOpen=!$("statusOtherModal")?.classList.contains("hidden");
   if(selfOpen && !e.target.closest("#selfStatusButton") && !e.target.closest("#statusSelfModal .modal")){
+    resetStatusEditor();
     $("statusSelfModal").classList.add("hidden");
   }
   if(otherOpen && !e.target.closest("#otherStatusButton") && !e.target.closest("#statusOtherModal .modal")){
