@@ -29,11 +29,11 @@ button,input,textarea{font:inherit}
 .hint{font-size:10px;color:#8e8e93;line-height:1.5;margin-top:8px;text-align:center}
 .login{padding:12px}
 .login input+input{margin-top:7px}
-.drawer{position:absolute;inset:0;z-index:5;background:#fff;display:flex;flex-direction:column}
+.drawer{position:fixed;left:14px;right:14px;top:calc(18px + env(safe-area-inset-top));bottom:calc(18px + env(safe-area-inset-bottom));z-index:50;background:#fff;display:flex;flex-direction:column;border:1px solid #e5e5e7;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.08);overflow:hidden}
 .drawerHead{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #ececef}
 .drawerHead button{border:0;background:transparent;color:#555;font-size:22px;padding:4px 7px}
-.list{flex:1;overflow:auto;padding:10px 12px 16px;background:#f7f7f9;min-height:340px}
-.item{background:#fff;border:1px solid #e3e3e7;border-radius:12px;padding:10px 11px;margin-bottom:8px}
+.list{flex:1;overflow:auto;padding:10px 12px calc(16px + env(safe-area-inset-bottom));background:#f7f7f9;min-height:0}
+.item{background:#fff;border:1px solid #e3e3e7;border-radius:12px;padding:9px 11px;margin-bottom:8px}
 .itemText{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.45}
 .itemMeta{margin-top:6px;font-size:9px;color:#8e8e93}
 .itemActions{display:flex;justify-content:flex-end;gap:8px;margin-top:7px}
