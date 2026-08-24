@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f7">
+<title>メモ</title>
+<link rel="manifest" href="memo-manifest.json">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#f5f5f7;color:#1c1c1e;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+button,input,textarea{font:inherit}
+.hidden{display:none!important}
+#screen{min-height:100dvh;padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));display:flex;justify-content:center;align-items:flex-start}
+.card{position:relative;width:min(430px,100%);background:#fff;border:1px solid #e5e5e7;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.08);overflow:hidden}
+.header{height:48px;display:grid;grid-template-columns:40px 1fr 40px;align-items:center;border-bottom:1px solid #ececef;padding:0 8px}
+.headerTitle{text-align:center;font-size:17px;font-weight:700}
+.menuBtn,.closeBtn{border:0;background:transparent;color:#444;font-size:21px;padding:6px}
+.body{padding:12px}
+.modes{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:10px}
+.mode{border:1px solid #d9d9de;background:#fafafa;color:#555;border-radius:10px;padding:8px 2px;font-size:11px}
+.mode.active{background:#1c1c1e;color:#fff;border-color:#1c1c1e;font-weight:700}
+#titleInput,#textInput,#loginId,#loginPassword{width:100%;border:1px solid #d8d8dc;background:#fff;color:#1c1c1e;border-radius:12px;padding:10px 11px;font-size:16px}
+#titleInput{margin-bottom:7px}
+#textInput{min-height:104px;max-height:240px;resize:vertical;line-height:1.45}
+.action{width:100%;border:0;border-radius:12px;background:#1c1c1e;color:#fff;padding:11px 12px;margin-top:9px;font-size:14px;font-weight:700}
+.action:disabled{opacity:.45}
+.result{height:18px;margin-top:6px;text-align:center;font-size:10px;color:#6e6e73}
+.hint{font-size:10px;color:#8e8e93;line-height:1.5;margin-top:8px;text-align:center}
+.login{padding:12px}
+.login input+input{margin-top:7px}
+.drawer{position:absolute;inset:0;z-index:5;background:#fff;display:flex;flex-direction:column}
+.drawerHead{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #ececef}
+.drawerHead button{border:0;background:transparent;color:#555;font-size:22px;padding:4px 7px}
+.list{flex:1;overflow:auto;padding:10px 12px 16px;background:#f7f7f9;min-height:340px}
+.item{background:#fff;border:1px solid #e3e3e7;border-radius:12px;padding:10px 11px;margin-bottom:8px}
+.itemText{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.45}
+.itemMeta{margin-top:6px;font-size:9px;color:#8e8e93}
+.itemActions{display:flex;justify-content:flex-end;gap:8px;margin-top:7px}
+.itemActions button{border:0;background:transparent;color:#666;font-size:10px;padding:3px 4px}
+</style>
+</head>
+<body>
+<div id="screen">
+  <main class="card">
+    <div class="header">
+      <button id="menuButton" class="menuBtn" type="button" aria-label="メモ一覧">☰</button>
+      <div class="headerTitle">メモ</div>
+      <span></span>
+    </div>
+
+    <section id="loginBox" class="login hidden">
+      <input id="loginId" autocomplete="username" placeholder="ID">
+      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="パスワード">
+      <button id="loginButton" class="action" type="button">開く</button>
+      <div id="loginError" class="hint"></div>
+    </section>
+
+    <section id="composeBox" class="body hidden">
+      <div class="modes">
+        <button type="button" class="mode active" data-mode="memo">入力</button>
+        <button type="button" class="mode" data-mode="status">状態</button>
+        <button type="button" class="mode" data-mode="talk">送付</button>
+        <button type="button" class="mode" data-mode="solo">記録</button>
+        <button type="button" class="mode" data-mode="note">保存</button>
+      </div>
+      <input id="titleInput" class="hidden" placeholder="タイトル" maxlength="100">
+      <textarea id="textInput" rows="4" maxlength="4000" placeholder="内容"></textarea>
+      <button id="submitButton" class="action" type="button">完了</button>
+      <div id="result" class="result"></div>
+    </section>
+
+    <section id="drawer" class="drawer hidden">
+      <div class="drawerHead">
+        <strong>メモ一覧</strong>
+        <button id="drawerClose" type="button" aria-label="閉じる">×</button>
+      </div>
+      <div id="memoList" class="list"></div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import {getFirestore,collection,addDoc,serverTimestamp,doc,setDoc,Timestamp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",
+  authDomain:"message-57e2d.firebaseapp.com",
+  projectId:"message-57e2d",
+  storageBucket:"message-57e2d.firebasestorage.app",
+  messagingSenderId:"560072908841",
+  appId:"1:560072908841:web:a6d0e92a57a24c152a3c38"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+
+let currentUID="";
+let currentId="";
+let mode="memo";
+let editingMemoId=null;
+
+function memoStoreKey(){return `pb.quickMemos.${currentUID||"guest"}`}
+function loadMemos(){
+  try{
+    const x=JSON.parse(localStorage.getItem(memoStoreKey())||"[]");
+    return Array.isArray(x)?x:[];
+  }catch(e){return []}
+}
+function saveMemos(rows){localStorage.setItem(memoStoreKey(),JSON.stringify(rows))}
+function statusDateKey(d=new Date()){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function resetEditor(){
+  editingMemoId=null;
+  $("textInput").value="";
+  $("titleInput").value="";
+  $("submitButton").textContent="完了";
+}
+function setMode(next){
+  mode=["memo","status","talk","solo","note"].includes(next)?next:"memo";
+  document.querySelectorAll(".mode").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+  $("titleInput").classList.toggle("hidden",mode!=="note");
+  $("textInput").placeholder=mode==="note"?"本文":"内容";
+
+  if(mode!=="memo"&&editingMemoId)resetEditor();
+  if(mode==="status"){
+    $("textInput").value=$("textInput").value.replace(/[\r\n]+/g," ");
+  }
+}
+function renderList(){
+  const box=$("memoList");
+  const rows=loadMemos().sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0));
+  box.innerHTML="";
+  if(!rows.length){
+    box.innerHTML='<div class="hint" style="padding:24px 6px">メモはありません</div>';
+    return;
+  }
+  rows.forEach(row=>{
+    const item=document.createElement("article");item.className="item";
+    const text=document.createElement("div");text.className="itemText";text.textContent=row.text||"";
+    const meta=document.createElement("div");meta.className="itemMeta";
+    meta.textContent=new Date(row.createdAt||Date.now()).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    const actions=document.createElement("div");actions.className="itemActions";
+    const edit=document.createElement("button");edit.type="button";edit.textContent="編集";
+    edit.onclick=()=>{
+      editingMemoId=row.id;
+      $("drawer").classList.add("hidden");
+      setMode("memo");
+      $("textInput").value=row.text||"";
+      $("submitButton").textContent="更新";
+      $("textInput").focus();
+    };
+    const del=document.createElement("button");del.type="button";del.textContent="削除";
+    del.onclick=()=>{
+      if(!confirm("このメモを削除しますか？"))return;
+      saveMemos(loadMemos().filter(x=>x.id!==row.id));
+      renderList();
+    };
+    actions.append(edit,del);
+    item.append(text,meta,actions);
+    box.appendChild(item);
+  });
+}
+
+async function submit(){
+  if(!auth.currentUser||!currentUID)return;
+  const raw=($("textInput").value||"").trim();
+  const title=($("titleInput").value||"").trim();
+  if(!raw&&!(mode==="note"&&title)){
+    $("textInput").focus();
+    return;
+  }
+
+  const btn=$("submitButton"),result=$("result");
+  btn.disabled=true;result.textContent="";
+  try{
+    if(mode==="memo"){
+      const now=Date.now(),rows=loadMemos();
+      if(editingMemoId){
+        const i=rows.findIndex(x=>x.id===editingMemoId);
+        if(i>=0)rows[i]={...rows[i],text:raw,updatedAt:now};
+      }else{
+        rows.push({id:crypto.randomUUID?.()||`m-${now}-${Math.random().toString(36).slice(2,8)}`,text:raw,createdAt:now,updatedAt:now});
+      }
+      saveMemos(rows);
+      resetEditor();
+    }else if(mode==="status"){
+      const text=raw.replace(/[\r\n]+/g," ");
+      const createdAt=Timestamp.now();
+      const historyRef=await addDoc(collection(db,"statusHistory",currentUID,"items"),{
+        text,createdAt,dateKey:statusDateKey(createdAt.toDate())
+      });
+      await setDoc(doc(db,"userStatuses",currentUID),{
+        uid:currentUID,senderId:currentId,text,historyId:historyRef.id,updatedAt:createdAt
+      },{merge:true});
+      $("textInput").value="";
+    }else if(mode==="talk"){
+      await addDoc(collection(db,"messages"),{
+        text:raw,senderId:currentId,uid:currentUID,
+        createdAt:serverTimestamp(),edited:false,reactions:{},replyTo:null
+      });
+      $("textInput").value="";
+    }else if(mode==="solo"){
+      await addDoc(collection(db,"solo"),{
+        text:raw,uid:currentUID,senderId:currentId,
+        createdAt:serverTimestamp(),reactions:{},comments:[]
+      });
+      $("textInput").value="";
+    }else if(mode==="note"){
+      await addDoc(collection(db,"notes"),{
+        title,body:raw,checklist:[],links:[],privateOnly:false,collaborative:false,pinned:false,
+        updatedAt:serverTimestamp(),updatedBy:currentId,
+        uid:currentUID,senderId:currentId,createdAt:serverTimestamp()
+      });
+      $("textInput").value="";$("titleInput").value="";
+    }
+    $("textInput").blur();$("titleInput").blur();
+    result.textContent="保存しました";
+    setTimeout(()=>result.textContent="",1200);
+  }catch(e){
+    console.error(e);
+    result.textContent="保存できませんでした";
+  }finally{btn.disabled=false}
+}
+
+document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+$("textInput").addEventListener("keydown",e=>{
+  if(mode==="status"&&e.key==="Enter")e.preventDefault();
+});
+$("textInput").addEventListener("input",()=>{
+  if(mode==="status"){
+    const x=$("textInput");
+    x.value=x.value.replace(/[\r\n]+/g," ");
+  }
+});
+$("submitButton").addEventListener("click",submit);
+$("menuButton").addEventListener("click",()=>{renderList();$("drawer").classList.remove("hidden")});
+$("drawerClose").addEventListener("click",()=>$("drawer").classList.add("hidden"));
+$("loginButton").addEventListener("click",async()=>{
+  const id=$("loginId").value.trim(),pw=$("loginPassword").value;
+  if(!id||!pw)return;
+  $("loginError").textContent="";
+  try{await signInWithEmailAndPassword(auth,`${id}@pb.local`,pw)}
+  catch(e){$("loginError").textContent="開けませんでした"}
+});
+$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginButton").click()});
+
+onAuthStateChanged(auth,user=>{
+  if(user){
+    currentUID=user.uid;
+    currentId=(user.email||"").replace("@pb.local","");
+    $("loginBox").classList.add("hidden");
+    $("composeBox").classList.remove("hidden");
+    setMode("memo");
+  }else{
+    currentUID="";currentId="";
+    $("composeBox").classList.add("hidden");
+    $("loginBox").classList.remove("hidden");
+  }
+});
+</script>
+</body>
+</html>
