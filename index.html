@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
+<script>
+(function(){
+  try{
+    if(new URLSearchParams(location.search).get("quick")==="1"){
+      document.documentElement.classList.add("quick-entry");
+    }
+  }catch(e){}
+})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
@@ -3604,6 +3615,24 @@ body.stealth-read-mode #statusOtherModal .statusEmpty{color:#777!important}
   background:#1c1c1e;color:#fff;border-color:#1c1c1e
 }
 
+
+/* v3.7.5a: prevent PIN flash when entering ?quick=1 */
+html.quick-entry #pinScreen,
+html.quick-entry #loginScreen,
+html.quick-entry #camoLoginScreen,
+html.quick-entry #appScreen,
+html.quick-entry #camoScreen,
+html.quick-entry #newsScreen,
+html.quick-entry #weatherScreen,
+html.quick-entry #teamsScreen,
+html.quick-entry #notesDecoyScreen,
+html.quick-entry #pcNotepadScreen{
+  display:none!important;
+}
+html.quick-entry body{
+  background:#f5f5f7!important;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -3904,6 +3933,7 @@ body.stealth-read-mode #statusOtherModal .statusEmpty{color:#777!important}
     <button id="menuStandby">👁 待機モード</button>
     <button id="menuVoice">📞 音声通話を開始</button>
     <button id="menuUpdates">🆕 アップデート</button>
+    <button id="menuQuickMemo">📝 メモ</button>
     <button id="menuSettings">⚙️ 設定</button>
     <button id="menuLock">🔒 PIN画面に戻る</button>
     <button id="logoutButton">ログアウト</button>
@@ -5097,6 +5127,7 @@ function showQuickMemo(user){
    "notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"]
     .forEach(id=>$(id)?.classList.add("hidden"));
   $("quickMemoScreen")?.classList.remove("hidden");
+  document.documentElement.classList.remove("quick-entry");
   $("quickMemoLoginBox")?.classList.add("hidden");
   $("quickMemoCompose")?.classList.remove("hidden");
   setQuickMemoTarget("memo");
@@ -5108,6 +5139,7 @@ function showQuickMemoLogin(){
    "notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"]
     .forEach(id=>$(id)?.classList.add("hidden"));
   $("quickMemoScreen")?.classList.remove("hidden");
+  document.documentElement.classList.remove("quick-entry");
   $("quickMemoCompose")?.classList.add("hidden");
   $("quickMemoLoginBox")?.classList.remove("hidden");
   setTimeout(()=>$("quickMemoLoginId")?.focus(),80);
@@ -5404,6 +5436,17 @@ $("talkSavedButton").onclick=()=>{closeAuxWindows("savedMessagesPanel");$("saved
 $("talkSearchButton").onclick=openTalkSearch;
 $("talkDateButton").onclick=openTalkDateFilter;
 $("closeSavedMessages").onclick=()=>$("savedMessagesPanel").classList.add("hidden");
+
+$("menuQuickMemo")?.addEventListener("click",()=>{
+  $("headerMenu")?.classList.add("hidden");
+  forceStandbyOff();
+  const u=new URL(location.href);
+  u.search="";
+  u.hash="";
+  u.searchParams.set("quick","1");
+  location.href=u.toString();
+});
+
 $("menuSettings").onclick=()=>{
   $("headerMenu").classList.add("hidden");
   closeAuxWindows("settingsModal");
