@@ -3473,6 +3473,137 @@ body.night-mode .previousStatusActions button{
   margin-bottom:0!important;
 }
 
+
+/* ===== v3.7.5a quick memo ===== */
+#quickMemoScreen{
+  position:fixed;inset:0;z-index:5000;
+  background:#f5f5f7;color:#1c1c1e;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  display:flex;justify-content:center;align-items:flex-start;
+  padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));
+}
+#quickMemoScreen.hidden{display:none!important}
+.quickMemoCard{
+  width:min(430px,100%);
+  background:#fff;border:1px solid #e5e5e7;border-radius:18px;
+  box-shadow:0 8px 28px rgba(0,0,0,.08);
+  overflow:hidden;
+}
+.quickMemoHeader{
+  height:48px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;border-bottom:1px solid #ececef;font-size:17px;font-weight:700;
+}
+.quickMemoHeader .quickMemoSub{font-size:10px;font-weight:500;color:#8e8e93}
+.quickMemoBody{padding:12px}
+.quickMemoModes{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
+  margin-bottom:10px;
+}
+.quickMemoMode{
+  border:1px solid #d9d9de;background:#fafafa;color:#555;
+  border-radius:10px;padding:8px 2px;font-size:11px;
+}
+.quickMemoMode.active{
+  background:#1c1c1e;color:#fff;border-color:#1c1c1e;font-weight:700;
+}
+#quickMemoTitle,
+#quickMemoText,
+#quickMemoLoginId,
+#quickMemoLoginPassword{
+  width:100%;box-sizing:border-box;
+  border:1px solid #d8d8dc;background:#fff;color:#1c1c1e;
+  border-radius:12px;padding:10px 11px;font-size:16px;
+}
+#quickMemoTitle{margin-bottom:7px}
+#quickMemoText{min-height:104px;max-height:220px;resize:vertical;line-height:1.45}
+.quickMemoAction{
+  width:100%;border:0;border-radius:12px;background:#1c1c1e;color:#fff;
+  padding:11px 12px;margin-top:9px;font-size:14px;font-weight:700;
+}
+.quickMemoAction:disabled{opacity:.45}
+#quickMemoResult{height:18px;margin-top:6px;text-align:center;font-size:10px;color:#6e6e73}
+#quickMemoLoginBox{padding:12px}
+#quickMemoLoginBox input+input{margin-top:7px}
+.quickMemoHint{font-size:10px;color:#8e8e93;line-height:1.5;margin-top:8px;text-align:center}
+
+/* night: quoted reply / reply editing bars */
+body.night-mode .replyQuote{
+  background:#252b32!important;
+  color:#edf0f3!important;
+  border-left-color:#8b96a3!important;
+  opacity:1!important;
+  border-radius:0 7px 7px 0;
+}
+body.night-mode #replyBar,
+body.night-mode #editBar{
+  background:#181c21!important;
+  color:#edf0f3!important;
+  border-color:#343a42!important;
+}
+body.night-mode #replyBar button,
+body.night-mode #editBar button{
+  color:#edf0f3!important;
+}
+
+/* stealth status: same compact viewer, no edit/history controls */
+body.stealth-read-mode #statusOtherModal .statusModalBody{
+  background:#fff!important;color:#111!important;
+}
+body.stealth-read-mode #statusOtherModal .statusCurrentText{color:#111!important}
+body.stealth-read-mode #statusOtherModal .statusUpdatedAt,
+body.stealth-read-mode #statusOtherModal .statusEmpty{color:#777!important}
+
+
+/* ===== v3.7.5a quick memo real memo mode ===== */
+.quickMemoModes.five{grid-template-columns:repeat(5,1fr)}
+.quickMemoHeader{position:relative}
+.quickMemoMenuButton{
+  border:0;background:transparent;color:#444;
+  font-size:20px;line-height:1;padding:5px 6px;margin-left:-4px;
+}
+.quickMemoDrawer{
+  position:absolute;inset:0;z-index:5;
+  background:#fff;display:flex;flex-direction:column;
+}
+.quickMemoDrawer.hidden{display:none!important}
+.quickMemoDrawerHeader{
+  height:48px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;border-bottom:1px solid #ececef;
+}
+.quickMemoDrawerHeader button{
+  border:0;background:transparent;color:#555;font-size:22px;padding:4px 7px
+}
+.quickMemoList{
+  flex:1;overflow:auto;padding:10px 12px 16px;background:#f7f7f9
+}
+.quickMemoItem{
+  background:#fff;border:1px solid #e3e3e7;border-radius:12px;
+  padding:10px 11px;margin-bottom:8px
+}
+.quickMemoItemText{
+  white-space:pre-wrap;word-break:break-word;
+  font-size:13px;line-height:1.45;color:#1c1c1e
+}
+.quickMemoItemMeta{
+  margin-top:6px;font-size:9px;color:#8e8e93
+}
+.quickMemoItemActions{
+  display:flex;justify-content:flex-end;gap:8px;margin-top:7px
+}
+.quickMemoItemActions button{
+  border:0;background:transparent;color:#666;font-size:10px;padding:3px 4px
+}
+.quickMemoEditBar{
+  display:flex;gap:6px;margin-top:8px
+}
+.quickMemoEditBar button{
+  flex:1;border:1px solid #ddd;border-radius:9px;background:#fafafa;
+  padding:7px 6px;font-size:10px;color:#444
+}
+.quickMemoEditBar button.primary{
+  background:#1c1c1e;color:#fff;border-color:#1c1c1e
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -3714,6 +3845,47 @@ body.night-mode .previousStatusActions button{
 
 <div id="standbyFlash" aria-hidden="true"></div>
 
+
+<section id="quickMemoScreen" class="hidden" aria-label="メモ">
+  <div class="quickMemoCard">
+    <div class="quickMemoHeader">
+      <button id="quickMemoMenuButton" class="quickMemoMenuButton" type="button" aria-label="メモ一覧">☰</button>
+      <span>メモ</span>
+      <span class="quickMemoSub">quick</span>
+    </div>
+
+
+    <div id="quickMemoDrawer" class="quickMemoDrawer hidden">
+      <div class="quickMemoDrawerHeader">
+        <strong>メモ一覧</strong>
+        <button id="quickMemoDrawerClose" type="button">×</button>
+      </div>
+      <div id="quickMemoList" class="quickMemoList"></div>
+    </div>
+
+    <div id="quickMemoLoginBox" class="hidden">
+      <input id="quickMemoLoginId" autocomplete="username" placeholder="ID">
+      <input id="quickMemoLoginPassword" type="password" autocomplete="current-password" placeholder="パスワード">
+      <button id="quickMemoLoginButton" class="quickMemoAction" type="button">開く</button>
+      <div id="quickMemoLoginError" class="quickMemoHint"></div>
+    </div>
+
+    <div id="quickMemoCompose" class="quickMemoBody hidden">
+      <div class="quickMemoModes five">
+        <button type="button" class="quickMemoMode active" data-quick-mode="memo">入力</button>
+        <button type="button" class="quickMemoMode" data-quick-mode="status">状態</button>
+        <button type="button" class="quickMemoMode" data-quick-mode="talk">送付</button>
+        <button type="button" class="quickMemoMode" data-quick-mode="solo">記録</button>
+        <button type="button" class="quickMemoMode" data-quick-mode="note">保存</button>
+      </div>
+      <input id="quickMemoTitle" class="hidden" placeholder="タイトル" maxlength="100">
+      <textarea id="quickMemoText" rows="4" maxlength="4000" placeholder="内容"></textarea>
+      <button id="quickMemoSubmit" class="quickMemoAction" type="button">完了</button>
+      <div id="quickMemoResult"></div>
+    </div>
+  </div>
+</section>
+
 <section id="appScreen" class="hidden">
 <header>
   <div>
@@ -3889,7 +4061,7 @@ body.night-mode .previousStatusActions button{
   <div id="placesList"></div>
 </div>
 
-<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.5</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部の更新ボタンを廃止し、PBロゴのタップで再読み込みするよう変更</li><li>ヘッダー中央に自分・相手の簡易ステータスを追加</li><li>自分のステータスは自由入力し、入力日時だけを履歴として保存</li><li>予定カレンダーの日付ごとに自分のステータス履歴を確認できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4e</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのカレンダー・ひとりごと・行きたい場所・お知らせの配色漏れを修正</li><li>ひとりごと・ノート・予定・行きたい場所の操作ボタンをテーマ色に統一</li><li>お知らせ・設定・あとで見る・メッセージ検索・日付で見るの上部バーをテーマ色に統一</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4d</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのノート・ひとりごと・予定・行きたい場所・お知らせの配色を改善</li><li>ノート本文や補助文字のコントラストを改善</li><li>送信中は既存の送信ロックに合わせて送信ボタンを薄く表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部バーに🌙ナイトモード切替を追加</li><li>設定にオリジナル・赤・青・黄・水色・ピンクのテーマ配色を追加</li><li>9409メモ帳モードで右上×からPIN画面へ戻れるように改善</li><li>9409メモ帳モードで右下のUTF-8をタップして送信できるように改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.3</div><div class="updateDate">2026/08/22</div><ul class="updateItems"><li>トーク・ひとりごとのリアクションを「レギュラー＋追加候補」方式に拡張</li><li>PIN 9409にWindowsメモ帳風のPC表示モードを追加</li><li>ノートにGoogle Drive・OneDrive・Dropbox等の関連リンクを複数登録できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.2</div><div class="updateDate">2026/08/21</div><ul class="updateItems"><li>トーク専用の「あとで見る・検索・日付で見る」を右側アイコンへ整理</li><li>トークタブ再タップで最新メッセージへ移動</li><li>トーク内未読バッジをホーム画面バッジ設定から分離</li><li>ノートと予定に自分／相手の表示切替を追加</li><li>ノートの作成者を左端の色で判別できるよう変更</li><li>ノートに共同編集とチェックリストを追加</li><li>設定・お知らせの閉じる操作を右上×へ統一</li><li>通知音量を1〜10で調整しテスト再生できる設定を追加</li><li>通常PBから9403へすぐ切り替えられるショートカットを追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.1</div><div class="updateDate">2026/08/20</div><ul class="updateItems"><li>位置情報タブを廃止し、トーク内の地図ウィンドウへ統合</li><li>ノートを上部の独立タブへ移動し、ひとりごと内のノートタブを廃止</li><li>あとで見るをトーク内の☆アイコンから開く方式へ変更し、三点リーダー内から削除</li><li>お知らせを全画面表示からウィンドウ表示へ変更</li><li>iOSでメッセージ入力欄とフォーム補助バーの間にできる余白を縮小</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
+<div id="updatesPage" class="page hidden"><div class="scroll"><div class="updateCard"><div class="updateVersion">v3.7.5a</div><div class="updateDate">2026/08/24</div><ul class="updateItems"><li>ホーム画面から使いやすい「メモ」形式のクイック入力モードを追加（入力・状態・送付・記録・保存）</li><li>クイック送付ではトークを開かず、未読メッセージを既読にしない仕様に対応</li><li>ナイトモードの引用返信部分の配色を修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部の更新ボタンを廃止し、PBロゴのタップで再読み込みするよう変更</li><li>ヘッダー中央に自分・相手の簡易ステータスを追加</li><li>自分のステータスは自由入力し、入力日時だけを履歴として保存</li><li>予定カレンダーの日付ごとに自分のステータス履歴を確認できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4e</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのカレンダー・ひとりごと・行きたい場所・お知らせの配色漏れを修正</li><li>ひとりごと・ノート・予定・行きたい場所の操作ボタンをテーマ色に統一</li><li>お知らせ・設定・あとで見る・メッセージ検索・日付で見るの上部バーをテーマ色に統一</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4d</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのノート・ひとりごと・予定・行きたい場所・お知らせの配色を改善</li><li>ノート本文や補助文字のコントラストを改善</li><li>送信中は既存の送信ロックに合わせて送信ボタンを薄く表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部バーに🌙ナイトモード切替を追加</li><li>設定にオリジナル・赤・青・黄・水色・ピンクのテーマ配色を追加</li><li>9409メモ帳モードで右上×からPIN画面へ戻れるように改善</li><li>9409メモ帳モードで右下のUTF-8をタップして送信できるように改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.3</div><div class="updateDate">2026/08/22</div><ul class="updateItems"><li>トーク・ひとりごとのリアクションを「レギュラー＋追加候補」方式に拡張</li><li>PIN 9409にWindowsメモ帳風のPC表示モードを追加</li><li>ノートにGoogle Drive・OneDrive・Dropbox等の関連リンクを複数登録できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.2</div><div class="updateDate">2026/08/21</div><ul class="updateItems"><li>トーク専用の「あとで見る・検索・日付で見る」を右側アイコンへ整理</li><li>トークタブ再タップで最新メッセージへ移動</li><li>トーク内未読バッジをホーム画面バッジ設定から分離</li><li>ノートと予定に自分／相手の表示切替を追加</li><li>ノートの作成者を左端の色で判別できるよう変更</li><li>ノートに共同編集とチェックリストを追加</li><li>設定・お知らせの閉じる操作を右上×へ統一</li><li>通知音量を1〜10で調整しテスト再生できる設定を追加</li><li>通常PBから9403へすぐ切り替えられるショートカットを追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.1</div><div class="updateDate">2026/08/20</div><ul class="updateItems"><li>位置情報タブを廃止し、トーク内の地図ウィンドウへ統合</li><li>ノートを上部の独立タブへ移動し、ひとりごと内のノートタブを廃止</li><li>あとで見るをトーク内の☆アイコンから開く方式へ変更し、三点リーダー内から削除</li><li>お知らせを全画面表示からウィンドウ表示へ変更</li><li>iOSでメッセージ入力欄とフォーム補助バーの間にできる余白を縮小</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.5.0</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9402にニュースサイト風モードを追加</li><li>PIN 9403に実用天気予報モードを追加</li><li>9403は福岡／現在地を切り替え可能</li><li>9403で現在気温・最高最低・降水確率・湿度・風・時間別・週間予報を表示</li><li>PIN 9404にTeams風モードを追加</li><li>9401〜9404は同じPBトークをコメント／投稿として閲覧・返信・送信可能</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.9</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>上部ヘッダーのバージョン表示を自動連動に変更</li><li>1対1音声通話v2を追加</li><li>PBを前面表示中だけ通話のお誘いを表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.4.8</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>相手の入力中を「● ● ●」でリアルタイム表示</li><li>通常トーク・9401の両方で入力中表示に対応</li><li>アップデート履歴を整理</li></ul></div>
@@ -4270,14 +4442,18 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.5";
+const APP_VERSION="3.7.5a";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
 const shortcutBadgeTest=urlParams.get("badgetest")==="1";
+const quickMemoMode=urlParams.get("quick")==="1";
 if(shortcutBadgeCheck){
   /* Shortcut専用。通常PBを表示せず、既読処理も起動しない */
   pinPassed=true;
+}
+if(quickMemoMode){
+  document.title="メモ";
 }
 
 
@@ -4683,7 +4859,7 @@ document.addEventListener("click",e=>{
     ["headerMenuButton","menuLock","reloadButton","loadMore","newMessageButton",
      "talkSearchButton","talkDateButton","clearTalkFilter","closeSearchPanel",
      "closeDateFilter","customDateApply","noteFilterMine","noteFilterOther",
-     "scheduleFilterMine","scheduleFilterOther"].includes(b.id);
+     "scheduleFilterMine","scheduleFilterOther","selfStatusButton","otherStatusButton"].includes(b.id);
   if(!allowed){e.preventDefault();e.stopImmediatePropagation()}
 },true);
 
@@ -4831,7 +5007,223 @@ $("camoLoginPassword").addEventListener("keydown",e=>{
 });
 $("logoutButton").onclick=async()=>{
   forceStandbyOff();await leaveVoiceRoom(false);await signOut(auth);$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden")};
+
+let quickMemoTarget="memo";
+let quickMemoEditingId=null;
+
+function quickMemoStoreKey(){
+  return `pb.quickMemos.${currentUID||"guest"}`;
+}
+function loadQuickMemos(){
+  try{
+    const rows=JSON.parse(localStorage.getItem(quickMemoStoreKey())||"[]");
+    return Array.isArray(rows)?rows:[];
+  }catch(e){return []}
+}
+function saveQuickMemos(rows){
+  localStorage.setItem(quickMemoStoreKey(),JSON.stringify(rows));
+}
+function renderQuickMemoList(){
+  const box=$("quickMemoList");if(!box)return;
+  const rows=loadQuickMemos().sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0));
+  box.innerHTML="";
+  if(!rows.length){
+    box.innerHTML='<div class="quickMemoHint" style="padding:22px 6px">メモはありません</div>';
+    return;
+  }
+  rows.forEach(row=>{
+    const card=document.createElement("div");card.className="quickMemoItem";
+    const tx=document.createElement("div");tx.className="quickMemoItemText";tx.textContent=row.text||"";
+    const meta=document.createElement("div");meta.className="quickMemoItemMeta";
+    const d=new Date(row.createdAt||Date.now());
+    meta.textContent=d.toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    const acts=document.createElement("div");acts.className="quickMemoItemActions";
+
+    const edit=document.createElement("button");edit.type="button";edit.textContent="編集";
+    edit.onclick=()=>{
+      quickMemoEditingId=row.id;
+      $("quickMemoDrawer").classList.add("hidden");
+      setQuickMemoTarget("memo");
+      $("quickMemoText").value=row.text||"";
+      $("quickMemoSubmit").textContent="更新";
+      $("quickMemoText").focus();
+    };
+
+    const del=document.createElement("button");del.type="button";del.textContent="削除";
+    del.onclick=()=>{
+      if(!confirm("このメモを削除しますか？"))return;
+      const next=loadQuickMemos().filter(x=>x.id!==row.id);
+      saveQuickMemos(next);
+      renderQuickMemoList();
+    };
+
+    acts.append(edit,del);
+    card.append(tx,meta,acts);
+    box.appendChild(card);
+  });
+}
+
+function resetQuickMemoEditor(){
+  quickMemoEditingId=null;
+  $("quickMemoText").value="";
+  $("quickMemoTitle").value="";
+  $("quickMemoSubmit").textContent="完了";
+}
+
+
+function setQuickMemoTarget(mode){
+  quickMemoTarget=["memo","status","talk","solo","note"].includes(mode)?mode:"memo";
+  document.querySelectorAll(".quickMemoMode").forEach(b=>{
+    b.classList.toggle("active",b.dataset.quickMode===quickMemoTarget);
+  });
+  const title=$("quickMemoTitle");
+  title?.classList.toggle("hidden",quickMemoTarget!=="note");
+  const text=$("quickMemoText");
+  if(text){
+    text.placeholder=quickMemoTarget==="memo"?"メモ":
+      quickMemoTarget==="status"?"内容":
+      quickMemoTarget==="talk"?"内容":
+      quickMemoTarget==="solo"?"内容":"本文";
+  }
+  if(quickMemoTarget!=="memo" && quickMemoEditingId){
+    resetQuickMemoEditor();
+  }
+}
+
+function showQuickMemo(user){
+  currentUID=user.uid;
+  currentId=(user.email||"").replace("@pb.local","");
+  ["pinScreen","appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen",
+   "notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"]
+    .forEach(id=>$(id)?.classList.add("hidden"));
+  $("quickMemoScreen")?.classList.remove("hidden");
+  $("quickMemoLoginBox")?.classList.add("hidden");
+  $("quickMemoCompose")?.classList.remove("hidden");
+  setQuickMemoTarget("memo");
+  setTimeout(()=>$("quickMemoText")?.focus(),80);
+}
+
+function showQuickMemoLogin(){
+  ["pinScreen","appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen",
+   "notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"]
+    .forEach(id=>$(id)?.classList.add("hidden"));
+  $("quickMemoScreen")?.classList.remove("hidden");
+  $("quickMemoCompose")?.classList.add("hidden");
+  $("quickMemoLoginBox")?.classList.remove("hidden");
+  setTimeout(()=>$("quickMemoLoginId")?.focus(),80);
+}
+
+async function submitQuickMemo(){
+  if(!auth.currentUser||!currentUID)return;
+  const text=($("quickMemoText")?.value||"").trim();
+  const title=($("quickMemoTitle")?.value||"").trim();
+  if(!text && !(quickMemoTarget==="note"&&title)){
+    $("quickMemoText")?.focus();
+    return;
+  }
+
+  const btn=$("quickMemoSubmit");
+  const result=$("quickMemoResult");
+  btn.disabled=true;
+  result.textContent="";
+
+  try{
+    if(quickMemoTarget==="memo"){
+      const now=Date.now();
+      const rows=loadQuickMemos();
+      if(quickMemoEditingId){
+        const idx=rows.findIndex(x=>x.id===quickMemoEditingId);
+        if(idx>=0){
+          rows[idx]={...rows[idx],text,updatedAt:now};
+        }
+      }else{
+        rows.push({
+          id:(crypto.randomUUID?.()||`m-${now}-${Math.random().toString(36).slice(2,8)}`),
+          text,createdAt:now,updatedAt:now
+        });
+      }
+      saveQuickMemos(rows);
+      resetQuickMemoEditor();
+    }else if(quickMemoTarget==="status"){
+      const createdAt=Timestamp.now();
+      const historyRef=await addDoc(
+        collection(db,"statusHistory",currentUID,"items"),
+        {text,createdAt,dateKey:statusDateKey(createdAt.toDate())}
+      );
+      await setDoc(doc(db,"userStatuses",currentUID),{
+        uid:currentUID,senderId:currentId,text,
+        historyId:historyRef.id,updatedAt:createdAt
+      },{merge:true});
+    }else if(quickMemoTarget==="talk"){
+      // クイック送付ではトーク購読も既読更新も起動しない。
+      await addDoc(collection(db,"messages"),{
+        text,senderId:currentId,uid:currentUID,
+        createdAt:serverTimestamp(),edited:false,reactions:{},replyTo:null
+      });
+    }else if(quickMemoTarget==="solo"){
+      await addDoc(collection(db,"solo"),{
+        text,uid:currentUID,senderId:currentId,
+        createdAt:serverTimestamp(),reactions:{},comments:[]
+      });
+    }else if(quickMemoTarget==="note"){
+      await addDoc(collection(db,"notes"),{
+        title,body:text,checklist:[],links:[],
+        privateOnly:false,collaborative:false,pinned:false,
+        updatedAt:serverTimestamp(),updatedBy:currentId,
+        uid:currentUID,senderId:currentId,createdAt:serverTimestamp()
+      });
+    }
+
+    if(quickMemoTarget!=="memo"){
+      $("quickMemoText").value="";
+      $("quickMemoTitle").value="";
+    }
+    $("quickMemoText").blur();
+    $("quickMemoTitle").blur();
+    result.textContent=quickMemoTarget==="memo"?"保存しました":"保存しました";
+    setTimeout(()=>{result.textContent="";},1200);
+  }catch(e){
+    console.error("quick memo",e);
+    result.textContent="保存できませんでした";
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+document.querySelectorAll(".quickMemoMode").forEach(b=>{
+  b.addEventListener("click",()=>setQuickMemoTarget(b.dataset.quickMode));
+});
+$("quickMemoSubmit")?.addEventListener("click",submitQuickMemo);
+
+$("quickMemoMenuButton")?.addEventListener("click",()=>{
+  renderQuickMemoList();
+  $("quickMemoDrawer")?.classList.remove("hidden");
+});
+$("quickMemoDrawerClose")?.addEventListener("click",()=>{
+  $("quickMemoDrawer")?.classList.add("hidden");
+});
+
+$("quickMemoLoginButton")?.addEventListener("click",async()=>{
+  const id=($("quickMemoLoginId")?.value||"").trim();
+  const pw=$("quickMemoLoginPassword")?.value||"";
+  if(!id||!pw)return;
+  $("quickMemoLoginError").textContent="";
+  try{
+    await signInWithEmailAndPassword(auth,`${id}@pb.local`,pw);
+  }catch(e){
+    $("quickMemoLoginError").textContent="開けませんでした";
+  }
+});
+$("quickMemoLoginPassword")?.addEventListener("keydown",e=>{
+  if(e.key==="Enter")$("quickMemoLoginButton")?.click();
+});
+
 onAuthStateChanged(auth,user=>{
+  if(quickMemoMode){
+    if(user)showQuickMemo(user);
+    else showQuickMemoLogin();
+    return;
+  }
   if(shortcutBadgeTest){
     ["pinScreen","appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"].forEach(id=>$(id)?.classList.add("hidden"));
     runShortcutBadgeTest();
@@ -4936,17 +5328,35 @@ document.querySelectorAll('.tab[data-page="placesPanel"]').forEach(tab=>{
 /* iOS Safari / PWA:
    入力中はiOS自身にレイアウトを任せる。
    キーボードを閉じた後だけ、残ったスクロール位置を戻す。 */
-function recoverPBViewportAfterKeyboard(){
+let talkWasAtLatestBeforeInput=false;
+
+function recoverPBViewportAfterKeyboard(restoreTalkLatest=false){
   [80,220,450].forEach(ms=>setTimeout(()=>{
     document.documentElement.style.removeProperty("--pb-viewport-height");
+    document.documentElement.style.removeProperty("--pb-visible-height");
 
+    if(restoreTalkLatest && !talkDateFilter && activePage()==="talkPage"){
+      scrollToLatest(false);
+    }
   },ms));
 }
-["messageInput","soloInput"].forEach(id=>{
-  const el=$(id);
-  if(!el)return;
-  el.addEventListener("focusout",recoverPBViewportAfterKeyboard);
-});
+
+const talkInput=$("messageInput");
+if(talkInput){
+  talkInput.addEventListener("focus",()=>{
+    talkWasAtLatestBeforeInput=followLatestMode||isNearBottom();
+  });
+  talkInput.addEventListener("focusout",()=>{
+    const restore=talkWasAtLatestBeforeInput;
+    talkWasAtLatestBeforeInput=false;
+    recoverPBViewportAfterKeyboard(restore);
+  });
+}
+
+const soloInputEl=$("soloInput");
+if(soloInputEl){
+  soloInputEl.addEventListener("focusout",()=>recoverPBViewportAfterKeyboard(false));
+}
 
 /* HEADER MENU */
 $("headerMenuButton").onclick=e=>{e.stopPropagation();closeAuxWindows("headerMenu");
@@ -5785,12 +6195,26 @@ function setReply(data){
   $("replyText").textContent=`${data.senderId}「${(data.text||"").slice(0,40)}」に返信`;
   $("replyBar").classList.remove("hidden");$("messageInput").focus();
 }
-$("cancelReply").onclick=()=>{replyTarget=null;$("replyBar").classList.add("hidden")};
+$("cancelReply").onclick=()=>{
+  replyTarget=null;
+  $("replyBar").classList.add("hidden");
+  const restore=talkWasAtLatestBeforeInput||followLatestMode||isNearBottom();
+  $("messageInput")?.blur();
+  recoverPBViewportAfterKeyboard(restore);
+};
 function editMessage(data){
   replyTarget=null;$("replyBar").classList.add("hidden");editingMessage=data;$("messageInput").value=data.text||"";
   $("editBar").classList.remove("hidden");$("messageInput").focus();
 }
-$("cancelEdit").onclick=()=>{editingMessage=null;$("messageInput").value="";stopTyping();$("editBar").classList.add("hidden")};
+$("cancelEdit").onclick=()=>{
+  editingMessage=null;
+  $("messageInput").value="";
+  stopTyping();
+  $("editBar").classList.add("hidden");
+  const restore=talkWasAtLatestBeforeInput||followLatestMode||isNearBottom();
+  $("messageInput")?.blur();
+  recoverPBViewportAfterKeyboard(restore);
+};
 
 /* Complete delete: delete message + clear copied quote from currently matching replies */
 async function removeMessageCompletely(data){
@@ -7121,8 +7545,29 @@ function resetStatusEditor(){
   $("saveStatusButton").textContent="保存";
 }
 
+function renderReadOnlyStatus(s){
+  const box=$("otherStatusContent");if(!box)return;
+  if(!s?.text?.trim()){
+    box.innerHTML='<div class="statusEmpty">現在のステータスはありません</div>';
+    return;
+  }
+  box.innerHTML="";
+  const text=document.createElement("div");
+  text.className="statusCurrentText";
+  text.textContent=s.text;
+  const time=document.createElement("div");
+  time.className="statusUpdatedAt";
+  time.textContent=s.updatedAt?`${formatStatusTime(s.updatedAt)} 更新`:"";
+  box.append(text,time);
+}
+
 function openSelfStatus(){
-  if(stealthReadMode)return;
+  if(stealthReadMode){
+    closeAuxWindows("statusOtherModal");
+    renderReadOnlyStatus(getOwnCurrentStatus());
+    $("statusOtherModal").classList.remove("hidden");
+    return;
+  }
   closeAuxWindows("statusSelfModal");
   renderPreviousStatusPreview(getOwnCurrentStatus());
   resetStatusEditor();
@@ -7148,7 +7593,7 @@ function openOtherStatus(){
   closeAuxWindows("statusOtherModal");
   renderOtherStatus();
   $("statusOtherModal").classList.remove("hidden");
-  markOtherStatusSeen();
+  if(!stealthReadMode)markOtherStatusSeen();
 }
 
 async function saveCurrentStatus(){
