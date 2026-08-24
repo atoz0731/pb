@@ -581,7 +581,7 @@ audio{display:none}
   border-radius:0 4px 4px 0;background:#e24a4a
 }
 #soloList .post.mineSolo::before{background:#2f6fed}
-#soloList .postText{margin-top:5px;line-height:1.48}
+#soloList .postText{margin-top:5px;line-height:1.48;white-space:pre-wrap;overflow-wrap:anywhere}
 #soloList .postUser{font-size:11px;font-weight:800}
 #soloList .postTime{font-size:9px}
 #soloList .soloMetaSummary{margin-top:6px}
@@ -3633,6 +3633,17 @@ html.quick-entry body{
   background:#f5f5f7!important;
 }
 
+
+/* v3.7.5a: status is intentionally single-line */
+#statusInput.statusInput{
+  box-sizing:border-box;
+  min-height:38px!important;
+  height:38px!important;
+  resize:none!important;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -3880,7 +3891,7 @@ html.quick-entry body{
     <div class="quickMemoHeader">
       <button id="quickMemoMenuButton" class="quickMemoMenuButton" type="button" aria-label="メモ一覧">☰</button>
       <span>メモ</span>
-      <span class="quickMemoSub">quick</span>
+      <span class="quickMemoSub" aria-hidden="true"></span>
     </div>
 
 
@@ -3999,7 +4010,7 @@ html.quick-entry body{
     </div>
     <div id="soloList" class="scroll"></div>
     <div class="composer">
-      <textarea id="soloInput" rows="1" placeholder="ひとりごと"></textarea>
+      <textarea id="soloInput" rows="2" placeholder="ひとりごと"></textarea>
       <button id="sendSolo" class="send">➤</button>
     </div>
   </div>
@@ -4319,7 +4330,7 @@ html.quick-entry body{
           <button id="editPreviousStatus" type="button">編集</button>
         </div>
       </div>
-      <textarea id="statusInput" class="statusInput" rows="2" maxlength="60" placeholder="ステータス"></textarea>
+      <input id="statusInput" class="statusInput" type="text" maxlength="60" placeholder="ステータス" autocomplete="off">
       <div class="statusActions">
         <button id="openMyStatusHistory" type="button">履歴</button>
         <button id="saveStatusButton" class="primaryStatus" type="button">保存</button>
@@ -5110,7 +5121,7 @@ function setQuickMemoTarget(mode){
   title?.classList.toggle("hidden",quickMemoTarget!=="note");
   const text=$("quickMemoText");
   if(text){
-    text.placeholder=quickMemoTarget==="memo"?"メモ":
+    text.placeholder=quickMemoTarget==="memo"?"内容":
       quickMemoTarget==="status"?"内容":
       quickMemoTarget==="talk"?"内容":
       quickMemoTarget==="solo"?"内容":"本文";
@@ -5118,7 +5129,23 @@ function setQuickMemoTarget(mode){
   if(quickMemoTarget!=="memo" && quickMemoEditingId){
     resetQuickMemoEditor();
   }
+  if(quickMemoTarget==="status")normalizeQuickStatusInput();
 }
+
+
+function normalizeQuickStatusInput(){
+  const text=$("quickMemoText");
+  if(!text || quickMemoTarget!=="status")return;
+  const cleaned=(text.value||"").replace(/[\r\n]+/g," ");
+  if(cleaned!==text.value)text.value=cleaned;
+}
+
+$("quickMemoText")?.addEventListener("keydown",e=>{
+  if(quickMemoTarget==="status" && e.key==="Enter"){
+    e.preventDefault();
+  }
+});
+$("quickMemoText")?.addEventListener("input",normalizeQuickStatusInput);
 
 function showQuickMemo(user){
   currentUID=user.uid;
@@ -5177,13 +5204,14 @@ async function submitQuickMemo(){
       saveQuickMemos(rows);
       resetQuickMemoEditor();
     }else if(quickMemoTarget==="status"){
+      const statusText=text.replace(/[\r\n]+/g," ");
       const createdAt=Timestamp.now();
       const historyRef=await addDoc(
         collection(db,"statusHistory",currentUID,"items"),
-        {text,createdAt,dateKey:statusDateKey(createdAt.toDate())}
+        {text:statusText,createdAt,dateKey:statusDateKey(createdAt.toDate())}
       );
       await setDoc(doc(db,"userStatuses",currentUID),{
-        uid:currentUID,senderId:currentId,text,
+        uid:currentUID,senderId:currentId,text:statusText,
         historyId:historyRef.id,updatedAt:createdAt
       },{merge:true});
     }else if(quickMemoTarget==="talk"){
@@ -5387,6 +5415,12 @@ if(talkInput){
 
 const soloInputEl=$("soloInput");
 if(soloInputEl){
+  const resizeSoloInput=()=>{
+    soloInputEl.style.height="auto";
+    soloInputEl.style.height=Math.min(120,Math.max(40,soloInputEl.scrollHeight))+"px";
+  };
+  soloInputEl.addEventListener("input",resizeSoloInput);
+  soloInputEl.addEventListener("focus",resizeSoloInput);
   soloInputEl.addEventListener("focusout",()=>recoverPBViewportAfterKeyboard(false));
 }
 
@@ -7262,11 +7296,17 @@ function toggleComments(post,data){
   };
   comp.append(input,send);box.appendChild(comp);post.appendChild(box);
 }
+$("soloInput")?.addEventListener("keydown",e=>{
+  // Enterは送信せず、そのまま改行として扱う。
+  if(e.key==="Enter")e.stopPropagation();
+});
+
 $("sendSolo").onclick=async()=>{
   if(stealthReadMode)return;
   const text=$("soloInput").value.trim();if(!text)return;
   await addDoc(collection(db,"solo"),{text,uid:currentUID,senderId:currentId,createdAt:serverTimestamp(),reactions:{},comments:[]});
   $("soloInput").value="";
+  $("soloInput").style.height="";
 };
 document.querySelectorAll(".soloFilterBtn").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".soloFilterBtn").forEach(x=>x.classList.remove("active"));
@@ -7642,7 +7682,7 @@ function openOtherStatus(){
 async function saveCurrentStatus(){
   if(stealthReadMode||!currentUID)return;
   const input=$("statusInput");
-  const text=(input.value||"").trim();
+  const text=(input.value||"").replace(/[\r\n]+/g," ").trim();
   if(!text){
     input.focus();
     return;
