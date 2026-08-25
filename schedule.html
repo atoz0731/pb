@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f7">
+<title>スケジュール</title>
+<link rel="manifest" href="schedule-manifest.json">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#f3f4f6;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+button,input{font:inherit}
+.hidden{display:none!important}
+#screen{min-height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.shell{width:100%;max-width:760px;min-height:100dvh;margin:0 auto;background:#fff}
+.appTitle{height:48px;display:flex;align-items:center;justify-content:center;background:#fff;border-bottom:1px solid #ddd;font-size:16px;font-weight:800}
+
+.calendarToolbar{background:#fff;padding:10px 11px 8px;border-bottom:1px solid #ddd}
+.calendarMonthRow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.monthNav{width:38px;height:32px;border:0;background:#f2f2f2;border-radius:9px;color:#1680f5;font-size:20px}
+#calendarTitle{font-weight:800;font-size:17px}
+.calendarRightBtns{display:flex;gap:6px;align-items:center}
+.todayBtn{height:32px;border:0;background:#111;color:#fff;border-radius:9px;padding:0 10px;font-size:11px;font-weight:700}
+.ownerOnly{display:inline-flex;align-items:center;border-radius:17px;padding:6px 11px;font-size:11px;background:#111;color:#fff}
+
+.calendar{background:#fff;padding:5px 6px 8px}
+.weekdays,.calendarGrid{display:grid;grid-template-columns:repeat(7,1fr)}
+.weekday{text-align:center;font-size:10px;color:#888;padding:4px 0}
+.weekday:first-child{color:#df3030}
+.weekday:last-child{color:#2b75c8}
+.dayCell{min-height:68px;border:0;border-top:1px solid #eee;border-left:1px solid #f2f2f2;padding:3px;overflow:hidden;background:#fff;color:#1680f5;text-align:left}
+.dayCell:nth-child(7n+1){border-left:0}
+.dayCell.otherMonth{background:#fafafa;color:#bbb}
+.dayCell.selected{outline:2px solid #111;outline-offset:-2px}
+.dayCell.today .dayNumber{background:#111;color:#fff}
+.dayNumber{display:flex;width:22px;height:22px;align-items:center;justify-content:center;border-radius:50%;font-size:10px;margin-bottom:2px}
+.dayNumber.sunday,.dayNumber.holiday{color:#df3030}
+.dayNumber.saturday{color:#2b75c8}
+.dayCell.today .dayNumber.sunday,.dayCell.today .dayNumber.saturday,.dayCell.today .dayNumber.holiday{color:#fff}
+.holidayName{font-size:7px;line-height:1.05;color:#e24a4a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
+.eventTitle{display:block;width:100%;padding:2px 3px;margin:1px 0;border-radius:4px;background:#2f6fed;color:#fff;font-size:8px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.eventMore{font-size:8px;color:#999}
+
+.dayDetail{background:#f3f4f6;padding:11px;min-height:220px;border-top:1px solid #eee}
+.dayDetailHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+#selectedDateTitle{font-weight:800;font-size:18px}
+.scheduleCard{background:#fff;border-radius:13px;padding:6px 8px;margin:4px 0;border-left:4px solid #2f6fed}
+.scheduleCompactRow{display:flex;align-items:center;gap:6px;min-width:0}
+.scheduleCompactTime{flex:0 0 auto;font-size:10px;color:#777;white-space:nowrap}
+.scheduleCompactTitle{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;line-height:1.25;font-weight:700}
+.scheduleMemo{white-space:pre-wrap;font-size:10px;line-height:1.35;color:#555;margin-top:3px}
+.small{font-size:11px;color:#888}
+
+.login{padding:16px}
+.login input{width:100%;border:1px solid #ccc;border-radius:10px;padding:11px;margin:5px 0;font-size:16px}
+.loginBtn{width:100%;border:0;border-radius:10px;padding:11px;background:#111;color:#fff;font-weight:700;margin-top:8px}
+.hint{text-align:center;color:#888;font-size:10px;margin-top:8px}
+
+.scheduleEditBtn{
+  border:0;background:none;color:#777;font-size:11px;padding:4px 0 0;margin-left:auto
+}
+.modalOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.35);
+  display:flex;align-items:flex-end;justify-content:center;z-index:200;
+  padding-top:env(safe-area-inset-top)
+}
+.modal{
+  width:100%;max-width:520px;background:#fff;border-radius:20px 20px 0 0;
+  padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+  max-height:calc(100dvh - env(safe-area-inset-top) - 10px);
+  overflow-y:auto;-webkit-overflow-scrolling:touch
+}
+.modal h3{margin:0 0 12px}
+.modal input,.modal textarea{
+  width:100%;padding:11px;border:1px solid #ccc;border-radius:10px;margin:5px 0
+}
+.modal textarea{resize:none}
+.scheduleTimeRow{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px
+}
+.scheduleTimeField label{display:block;font-size:11px;color:#777;margin:4px 2px 2px}
+.allDayRow{display:flex;align-items:center;justify-content:space-between;padding:9px 2px}
+.allDayCheck{width:22px!important;height:22px;margin:0!important}
+.modalBtns{display:flex;gap:8px;margin-top:8px}
+.modalBtns button{flex:1;border:0;border-radius:10px;padding:11px}
+.modalSave{background:#111;color:#fff;font-weight:700}
+
+
+.addEventBtn{
+  border:0;background:#111;color:#fff;border-radius:16px;
+  padding:7px 11px;font-size:11px;font-weight:700
+}
+.scheduleDeleteBtn{
+  border:0;background:none;color:#c52b3d;font-size:11px;
+  padding:4px 0 0 8px
+}
+
+</style>
+</head>
+<body>
+<div id="screen">
+  <main class="shell">
+    <div class="appTitle">スケジュール</div>
+
+    <section id="loginBox" class="login hidden">
+      <input id="loginId" autocomplete="username" placeholder="ID">
+      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="パスワード">
+      <button id="loginButton" class="loginBtn" type="button">開く</button>
+      <div id="loginError" class="hint"></div>
+    </section>
+
+    <section id="scheduleBox" class="hidden">
+      <div class="calendarToolbar">
+        <div class="calendarMonthRow">
+          <button id="prevMonth" class="monthNav" type="button">‹</button>
+          <div id="calendarTitle"></div>
+          <div class="calendarRightBtns">
+            <button id="todayButton" class="todayBtn" type="button">今日</button>
+            <button id="nextMonth" class="monthNav" type="button">›</button>
+          </div>
+        </div>
+        <div class="ownerOnly">自分</div>
+      </div>
+
+      <div class="calendar">
+        <div class="weekdays">
+          <div class="weekday">日</div><div class="weekday">月</div><div class="weekday">火</div>
+          <div class="weekday">水</div><div class="weekday">木</div><div class="weekday">金</div><div class="weekday">土</div>
+        </div>
+        <div id="calendarGrid" class="calendarGrid"></div>
+      </div>
+
+      <div class="dayDetail">
+        <div class="dayDetailHeader">
+          <div id="selectedDateTitle"></div>
+          <button id="createScheduleButton" class="addEventBtn" type="button">＋ 予定</button>
+        </div>
+        <div id="selectedDateEvents"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+
+<div id="scheduleEditModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3 id="scheduleEditModalTitle">予定を追加</h3>
+    <input id="editTitle" placeholder="予定">
+    <textarea id="editMemo" rows="4" placeholder="メモ"></textarea>
+
+    <div class="allDayRow">
+      <label for="editAllDay">終日</label>
+      <input id="editAllDay" class="allDayCheck" type="checkbox">
+    </div>
+
+    <input id="editDate" type="date">
+    <input id="editEndDate" type="date">
+
+    <div id="editTimeRow" class="scheduleTimeRow">
+      <div class="scheduleTimeField">
+        <label>開始</label>
+        <input id="editStartTime" type="time">
+      </div>
+      <div class="scheduleTimeField">
+        <label>終了</label>
+        <input id="editEndTime" type="time">
+      </div>
+    </div>
+
+    <div class="modalBtns">
+      <button id="cancelEditSchedule" type="button">キャンセル</button>
+      <button id="saveEditSchedule" class="modalSave" type="button">保存</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import {getFirestore,collection,query,where,onSnapshot,doc,addDoc,updateDoc,deleteDoc,serverTimestamp,Timestamp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",
+  authDomain:"message-57e2d.firebaseapp.com",
+  projectId:"message-57e2d",
+  storageBucket:"message-57e2d.firebasestorage.app",
+  messagingSenderId:"560072908841",
+  appId:"1:560072908841:web:a6d0e92a57a24c152a3c38"
+};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+
+let currentUID="";
+let currentId="";
+let schedules=[];
+let monthDate=new Date();
+let selectedDate=new Date();
+let unsub=null;
+let editingSchedule=null;
+
+function dateId(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function eventCoversDate(s,d){
+  const target=dateId(d);
+  let start=s.startDate||s.date||"";
+  if(!start&&s.startsAt?.toDate)start=dateId(s.startsAt.toDate());
+  if(!start)return false;
+  const end=s.allDay?(s.endDate||start):start;
+  return target>=start&&target<=end;
+}
+function rangeText(s){
+  if(s.allDay){
+    const start=s.startDate||(s.startsAt?.toDate?dateId(s.startsAt.toDate()):"");
+    const end=s.endDate||start;
+    if(start===end)return "終日";
+    const sd=new Date(`${start}T00:00:00`),ed=new Date(`${end}T00:00:00`);
+    return `終日 ${sd.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}〜${ed.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}`;
+  }
+  if(!s.startsAt?.toDate)return "";
+  const start=s.startsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+  if(s.endsAt?.toDate){
+    const end=s.endsAt.toDate().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+    return `${start}〜${end}`;
+  }
+  return start;
+}
+function sortSchedules(list){
+  return [...list].sort((a,b)=>{
+    const aa=a.startsAt?.toMillis?.()||0,bb=b.startsAt?.toMillis?.()||0;
+    return aa-bb;
+  });
+}
+
+function renderCalendar(){
+  $("calendarTitle").textContent=monthDate.toLocaleDateString("ja-JP",{year:"numeric",month:"long"});
+  const grid=$("calendarGrid");grid.innerHTML="";
+  const y=monthDate.getFullYear(),m=monthDate.getMonth();
+  const first=new Date(y,m,1),start=new Date(y,m,1-first.getDay());
+  const today=dateId(new Date());
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    const cell=document.createElement("button");cell.type="button";cell.className="dayCell";
+    if(d.getMonth()!==m)cell.classList.add("otherMonth");
+    if(dateId(d)===dateId(selectedDate))cell.classList.add("selected");
+    if(dateId(d)===today)cell.classList.add("today");
+
+    const n=document.createElement("div");n.className="dayNumber";n.textContent=d.getDate();
+    if(d.getDay()===0)n.classList.add("sunday");
+    else if(d.getDay()===6)n.classList.add("saturday");
+    cell.appendChild(n);
+
+    const events=sortSchedules(schedules.filter(s=>eventCoversDate(s,d)));
+    events.slice(0,2).forEach(s=>{
+      const ev=document.createElement("div");ev.className="eventTitle";ev.textContent=s.title||"予定";cell.appendChild(ev);
+    });
+    if(events.length>2){
+      const more=document.createElement("div");more.className="eventMore";more.textContent=`+${events.length-2}`;cell.appendChild(more);
+    }
+    cell.onclick=()=>{selectedDate=new Date(d);monthDate=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar();renderDetail()};
+    grid.appendChild(cell);
+  }
+}
+
+
+
+function localDateValue(ts){
+  if(!ts?.toDate)return "";
+  return dateId(ts.toDate());
+}
+function localTimeValue(ts){
+  if(!ts?.toDate)return "";
+  const d=ts.toDate();
+  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+function syncEditFields(){
+  const allDay=$("editAllDay").checked;
+  $("editEndDate").classList.toggle("hidden",!allDay);
+  $("editTimeRow").classList.toggle("hidden",allDay);
+}
+
+function resetScheduleForm(dateValue=""){
+  editingSchedule=null;
+  $("scheduleEditModalTitle").textContent="予定を追加";
+  $("editTitle").value="";
+  $("editMemo").value="";
+  $("editAllDay").checked=false;
+  $("editDate").value=dateValue||dateId(selectedDate);
+  $("editEndDate").value=dateValue||dateId(selectedDate);
+  $("editStartTime").value="";
+  $("editEndTime").value="";
+  syncEditFields();
+}
+function openScheduleCreate(){
+  resetScheduleForm(dateId(selectedDate));
+  $("scheduleEditModal").classList.remove("hidden");
+  setTimeout(()=>$("editTitle")?.focus(),50);
+}
+
+function openScheduleEdit(s){
+  editingSchedule=s;
+  $("scheduleEditModalTitle").textContent="予定を編集";
+  $("editTitle").value=s.title||"";
+  $("editMemo").value=s.memo||"";
+  $("editAllDay").checked=!!s.allDay;
+
+  const startDate=s.startDate||localDateValue(s.startsAt);
+  const endDate=s.endDate||startDate;
+  $("editDate").value=startDate;
+  $("editEndDate").value=endDate;
+
+  $("editStartTime").value=s.allDay?"":localTimeValue(s.startsAt);
+  $("editEndTime").value=s.allDay?"":localTimeValue(s.endsAt);
+
+  syncEditFields();
+  $("scheduleEditModal").classList.remove("hidden");
+}
+$("editAllDay")?.addEventListener("change",syncEditFields);
+$("cancelEditSchedule")?.addEventListener("click",()=>{
+  resetScheduleForm();
+  $("scheduleEditModal").classList.add("hidden");
+});
+$("scheduleEditModal")?.addEventListener("click",e=>{
+  if(e.target===$("scheduleEditModal")){
+    resetScheduleForm();
+    $("scheduleEditModal").classList.add("hidden");
+  }
+});
+$("saveEditSchedule")?.addEventListener("click",async()=>{
+  if(!editingSchedule)return;
+
+  const title=$("editTitle").value.trim();
+  const memo=$("editMemo").value.trim();
+  const allDay=$("editAllDay").checked;
+  const date=$("editDate").value;
+  const endDate=allDay?($("editEndDate").value||date):date;
+  const startTime=allDay?"12:00":($("editStartTime").value||"00:00");
+  const endTime=allDay?"":$("editEndTime").value;
+
+  if(!title||!date){alert("タイトルと日付を入力してください");return}
+  if(allDay&&endDate<date){alert("終了日は開始日以降にしてください");return}
+
+  const startsAt=Timestamp.fromDate(new Date(`${date}T${startTime}:00`));
+  let endsAt=null;
+  if(!allDay&&endTime){
+    const d=new Date(`${date}T${endTime}:00`);
+    if(d<startsAt.toDate()){
+      alert("終了時刻は開始時刻以降にしてください");
+      return;
+    }
+    endsAt=Timestamp.fromDate(d);
+  }
+
+  const btn=$("saveEditSchedule");
+  btn.disabled=true;
+  try{
+    const payload={title,memo,allDay,startDate:date,endDate,startsAt,endsAt};
+    if(editingSchedule){
+      await updateDoc(doc(db,"schedules",editingSchedule.id),payload);
+    }else{
+      await addDoc(collection(db,"schedules"),{
+        ...payload,
+        uid:currentUID,
+        senderId:currentId,
+        privateOnly:false,
+        createdAt:serverTimestamp(),
+        comments:[]
+      });
+    }
+    resetScheduleForm();
+    $("scheduleEditModal").classList.add("hidden");
+  }catch(e){
+    console.error(e);
+    alert("予定を更新できませんでした");
+  }finally{
+    btn.disabled=false;
+  }
+});
+
+function renderDetail(){
+  $("selectedDateTitle").textContent=selectedDate.toLocaleDateString("ja-JP",{month:"long",day:"numeric",weekday:"short"});
+  const box=$("selectedDateEvents");box.innerHTML="";
+  const events=sortSchedules(schedules.filter(s=>eventCoversDate(s,selectedDate)));
+  if(!events.length){box.innerHTML='<div class="small">予定はありません。</div>';return}
+  events.forEach(s=>{
+    const card=document.createElement("div");card.className="scheduleCard";
+    const row=document.createElement("div");row.className="scheduleCompactRow";
+    const time=document.createElement("div");time.className="scheduleCompactTime";time.textContent=rangeText(s);
+    const title=document.createElement("div");title.className="scheduleCompactTitle";title.textContent=s.title||"";
+    const edit=document.createElement("button");
+    edit.className="scheduleEditBtn";
+    edit.type="button";
+    edit.textContent="編集";
+    edit.onclick=e=>{e.stopPropagation();openScheduleEdit(s)};
+
+    const del=document.createElement("button");
+    del.className="scheduleDeleteBtn";
+    del.type="button";
+    del.textContent="削除";
+    del.onclick=async e=>{
+      e.stopPropagation();
+      if(!confirm("この予定を削除しますか？"))return;
+      try{
+        await deleteDoc(doc(db,"schedules",s.id));
+      }catch(err){
+        console.error(err);
+        alert("予定を削除できませんでした");
+      }
+    };
+
+    row.append(time,title,edit,del);
+    card.appendChild(row);
+    if(s.memo){
+      const memo=document.createElement("div");memo.className="scheduleMemo";memo.textContent=s.memo;card.appendChild(memo);
+    }
+    box.appendChild(card);
+  });
+}
+
+function listenOwnSchedules(){
+  if(unsub)unsub();
+  // 自分の予定だけをFirestoreから取得。並び順はクライアント側で整える。
+  const q=query(collection(db,"schedules"),where("uid","==",currentUID));
+  unsub=onSnapshot(q,snap=>{
+    schedules=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderCalendar();renderDetail();
+  },e=>{
+    console.error(e);
+    $("detailEvents").innerHTML='<div class="empty">予定を読み込めませんでした。</div>';
+  });
+}
+$("createScheduleButton")?.addEventListener("click",openScheduleCreate);
+$("prevMonth").onclick=()=>{monthDate=new Date(monthDate.getFullYear(),monthDate.getMonth()-1,1);renderCalendar()};
+$("nextMonth").onclick=()=>{monthDate=new Date(monthDate.getFullYear(),monthDate.getMonth()+1,1);renderCalendar()};
+$("todayButton").onclick=()=>{selectedDate=new Date();monthDate=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderCalendar();renderDetail()};
+$("loginButton").onclick=async()=>{
+  const id=$("loginId").value.trim(),pw=$("loginPassword").value;
+  if(!id||!pw)return;
+  $("loginError").textContent="";
+  try{await signInWithEmailAndPassword(auth,`${id}@pb.local`,pw)}
+  catch(e){$("loginError").textContent="開けませんでした"}
+};
+$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginButton").click()});
+
+onAuthStateChanged(auth,user=>{
+  if(user){
+    currentUID=user.uid;
+    currentId=(user.email||"").replace("@pb.local","");
+    $("loginBox").classList.add("hidden");
+    $("scheduleBox").classList.remove("hidden");
+    listenOwnSchedules();
+  }else{
+    currentUID="";
+    currentId="";
+    if(unsub){unsub();unsub=null}
+    $("scheduleBox").classList.add("hidden");
+    $("loginBox").classList.remove("hidden");
+  }
+});
+</script>
+</body>
+</html>
