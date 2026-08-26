@@ -3650,22 +3650,134 @@ html.quick-entry body{
   border-left-color:var(--schedule-owner-color,#888)!important;
 }
 
-/* v3.7.5d: ノート本文は通常5行まで、必要な時だけ展開 */
+/* v3.7.5d: ノート一覧は5行プレビュー＋別ウィンドウで全文表示 */
+.noteCard{
+  border:1px solid rgba(0,0,0,.08)!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.noteHead{align-items:flex-start}
+.noteHeadRight{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex-shrink:0;
+}
+.noteOpenBtn{
+  width:28px;
+  height:28px;
+  border:0;
+  background:none;
+  color:#777;
+  font-size:18px;
+  line-height:1;
+  padding:0;
+}
 .noteBody.noteCollapsed{
   max-height:7em;
   overflow:hidden;
 }
-.noteExpandBtn{
-  display:block;
+.noteViewerOverlay{
+  position:fixed;
+  inset:0;
+  z-index:260;
+  background:rgba(0,0,0,.38);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));
+}
+.noteViewerOverlay.hidden{display:none!important}
+.noteViewer{
+  width:min(560px,100%);
+  max-height:calc(100dvh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  background:#fff;
+  color:#111;
+  border-radius:18px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 10px 34px rgba(0,0,0,.24);
+}
+.noteViewerHead{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 14px;
+  border-bottom:1px solid #e8e8e8;
+}
+.noteViewerTitle{
+  flex:1;
+  min-width:0;
+  font-size:16px;
+  font-weight:800;
+  overflow-wrap:anywhere;
+}
+.noteViewerEdit{
+  border:0;background:none;color:#1769aa;font-size:12px;font-weight:700;
+  padding:7px 4px;white-space:nowrap
+}
+.noteViewerClose{
+  width:34px;
+  height:34px;
   border:0;
   background:none;
-  color:#6f7782;
-  font-size:10px;
-  padding:3px 0 5px;
-  margin:0;
+  color:#555;
+  font-size:26px;
+  line-height:1;
+  padding:0;
 }
-.noteExpandBtn.hidden{display:none!important}
-body.night-mode .noteExpandBtn{color:#b8bec6!important}
+.noteViewerBody{
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:14px;
+}
+.noteViewerText{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font-size:13px;
+  line-height:1.55;
+  color:#333;
+}
+.noteViewerChecklist{margin-top:14px}
+.noteViewerCheckRow{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  padding:5px 0;
+  font-size:12px;
+}
+.noteViewerLinks{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:14px;
+}
+.noteViewerLinks a{
+  color:#1769aa;
+  text-decoration:none;
+  font-size:12px;
+}
+.noteViewerMeta{
+  margin-top:15px;
+  color:#888;
+  font-size:10px;
+  line-height:1.45;
+}
+body.night-mode .noteCard{
+  border-color:#343a42!important;
+  box-shadow:none!important;
+}
+body.night-mode .noteOpenBtn{color:#b8bec6!important}
+body.night-mode .noteViewer{
+  background:#171b20!important;
+  color:#edf0f3!important;
+}
+body.night-mode .noteViewerHead{border-color:#343a42!important}
+body.night-mode .noteViewerTitle,
+body.night-mode .noteViewerText{color:#edf0f3!important}
+body.night-mode .noteViewerEdit{color:#8dbcf0!important}
+body.night-mode .noteViewerClose{color:#d7dce2!important}
+body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -4379,6 +4491,18 @@ body.night-mode .noteExpandBtn{color:#b8bec6!important}
   </div>
 </div>
 
+
+<div id="noteViewerOverlay" class="noteViewerOverlay hidden">
+  <div class="noteViewer" role="dialog" aria-modal="true" aria-labelledby="noteViewerTitle">
+    <div class="noteViewerHead">
+      <div id="noteViewerTitle" class="noteViewerTitle"></div>
+      <button id="noteViewerEdit" class="noteViewerEdit hidden" type="button">編集</button>
+      <button id="noteViewerClose" class="noteViewerClose" type="button" aria-label="閉じる">×</button>
+    </div>
+    <div id="noteViewerBody" class="noteViewerBody"></div>
+  </div>
+</div>
+
 <div id="noteModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="noteModalTitle">ノートを追加</h3>
@@ -4494,7 +4618,6 @@ let locationShareActive=false, locationShareBusy=false;
 let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
-const expandedNoteIds=new Set();
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -7386,6 +7509,81 @@ function listenNotes(){
     $("noteList").innerHTML='<div class="small" style="padding:14px">ノートを読み込めませんでした。Firestoreルールも確認してください。</div>';
   });
 }
+
+let viewingNote=null;
+function openNoteViewer(n){
+  viewingNote=n;
+  $("noteViewerTitle").textContent=n.title||"無題";
+  const box=$("noteViewerBody");
+  box.innerHTML="";
+
+  if(n.body){
+    const text=document.createElement("div");
+    text.className="noteViewerText";
+    text.textContent=n.body;
+    box.appendChild(text);
+  }
+
+  const checks=Array.isArray(n.checklist)?n.checklist:[];
+  if(checks.length){
+    const cb=document.createElement("div");
+    cb.className="noteViewerChecklist";
+    checks.forEach(item=>{
+      const row=document.createElement("div");
+      row.className="noteViewerCheckRow";
+      const mark=document.createElement("span");
+      mark.textContent=item.done?"☑":"☐";
+      const tx=document.createElement("span");
+      tx.textContent=item.text||"";
+      row.append(mark,tx);
+      cb.appendChild(row);
+    });
+    box.appendChild(cb);
+  }
+
+  const links=Array.isArray(n.links)?n.links:[];
+  if(links.length){
+    const lb=document.createElement("div");
+    lb.className="noteViewerLinks";
+    links.forEach(item=>{
+      if(!item?.url)return;
+      const a=document.createElement("a");
+      a.href=item.url;
+      a.target="_blank";
+      a.rel="noopener";
+      a.textContent=`${item.label||"関連資料"} ↗`;
+      lb.appendChild(a);
+    });
+    if(lb.children.length)box.appendChild(lb);
+  }
+
+  const meta=document.createElement("div");
+  meta.className="noteViewerMeta";
+  const mine=n.uid===currentUID;
+  const updatedBy=n.updatedBy?`　更新:${n.updatedBy}`:"";
+  meta.textContent=`${mine?"自分":(n.senderId||"")}${n.privateOnly?"　🔒自分のみ":""}${n.collaborative?"　共同編集":""}${updatedBy}${n.updatedAt?.toDate?`　${n.updatedAt.toDate().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})}`:""}`;
+  box.appendChild(meta);
+
+  const canEdit=n.uid===currentUID||!!n.collaborative;
+  $("noteViewerEdit").classList.toggle("hidden",!canEdit);
+  $("noteViewerOverlay").classList.remove("hidden");
+}
+function closeNoteViewer(){
+  $("noteViewerOverlay").classList.add("hidden");
+  $("noteViewerBody").innerHTML="";
+  viewingNote=null;
+}
+$("noteViewerEdit")?.addEventListener("click",()=>{
+  if(!viewingNote)return;
+  const n=viewingNote;
+  closeNoteViewer();
+  openNoteEditor(n);
+});
+$("noteViewerClose")?.addEventListener("click",closeNoteViewer);
+$("noteViewerOverlay")?.addEventListener("click",e=>{
+  if(e.target===$("noteViewerOverlay"))closeNoteViewer();
+});
+
 function renderNotes(){
   const list=$("noteList");list.innerHTML="";
   const noteTime=(n,key)=>n?.[key]?.toMillis?.() ?? ((n?.[key]?.seconds||0)*1000);
@@ -7410,35 +7608,25 @@ function renderNotes(){
     card.className=`noteCard ${mine?"mine":"other"} ${stateClass}`;
     const head=document.createElement("div");head.className="noteHead";
     const title=document.createElement("div");title.className="noteTitle";title.textContent=n.title||"無題";
+
+    const headRight=document.createElement("div");headRight.className="noteHeadRight";
     const pin=document.createElement("div");pin.className="notePin";pin.textContent=n.pinned?"📌":"";
-    head.append(title,pin);
+    const open=document.createElement("button");
+    open.type="button";
+    open.className="noteOpenBtn";
+    open.textContent="↗";
+    open.title="ノートを開く";
+    open.setAttribute("aria-label","ノートを開く");
+    open.onclick=e=>{e.stopPropagation();openNoteViewer(n)};
+    headRight.append(pin,open);
+
+    head.append(title,headRight);
+
     const body=document.createElement("div");
-    body.className="noteBody";
+    body.className="noteBody noteCollapsed";
     body.textContent=n.body||"";
 
-    const expand=document.createElement("button");
-    expand.type="button";
-    expand.className="noteExpandBtn hidden";
-
-    const applyNoteExpansion=()=>{
-      const expanded=expandedNoteIds.has(n.id);
-      body.classList.toggle("noteCollapsed",!expanded);
-      body.style.maxHeight=expanded?"none":"7em";
-      body.style.overflow=expanded?"visible":"hidden";
-      expand.textContent=expanded?"閉じる":"続きを読む";
-      expand.setAttribute("aria-expanded",expanded?"true":"false");
-    };
-    applyNoteExpansion();
-
-    expand.onclick=e=>{
-      e.preventDefault();
-      e.stopPropagation();
-      if(expandedNoteIds.has(n.id))expandedNoteIds.delete(n.id);
-      else expandedNoteIds.add(n.id);
-      applyNoteExpansion();
-    };
-
-    card.append(head,body,expand);
+    card.append(head,body);
 
     const checks=Array.isArray(n.checklist)?n.checklist:[];
     if(checks.length){
@@ -7485,28 +7673,6 @@ function renderNotes(){
       card.appendChild(acts);
     }
     list.appendChild(card);
-
-    requestAnimationFrame(()=>{
-      const expanded=expandedNoteIds.has(n.id);
-
-      body.classList.remove("noteCollapsed");
-      body.style.maxHeight="none";
-      body.style.overflow="visible";
-      const fullHeight=body.scrollHeight;
-
-      body.classList.add("noteCollapsed");
-      body.style.maxHeight="7em";
-      body.style.overflow="hidden";
-      const collapsedHeight=body.clientHeight;
-
-      expand.classList.toggle("hidden",!(fullHeight>collapsedHeight+2));
-
-      if(expanded){
-        body.classList.remove("noteCollapsed");
-        body.style.maxHeight="none";
-        body.style.overflow="visible";
-      }
-    });
   });
 }
 function renderChecklistEditor(){
