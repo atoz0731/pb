@@ -3649,6 +3649,24 @@ html.quick-entry body{
 #schedulePage .scheduleCard{
   border-left-color:var(--schedule-owner-color,#888)!important;
 }
+
+/* v3.7.5d: ノート本文は通常5行まで、必要な時だけ展開 */
+.noteBody.noteCollapsed{
+  max-height:7em;
+  overflow:hidden;
+}
+.noteExpandBtn{
+  display:block;
+  border:0;
+  background:none;
+  color:#6f7782;
+  font-size:10px;
+  padding:3px 0 5px;
+  margin:0;
+}
+.noteExpandBtn.hidden{display:none!important}
+body.night-mode .noteExpandBtn{color:#b8bec6!important}
+
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -4476,6 +4494,7 @@ let locationShareActive=false, locationShareBusy=false;
 let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
+const expandedNoteIds=new Set();
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeSchedules=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -4489,7 +4508,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
 const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.5c";
+const APP_VERSION="3.7.5d";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -7393,8 +7412,33 @@ function renderNotes(){
     const title=document.createElement("div");title.className="noteTitle";title.textContent=n.title||"無題";
     const pin=document.createElement("div");pin.className="notePin";pin.textContent=n.pinned?"📌":"";
     head.append(title,pin);
-    const body=document.createElement("div");body.className="noteBody";body.textContent=n.body||"";
-    card.append(head,body);
+    const body=document.createElement("div");
+    body.className="noteBody";
+    body.textContent=n.body||"";
+
+    const expand=document.createElement("button");
+    expand.type="button";
+    expand.className="noteExpandBtn hidden";
+
+    const applyNoteExpansion=()=>{
+      const expanded=expandedNoteIds.has(n.id);
+      body.classList.toggle("noteCollapsed",!expanded);
+      body.style.maxHeight=expanded?"none":"7em";
+      body.style.overflow=expanded?"visible":"hidden";
+      expand.textContent=expanded?"閉じる":"続きを読む";
+      expand.setAttribute("aria-expanded",expanded?"true":"false");
+    };
+    applyNoteExpansion();
+
+    expand.onclick=e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      if(expandedNoteIds.has(n.id))expandedNoteIds.delete(n.id);
+      else expandedNoteIds.add(n.id);
+      applyNoteExpansion();
+    };
+
+    card.append(head,body,expand);
 
     const checks=Array.isArray(n.checklist)?n.checklist:[];
     if(checks.length){
@@ -7441,6 +7485,28 @@ function renderNotes(){
       card.appendChild(acts);
     }
     list.appendChild(card);
+
+    requestAnimationFrame(()=>{
+      const expanded=expandedNoteIds.has(n.id);
+
+      body.classList.remove("noteCollapsed");
+      body.style.maxHeight="none";
+      body.style.overflow="visible";
+      const fullHeight=body.scrollHeight;
+
+      body.classList.add("noteCollapsed");
+      body.style.maxHeight="7em";
+      body.style.overflow="hidden";
+      const collapsedHeight=body.clientHeight;
+
+      expand.classList.toggle("hidden",!(fullHeight>collapsedHeight+2));
+
+      if(expanded){
+        body.classList.remove("noteCollapsed");
+        body.style.maxHeight="none";
+        body.style.overflow="visible";
+      }
+    });
   });
 }
 function renderChecklistEditor(){
