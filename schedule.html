@@ -234,6 +234,74 @@ function sortSchedules(list){
   });
 }
 
+
+function nthMonday(year,month,n){
+  const first=new Date(year,month,1);
+  return 1+((8-first.getDay())%7)+(n-1)*7;
+}
+function vernalEquinoxDay(year){
+  return Math.floor(20.8431+0.242194*(year-1980)-Math.floor((year-1980)/4));
+}
+function autumnEquinoxDay(year){
+  return Math.floor(23.2488+0.242194*(year-1980)-Math.floor((year-1980)/4));
+}
+function japaneseHolidayMap(year){
+  const h=new Map();
+  const add=(m,d,name)=>h.set(`${year}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`,name);
+
+  add(1,1,"元日");
+  add(1,nthMonday(year,0,2),"成人の日");
+  add(2,11,"建国記念の日");
+  if(year>=2020)add(2,23,"天皇誕生日");
+  add(3,vernalEquinoxDay(year),"春分の日");
+  add(4,29,"昭和の日");
+  add(5,3,"憲法記念日");
+  add(5,4,"みどりの日");
+  add(5,5,"こどもの日");
+  add(7,nthMonday(year,6,3),"海の日");
+  add(8,11,"山の日");
+  add(9,nthMonday(year,8,3),"敬老の日");
+  add(9,autumnEquinoxDay(year),"秋分の日");
+  add(10,nthMonday(year,9,2),"スポーツの日");
+  add(11,3,"文化の日");
+  add(11,23,"勤労感謝の日");
+
+  // 国民の休日：祝日に挟まれた平日
+  let changed=true;
+  while(changed){
+    changed=false;
+    for(let m=0;m<12;m++){
+      const days=new Date(year,m+1,0).getDate();
+      for(let d=2;d<days;d++){
+        const cur=new Date(year,m,d);
+        const key=dateId(cur);
+        if(h.has(key)||cur.getDay()===0)continue;
+        const prev=new Date(cur);prev.setDate(cur.getDate()-1);
+        const next=new Date(cur);next.setDate(cur.getDate()+1);
+        if(h.has(dateId(prev))&&h.has(dateId(next))){
+          h.set(key,"国民の休日");changed=true;
+        }
+      }
+    }
+  }
+
+  // 振替休日：日曜の祝日の直後で、最初の祝日でない日
+  [...h.entries()].forEach(([key])=>{
+    const d=new Date(`${key}T00:00:00`);
+    if(d.getDay()!==0)return;
+    const sub=new Date(d);
+    do{sub.setDate(sub.getDate()+1)}while(h.has(dateId(sub)));
+    if(sub.getFullYear()===year)h.set(dateId(sub),"振替休日");
+  });
+  return h;
+}
+const holidayCache=new Map();
+function getJapaneseHoliday(d){
+  const y=d.getFullYear();
+  if(!holidayCache.has(y))holidayCache.set(y,japaneseHolidayMap(y));
+  return holidayCache.get(y).get(dateId(d))||"";
+}
+
 function renderCalendar(){
   $("calendarTitle").textContent=monthDate.toLocaleDateString("ja-JP",{year:"numeric",month:"long"});
   const grid=$("calendarGrid");grid.innerHTML="";
@@ -248,9 +316,17 @@ function renderCalendar(){
     if(dateId(d)===today)cell.classList.add("today");
 
     const n=document.createElement("div");n.className="dayNumber";n.textContent=d.getDate();
-    if(d.getDay()===0)n.classList.add("sunday");
+    const holidayName=getJapaneseHoliday(d);
+    if(holidayName)n.classList.add("holiday");
+    else if(d.getDay()===0)n.classList.add("sunday");
     else if(d.getDay()===6)n.classList.add("saturday");
     cell.appendChild(n);
+    if(holidayName){
+      const hn=document.createElement("div");
+      hn.className="holidayName";
+      hn.textContent=holidayName;
+      cell.appendChild(hn);
+    }
 
     const events=sortSchedules(schedules.filter(s=>eventCoversDate(s,d)));
     events.slice(0,2).forEach(s=>{
