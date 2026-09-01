@@ -1966,6 +1966,18 @@ body.standbyMode #standbyStatus{display:inline-flex}
 #standbyFlash.flashNow{display:block;animation:pbStandbyFlash .42s ease-in-out 0s 3 alternate}
 @keyframes pbStandbyFlash{from{opacity:0}to{opacity:.58}}
 
+/* read-only black standby */
+#stealthStandbyCover{
+  position:fixed;inset:0;z-index:49999;background:#000;display:none;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+body.stealth-read-mode.standbyMode #stealthStandbyCover{display:block}
+body.stealth-read-mode.standbyMode #standbyFlash{background:#2b2b2b}
+body.stealth-read-mode.standbyMode #standbyFlash.flashNow{
+  display:block;animation:pbStealthStandbyFlash .30s ease-in-out 0s 4 alternate
+}
+@keyframes pbStealthStandbyFlash{from{opacity:0}to{opacity:.72}}
+
 
 /* ===== v3.7.2b close-button tuning ===== */
 #savedMessagesPanel .windowCloseX{top:1px!important}
@@ -2256,7 +2268,6 @@ body.stealth-read-mode .messageMenuButton,
 body.stealth-read-mode #pickImage,
 body.stealth-read-mode #headerNoticeButton,
 body.stealth-read-mode #quickWeather,
-body.stealth-read-mode #menuStandby,
 body.stealth-read-mode #menuVoice,
 body.stealth-read-mode #menuUpdates,
 body.stealth-read-mode #menuSettings,
@@ -4086,6 +4097,7 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 </div>
 
 <div id="standbyFlash" aria-hidden="true"></div>
+<div id="stealthStandbyCover" aria-label="待機中" role="button" tabindex="0"></div>
 
 
 <section id="quickMemoScreen" class="hidden" aria-label="メモ">
@@ -4769,11 +4781,17 @@ function forceStandbyOff(){
   }
 }
 
+let lastStealthStandbyFlashAt=0;
 function flashStandbyScreen(){
   if(!standbyMode||document.hidden)return;
+  if(stealthReadMode){
+    const now=Date.now();
+    if(now-lastStealthStandbyFlashAt<10000)return;
+    lastStealthStandbyFlashAt=now;
+  }
   const f=$("standbyFlash");if(!f)return;
   f.classList.remove("flashNow");void f.offsetWidth;f.classList.add("flashNow");
-  setTimeout(()=>f.classList.remove("flashNow"),1500);
+  setTimeout(()=>f.classList.remove("flashNow"),stealthReadMode?1400:1500);
 }
 
 let audioContext=null;
@@ -5684,6 +5702,15 @@ $("menuStandby").onclick=async()=>{
   $("headerMenu").classList.add("hidden");
   await setStandbyMode(!standbyMode);
 };
+$("stealthStandbyCover")?.addEventListener("click",async()=>{
+  if(stealthReadMode&&standbyMode)await setStandbyMode(false);
+});
+$("stealthStandbyCover")?.addEventListener("keydown",async e=>{
+  if((e.key==="Enter"||e.key===" ")&&stealthReadMode&&standbyMode){
+    e.preventDefault();
+    await setStandbyMode(false);
+  }
+});
 $("menuVoice").onclick=async()=>{$("headerMenu").classList.add("hidden");await openVoiceRoom()};
 
 $("menuUpdates").onclick=()=>{
@@ -5913,6 +5940,12 @@ function clearUnreadTalk(){
   unreadTalkCount=0;updateNotificationUI();
 }
 function handleIncomingMessage(data){
+  // Read-only black standby: visual signal only. Do not sound/vibrate/notify or alter read state.
+  if(stealthReadMode&&standbyMode){
+    flashStandbyScreen();
+    return;
+  }
+
   playIncomingSound();
   flashStandbyScreen();
 
