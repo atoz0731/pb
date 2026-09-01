@@ -1956,9 +1956,42 @@ body.pinLocked{
   display:none;align-items:center;gap:5px;margin-left:6px;
   font-size:9px;color:#b9f6ca;font-weight:700;white-space:nowrap
 }
-body.standbyMode #standbyStatus{display:inline-flex}
+body.standbyMode:not(.stealth-read-mode) #standbyStatus{display:inline-flex}
 .standbyDot{width:6px;height:6px;border-radius:50%;background:#69f0ae;animation:standbyPulse 1.6s ease-in-out infinite}
 @keyframes standbyPulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* Normal standby keeps the regular PB screen visible.
+   Full blackout applies only to the read-only mode. */
+html.stealthStandbyBlack,
+html.stealthStandbyBlack body,
+body.stealth-read-mode.standbyMode{
+  background:#000000!important;
+  background-color:#000000!important;
+  overscroll-behavior:none!important;
+}
+html.stealthStandbyBlack,
+body.stealth-read-mode.standbyMode{
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  overflow:hidden!important;
+}
+body.stealth-read-mode.standbyMode #appScreen,
+body.stealth-read-mode.standbyMode #pinScreen,
+body.stealth-read-mode.standbyMode main,
+body.stealth-read-mode.standbyMode .page,
+body.stealth-read-mode.standbyMode .scroll{
+  background:#000000!important;
+}
+body.stealth-read-mode.standbyMode *{
+  scrollbar-width:none!important;
+}
+body.stealth-read-mode.standbyMode *::-webkit-scrollbar{
+  display:none!important;
+  width:0!important;
+  height:0!important;
+}
+
 #standbyFlash{
   position:fixed;inset:0;z-index:50000;pointer-events:none;
   background:#fff;opacity:0;display:none
@@ -1966,13 +1999,33 @@ body.standbyMode #standbyStatus{display:inline-flex}
 #standbyFlash.flashNow{display:block;animation:pbStandbyFlash .42s ease-in-out 0s 3 alternate}
 @keyframes pbStandbyFlash{from{opacity:0}to{opacity:.58}}
 
-/* read-only black standby */
+/* Black touch cover used only for read-only standby, extended through safe areas */
 #stealthStandbyCover{
-  position:fixed;inset:0;z-index:49999;background:#000;display:none;
-  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  position:fixed;
+  top:calc(-1 * env(safe-area-inset-top));
+  right:calc(-1 * env(safe-area-inset-right));
+  bottom:calc(-1 * env(safe-area-inset-bottom));
+  left:calc(-1 * env(safe-area-inset-left));
+  z-index:49999;
+  background:#000000!important;
+  display:none;
+  margin:0!important;padding:0!important;border:0!important;
+  outline:0!important;box-shadow:none!important;
+  color:transparent!important;
+  overflow:hidden!important;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
-body.stealth-read-mode.standbyMode #stealthStandbyCover{display:block}
-body.stealth-read-mode.standbyMode #standbyFlash{background:#2b2b2b}
+body.stealth-read-mode.standbyMode #stealthStandbyCover{display:block!important}
+
+/* Read-only standby notification flash: dark gray only, no text/UI */
+body.stealth-read-mode.standbyMode #standbyFlash{
+  top:calc(-1 * env(safe-area-inset-top));
+  right:calc(-1 * env(safe-area-inset-right));
+  bottom:calc(-1 * env(safe-area-inset-bottom));
+  left:calc(-1 * env(safe-area-inset-left));
+  background:#2b2b2b
+}
 body.stealth-read-mode.standbyMode #standbyFlash.flashNow{
   display:block;animation:pbStealthStandbyFlash .30s ease-in-out 0s 4 alternate
 }
@@ -4759,9 +4812,22 @@ async function acquireStandbyWakeLock(){
     standbyWakeLock.addEventListener("release",()=>{standbyWakeLock=null},{once:true});
   }catch(e){console.debug("wakeLock",e)}
 }
+const standbyThemeMeta=document.querySelector('meta[name="theme-color"]');
+const standbyNormalThemeColor=standbyThemeMeta?.getAttribute("content")||"#000000";
+
+function applyStandbyVisualState(){
+  const blackStandby=standbyMode&&stealthReadMode;
+  document.documentElement.classList.toggle("standbyMode",standbyMode);
+  document.documentElement.classList.toggle("stealthStandbyBlack",blackStandby);
+  document.body.classList.toggle("standbyMode",standbyMode);
+  if(standbyThemeMeta){
+    standbyThemeMeta.setAttribute("content",blackStandby?"#000000":standbyNormalThemeColor);
+  }
+}
+
 async function setStandbyMode(on){
   standbyMode=!!on;
-  document.body.classList.toggle("standbyMode",standbyMode);
+  applyStandbyVisualState();
   const menu=$("menuStandby");
   if(menu)menu.textContent=standbyMode?"👁 待機モードを終了":"👁 待機モード";
   if(standbyMode){
@@ -4775,7 +4841,8 @@ function forceStandbyOff(){
   if(standbyMode || standbyWakeLock){
     setStandbyMode(false);
   }else{
-    document.body.classList.remove("standbyMode");
+    standbyMode=false;
+    applyStandbyVisualState();
     const menu=$("menuStandby");
     if(menu)menu.textContent="👁 待機モード";
   }
