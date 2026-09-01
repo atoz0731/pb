@@ -85,6 +85,115 @@ button,input{font:inherit}
 .modalBtns button{flex:1;border:0;border-radius:10px;padding:11px}
 .modalSave{background:#111;color:#fff;font-weight:700}
 
+/* PB通常モードと同じ予定入力レイアウト */
+#scheduleEditModal .modal{
+  width:calc(100vw - 24px);
+  max-width:520px;
+  padding:20px 16px calc(22px + env(safe-area-inset-bottom));
+  overflow-x:hidden;
+}
+#scheduleEditModal .modal h3{
+  margin:0 0 12px;
+  font-size:20px;
+}
+#scheduleEditModal input,
+#scheduleEditModal textarea{
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+#scheduleEditModal #editTitle{
+  height:46px;
+  border-radius:12px;
+  font-size:16px;
+}
+.scheduleDateLabel{
+  display:block;
+  margin:0 4px 6px;
+  font-size:11px;
+  line-height:1.25;
+  color:#777;
+}
+#scheduleEditModal input[type="date"],
+#scheduleEditModal input[type="time"]{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:56px!important;
+  min-height:56px!important;
+  padding:0 16px!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  border:1px solid #ccc!important;
+  border-radius:14px!important;
+  background:#f3f3f3!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  text-align:center!important;
+  font-size:18px!important;
+  color:#222!important;
+}
+#scheduleEditModal .allDayRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:56px;
+  padding:9px 2px;
+  margin:2px 0;
+}
+#scheduleEditModal .allDayRow label,
+#scheduleEditModal .privateRow label{
+  font-weight:600;
+}
+#scheduleEditModal .allDayCheck,
+#scheduleEditModal .privateCheck{
+  width:22px!important;
+  height:22px!important;
+  margin:0!important;
+}
+#scheduleEditModal .endDateRow{margin-top:2px}
+#scheduleEditModal .scheduleTimeRow{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:14px!important;
+  width:100%!important;
+}
+#scheduleEditModal .scheduleTimeField{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+}
+#scheduleEditModal .scheduleTimeField label{
+  display:block!important;
+  margin:0 4px 6px!important;
+  font-size:11px;
+  line-height:1.25!important;
+  color:#777;
+}
+#scheduleEditModal .privateRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:56px;
+  padding:9px 2px;
+  margin:2px 0;
+  border-top:1px solid #eee;
+}
+#scheduleEditModal #editMemo{
+  min-height:86px;
+  border-radius:12px;
+  margin-top:5px;
+}
+#scheduleEditModal .modalBtns{
+  gap:8px;
+  margin-top:8px;
+}
+#scheduleEditModal .modalBtns button{
+  min-height:44px;
+  border-radius:10px;
+  font-size:16px;
+}
+
 
 .addEventBtn{
   border:0;background:#111;color:#fff;border-radius:16px;
@@ -145,27 +254,37 @@ button,input{font:inherit}
 <div id="scheduleEditModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="scheduleEditModalTitle">予定を追加</h3>
-    <input id="editTitle" placeholder="予定">
-    <textarea id="editMemo" rows="4" placeholder="メモ"></textarea>
+    <input id="editTitle" placeholder="予定のタイトル">
+
+    <label class="scheduleDateLabel" for="editDate">日付</label>
+    <input id="editDate" type="date">
 
     <div class="allDayRow">
       <label for="editAllDay">終日</label>
       <input id="editAllDay" class="allDayCheck" type="checkbox">
     </div>
 
-    <input id="editDate" type="date">
-    <input id="editEndDate" type="date">
+    <div id="editEndDateRow" class="endDateRow hidden">
+      <input id="editEndDate" type="date" aria-label="終了日">
+    </div>
 
     <div id="editTimeRow" class="scheduleTimeRow">
       <div class="scheduleTimeField">
-        <label>開始</label>
+        <label for="editStartTime">開始時刻</label>
         <input id="editStartTime" type="time">
       </div>
       <div class="scheduleTimeField">
-        <label>終了</label>
+        <label for="editEndTime">終了時刻（任意）</label>
         <input id="editEndTime" type="time">
       </div>
     </div>
+
+    <div class="privateRow">
+      <label for="editPrivateOnly">自分のみに表示</label>
+      <input id="editPrivateOnly" class="privateCheck" type="checkbox">
+    </div>
+
+    <textarea id="editMemo" rows="3" placeholder="メモ（任意）"></textarea>
 
     <div class="modalBtns">
       <button id="cancelEditSchedule" type="button">キャンセル</button>
@@ -353,8 +472,11 @@ function localTimeValue(ts){
 }
 function syncEditFields(){
   const allDay=$("editAllDay").checked;
-  $("editEndDate").classList.toggle("hidden",!allDay);
+  $("editEndDateRow").classList.toggle("hidden",!allDay);
   $("editTimeRow").classList.toggle("hidden",allDay);
+  if(allDay&&!$("editEndDate").value){
+    $("editEndDate").value=$("editDate").value;
+  }
 }
 
 function resetScheduleForm(dateValue=""){
@@ -365,8 +487,9 @@ function resetScheduleForm(dateValue=""){
   $("editAllDay").checked=false;
   $("editDate").value=dateValue||dateId(selectedDate);
   $("editEndDate").value=dateValue||dateId(selectedDate);
-  $("editStartTime").value="";
+  $("editStartTime").value="09:00";
   $("editEndTime").value="";
+  $("editPrivateOnly").checked=false;
   syncEditFields();
 }
 function openScheduleCreate(){
@@ -387,13 +510,22 @@ function openScheduleEdit(s){
   $("editDate").value=startDate;
   $("editEndDate").value=endDate;
 
-  $("editStartTime").value=s.allDay?"":localTimeValue(s.startsAt);
+  $("editStartTime").value=s.allDay?"":(localTimeValue(s.startsAt)||"09:00");
   $("editEndTime").value=s.allDay?"":localTimeValue(s.endsAt);
+  $("editPrivateOnly").checked=!!s.privateOnly;
 
   syncEditFields();
   $("scheduleEditModal").classList.remove("hidden");
 }
 $("editAllDay")?.addEventListener("change",syncEditFields);
+$("editDate")?.addEventListener("change",()=>{
+  if($("editAllDay").checked){
+    const start=$("editDate").value;
+    if(!$("editEndDate").value || $("editEndDate").value<start){
+      $("editEndDate").value=start;
+    }
+  }
+});
 $("cancelEditSchedule")?.addEventListener("click",()=>{
   resetScheduleForm();
   $("scheduleEditModal").classList.add("hidden");
@@ -405,8 +537,6 @@ $("scheduleEditModal")?.addEventListener("click",e=>{
   }
 });
 $("saveEditSchedule")?.addEventListener("click",async()=>{
-  if(!editingSchedule)return;
-
   const title=$("editTitle").value.trim();
   const memo=$("editMemo").value.trim();
   const allDay=$("editAllDay").checked;
@@ -414,6 +544,7 @@ $("saveEditSchedule")?.addEventListener("click",async()=>{
   const endDate=allDay?($("editEndDate").value||date):date;
   const startTime=allDay?"12:00":($("editStartTime").value||"00:00");
   const endTime=allDay?"":$("editEndTime").value;
+  const privateOnly=$("editPrivateOnly").checked;
 
   if(!title||!date){alert("タイトルと日付を入力してください");return}
   if(allDay&&endDate<date){alert("終了日は開始日以降にしてください");return}
@@ -432,7 +563,7 @@ $("saveEditSchedule")?.addEventListener("click",async()=>{
   const btn=$("saveEditSchedule");
   btn.disabled=true;
   try{
-    const payload={title,memo,allDay,startDate:date,endDate,startsAt,endsAt};
+    const payload={title,memo,allDay,startDate:date,endDate,startsAt,endsAt,privateOnly};
     if(editingSchedule){
       await updateDoc(doc(db,"schedules",editingSchedule.id),payload);
     }else{
@@ -440,7 +571,6 @@ $("saveEditSchedule")?.addEventListener("click",async()=>{
         ...payload,
         uid:currentUID,
         senderId:currentId,
-        privateOnly:false,
         createdAt:serverTimestamp(),
         comments:[]
       });
