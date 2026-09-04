@@ -12,7 +12,7 @@
 html,body{margin:0;min-height:100%;background:#f5f5f7;color:#1c1c1e;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
 button,input,textarea{font:inherit}
 .hidden{display:none!important}
-#screen{min-height:100dvh;padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));display:flex;justify-content:center;align-items:flex-start}
+#screen{min-height:100dvh;padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;justify-content:flex-start;align-items:center}
 .card{position:relative;width:min(430px,100%);background:#fff;border:1px solid #e5e5e7;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.08);overflow:hidden}
 .header{height:48px;display:grid;grid-template-columns:40px 1fr 40px;align-items:center;border-bottom:1px solid #ececef;padding:0 8px}
 .headerTitle{text-align:center;font-size:17px;font-weight:700}
@@ -39,6 +39,51 @@ button,input,textarea{font:inherit}
 .itemMeta{margin-top:6px;font-size:9px;color:#8e8e93}
 .itemActions{display:flex;justify-content:flex-end;gap:8px;margin-top:7px}
 .itemActions button{border:0;background:transparent;color:#666;font-size:10px;padding:3px 4px}
+
+/* voice memo */
+.recordTapArea{
+  width:min(430px,100%);
+  flex:1 1 auto;
+  min-height:42dvh;
+  margin-top:8px;
+  background:transparent;
+  border:0;
+  outline:0;
+  box-shadow:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+#submitButton.recording{
+  background:#b8b8bd!important;
+  color:#fff!important;
+}
+.audioItem .itemText{font-weight:600}
+.audioPlayer{width:100%;margin-top:8px;height:34px}
+.audioMetaLine{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.audioBadge{font-size:9px;color:#8e8e93}
+.blackRecordScreen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:#000;
+  display:block;
+  overflow:hidden;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.blackReturnZone{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:55%;
+  background:transparent;
+  border:0;
+  outline:0;
+}
+body.black-record-open,
+html.black-record-open{
+  background:#000!important;
+  overflow:hidden!important;
+}
 </style>
 </head>
 <body>
@@ -79,6 +124,11 @@ button,input,textarea{font:inherit}
       <div id="memoList" class="list"></div>
     </section>
   </main>
+  <button id="recordTapArea" class="recordTapArea" type="button" aria-label="余白"></button>
+</div>
+
+<div id="blackRecordScreen" class="blackRecordScreen hidden" aria-hidden="true">
+  <button id="blackReturnZone" class="blackReturnZone" type="button" aria-label="戻る"></button>
 </div>
 
 <script type="module">
@@ -104,6 +154,188 @@ let currentUID="";
 let currentId="";
 let mode="memo";
 let editingMemoId=null;
+
+/* ===== Voice memo (local only) ===== */
+let mediaRecorder=null;
+let mediaStream=null;
+let recordingChunks=[];
+let recordingStartedAt=0;
+let recordingActive=false;
+let stopRecordingPromise=null;
+let finishHoldTimer=null;
+let finishHoldTriggered=false;
+
+const AUDIO_DB_NAME="pbMemoAudio";
+const AUDIO_DB_VERSION=1;
+const AUDIO_STORE="recordings";
+
+function openAudioDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(AUDIO_DB_NAME,AUDIO_DB_VERSION);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(AUDIO_STORE)){
+        const store=db.createObjectStore(AUDIO_STORE,{keyPath:"id"});
+        store.createIndex("uid","uid",{unique:false});
+        store.createIndex("createdAt","createdAt",{unique:false});
+      }
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function saveAudioRecord(row){
+  const db=await openAudioDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(AUDIO_STORE,"readwrite");
+    tx.objectStore(AUDIO_STORE).put(row);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e)};
+  });
+}
+async function loadAudioRecords(){
+  if(!currentUID)return [];
+  const db=await openAudioDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(AUDIO_STORE,"readonly");
+    const req=tx.objectStore(AUDIO_STORE).getAll();
+    req.onsuccess=()=>{
+      const rows=(req.result||[])
+        .filter(x=>x.uid===currentUID)
+        .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      db.close();resolve(rows);
+    };
+    req.onerror=()=>{const e=req.error;db.close();reject(e)};
+  });
+}
+async function deleteAudioRecord(id){
+  const db=await openAudioDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(AUDIO_STORE,"readwrite");
+    tx.objectStore(AUDIO_STORE).delete(id);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e)};
+  });
+}
+function chooseAudioMimeType(){
+  const candidates=["audio/mp4","audio/webm;codecs=opus","audio/webm"];
+  if(!window.MediaRecorder)return "";
+  return candidates.find(x=>MediaRecorder.isTypeSupported?.(x))||"";
+}
+function audioExt(mime=""){
+  return mime.includes("mp4")?"m4a":mime.includes("webm")?"webm":"audio";
+}
+function audioFileName(createdAt,mime){
+  const d=new Date(createdAt);
+  const p=n=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.${audioExt(mime)}`;
+}
+function setRecordingUI(on){
+  recordingActive=!!on;
+  $("submitButton").classList.toggle("recording",recordingActive);
+  $("submitButton").setAttribute("aria-label",recordingActive?"長押しで終了":"完了");
+}
+function openBlackRecordScreen(){
+  if(!recordingActive)return;
+  $("blackRecordScreen").classList.remove("hidden");
+  $("blackRecordScreen").setAttribute("aria-hidden","false");
+  document.documentElement.classList.add("black-record-open");
+  document.body.classList.add("black-record-open");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content","#000000");
+}
+function closeBlackRecordScreen(){
+  $("blackRecordScreen").classList.add("hidden");
+  $("blackRecordScreen").setAttribute("aria-hidden","true");
+  document.documentElement.classList.remove("black-record-open");
+  document.body.classList.remove("black-record-open");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content","#f5f5f7");
+}
+async function startRecording(){
+  if(recordingActive)return;
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
+    $("result").textContent="この端末では録音できません";
+    setTimeout(()=>$("result").textContent="",1800);
+    return;
+  }
+  try{
+    mediaStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    recordingChunks=[];
+    const mime=chooseAudioMimeType();
+    mediaRecorder=mime?new MediaRecorder(mediaStream,{mimeType:mime}):new MediaRecorder(mediaStream);
+    mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size)recordingChunks.push(e.data)};
+    stopRecordingPromise=new Promise((resolve,reject)=>{
+      mediaRecorder.onstop=async()=>{
+        try{
+          const finalMime=mediaRecorder?.mimeType||mime||"audio/mp4";
+          const blob=new Blob(recordingChunks,{type:finalMime});
+          const now=Date.now();
+          const row={
+            id:crypto.randomUUID?.()||`a-${now}-${Math.random().toString(36).slice(2,8)}`,
+            uid:currentUID,
+            createdAt:recordingStartedAt||now,
+            durationMs:Math.max(0,now-(recordingStartedAt||now)),
+            mime:finalMime,
+            fileName:audioFileName(recordingStartedAt||now,finalMime),
+            blob
+          };
+          if(blob.size>0)await saveAudioRecord(row);
+          resolve(row);
+        }catch(err){reject(err)}
+      };
+      mediaRecorder.onerror=e=>reject(e.error||new Error("recording error"));
+    });
+    recordingStartedAt=Date.now();
+    mediaRecorder.start(1000);
+    setRecordingUI(true);
+  }catch(e){
+    console.error(e);
+    mediaStream?.getTracks?.().forEach(x=>x.stop());
+    mediaStream=null;mediaRecorder=null;recordingChunks=[];
+    $("result").textContent="マイクを使用できませんでした";
+    setTimeout(()=>$("result").textContent="",1800);
+  }
+}
+async function finishRecording(){
+  if(!recordingActive)return;
+  setRecordingUI(false);
+  closeBlackRecordScreen();
+  const rec=mediaRecorder;
+  try{
+    if(rec&&rec.state!=="inactive")rec.stop();
+    await stopRecordingPromise;
+    $("result").textContent="保存しました";
+    setTimeout(()=>$("result").textContent="",1200);
+  }catch(e){
+    console.error(e);
+    $("result").textContent="保存できませんでした";
+    setTimeout(()=>$("result").textContent="",1800);
+  }finally{
+    mediaStream?.getTracks?.().forEach(x=>x.stop());
+    mediaStream=null;mediaRecorder=null;recordingChunks=[];
+    recordingStartedAt=0;stopRecordingPromise=null;
+  }
+}
+async function exportAudio(row){
+  const blob=row.blob;
+  const fileName=row.fileName||audioFileName(row.createdAt,row.mime||blob?.type||"");
+  try{
+    if(navigator.share&&window.File){
+      const file=new File([blob],fileName,{type:row.mime||blob.type||"application/octet-stream"});
+      if(!navigator.canShare||navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:fileName});
+        return;
+      }
+    }
+  }catch(e){
+    if(e?.name==="AbortError")return;
+    console.debug("share fallback",e);
+  }
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=fileName;a.rel="noopener";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
 
 function memoStoreKey(){return `pb.quickMemos.${currentUID||"guest"}`}
 function loadMemos(){
@@ -133,39 +365,67 @@ function setMode(next){
     $("textInput").value=$("textInput").value.replace(/[\r\n]+/g," ");
   }
 }
-function renderList(){
+async function renderList(){
   const box=$("memoList");
   const rows=loadMemos().sort((a,b)=>(b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0));
+  let audios=[];
+  try{audios=await loadAudioRecords()}catch(e){console.error("audio list",e)}
+  const combined=[
+    ...rows.map(x=>({kind:"text",createdAt:x.updatedAt||x.createdAt||0,row:x})),
+    ...audios.map(x=>({kind:"audio",createdAt:x.createdAt||0,row:x}))
+  ].sort((a,b)=>b.createdAt-a.createdAt);
+
   box.innerHTML="";
-  if(!rows.length){
+  if(!combined.length){
     box.innerHTML='<div class="hint" style="padding:24px 6px">メモはありません</div>';
     return;
   }
-  rows.forEach(row=>{
-    const item=document.createElement("article");item.className="item";
-    const text=document.createElement("div");text.className="itemText";text.textContent=row.text||"";
+
+  for(const entry of combined){
+    const row=entry.row;
+    const item=document.createElement("article");item.className="item"+(entry.kind==="audio"?" audioItem":"");
     const meta=document.createElement("div");meta.className="itemMeta";
-    meta.textContent=new Date(row.createdAt||Date.now()).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    meta.textContent=new Date(entry.createdAt||Date.now()).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
     const actions=document.createElement("div");actions.className="itemActions";
-    const edit=document.createElement("button");edit.type="button";edit.textContent="編集";
-    edit.onclick=()=>{
-      editingMemoId=row.id;
-      $("drawer").classList.add("hidden");
-      setMode("memo");
-      $("textInput").value=row.text||"";
-      $("submitButton").textContent="更新";
-      $("textInput").focus();
-    };
-    const del=document.createElement("button");del.type="button";del.textContent="削除";
-    del.onclick=()=>{
-      if(!confirm("このメモを削除しますか？"))return;
-      saveMemos(loadMemos().filter(x=>x.id!==row.id));
-      renderList();
-    };
-    actions.append(edit,del);
-    item.append(text,meta,actions);
+
+    if(entry.kind==="text"){
+      const text=document.createElement("div");text.className="itemText";text.textContent=row.text||"";
+      const edit=document.createElement("button");edit.type="button";edit.textContent="編集";
+      edit.onclick=()=>{
+        editingMemoId=row.id;
+        $("drawer").classList.add("hidden");
+        setMode("memo");
+        $("textInput").value=row.text||"";
+        $("submitButton").textContent="更新";
+        $("textInput").focus();
+      };
+      const del=document.createElement("button");del.type="button";del.textContent="削除";
+      del.onclick=()=>{
+        if(!confirm("このメモを削除しますか？"))return;
+        saveMemos(loadMemos().filter(x=>x.id!==row.id));
+        renderList();
+      };
+      actions.append(edit,del);
+      item.append(text,meta,actions);
+    }else{
+      const title=document.createElement("div");title.className="itemText";title.textContent="音声メモ";
+      const player=document.createElement("audio");player.className="audioPlayer";player.controls=true;player.preload="metadata";
+      const url=URL.createObjectURL(row.blob);
+      player.src=url;
+      player.addEventListener("emptied",()=>URL.revokeObjectURL(url),{once:true});
+      const save=document.createElement("button");save.type="button";save.textContent="ファイルに保存";
+      save.onclick=()=>exportAudio(row);
+      const del=document.createElement("button");del.type="button";del.textContent="削除";
+      del.onclick=async()=>{
+        if(!confirm("この音声メモを削除しますか？"))return;
+        await deleteAudioRecord(row.id);
+        renderList();
+      };
+      actions.append(save,del);
+      item.append(title,player,meta,actions);
+    }
     box.appendChild(item);
-  });
+  }
 }
 
 async function submit(){
@@ -229,7 +489,10 @@ async function submit(){
   }finally{btn.disabled=false}
 }
 
-document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>{
+  if(recordingActive)return;
+  setMode(b.dataset.mode);
+}));
 $("textInput").addEventListener("keydown",e=>{
   if(mode==="status"&&e.key==="Enter")e.preventDefault();
 });
@@ -239,8 +502,56 @@ $("textInput").addEventListener("input",()=>{
     x.value=x.value.replace(/[\r\n]+/g," ");
   }
 });
-$("submitButton").addEventListener("click",submit);
-$("menuButton").addEventListener("click",()=>{renderList();$("drawer").classList.remove("hidden")});
+$("submitButton").addEventListener("click",e=>{
+  if(recordingActive){
+    e.preventDefault();
+    return;
+  }
+  submit();
+});
+
+/* lower blank area: first tap starts recording; while recording, tap opens black screen */
+$("recordTapArea").addEventListener("click",async()=>{
+  if(!$("drawer").classList.contains("hidden"))return;
+  if(!recordingActive){
+    await startRecording();
+  }else{
+    openBlackRecordScreen();
+  }
+});
+
+/* black screen: only the lower area returns to the memo screen; recording continues */
+$("blackReturnZone").addEventListener("click",()=>closeBlackRecordScreen());
+
+/* while recording, "完了" must be held for 0.5 sec to stop */
+const finishBtn=$("submitButton");
+const beginFinishHold=e=>{
+  if(!recordingActive)return;
+  e.preventDefault();
+  finishHoldTriggered=false;
+  clearTimeout(finishHoldTimer);
+  finishHoldTimer=setTimeout(async()=>{
+    finishHoldTriggered=true;
+    await finishRecording();
+  },500);
+};
+const cancelFinishHold=e=>{
+  if(!recordingActive)return;
+  e.preventDefault();
+  clearTimeout(finishHoldTimer);
+  finishHoldTimer=null;
+};
+finishBtn.addEventListener("pointerdown",beginFinishHold);
+finishBtn.addEventListener("pointerup",cancelFinishHold);
+finishBtn.addEventListener("pointercancel",cancelFinishHold);
+finishBtn.addEventListener("pointerleave",cancelFinishHold);
+finishBtn.addEventListener("contextmenu",e=>{if(recordingActive)e.preventDefault()});
+
+$("menuButton").addEventListener("click",async()=>{
+  if(recordingActive)return;
+  await renderList();
+  $("drawer").classList.remove("hidden");
+});
 $("drawerClose").addEventListener("click",()=>$("drawer").classList.add("hidden"));
 $("loginButton").addEventListener("click",async()=>{
   const id=$("loginId").value.trim(),pw=$("loginPassword").value;
@@ -259,6 +570,12 @@ onAuthStateChanged(auth,user=>{
     $("composeBox").classList.remove("hidden");
     setMode("memo");
   }else{
+    if(recordingActive){
+      try{mediaRecorder?.stop()}catch(e){}
+      mediaStream?.getTracks?.().forEach(x=>x.stop());
+      recordingActive=false;
+      closeBlackRecordScreen();
+    }
     currentUID="";currentId="";
     $("composeBox").classList.add("hidden");
     $("loginBox").classList.remove("hidden");
