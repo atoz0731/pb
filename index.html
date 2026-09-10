@@ -2018,6 +2018,20 @@ body.stealth-read-mode.standbyMode *::-webkit-scrollbar{
 }
 body.stealth-read-mode.standbyMode #stealthStandbyCover{display:block!important}
 
+/* Tiny persistent arrival marker while read-only standby is active */
+#stealthStandbyMessageDot{
+  position:fixed;
+  top:calc(env(safe-area-inset-top) + 6px);
+  right:7px;
+  width:5px;height:5px;border-radius:50%;
+  background:#ff2d2d;
+  z-index:50001;
+  display:none;
+  pointer-events:none;
+  box-shadow:none;
+}
+body.stealth-read-mode.standbyMode #stealthStandbyMessageDot.show{display:block!important}
+
 /* Read-only standby notification flash: dark gray only, no text/UI */
 body.stealth-read-mode.standbyMode #standbyFlash{
   top:calc(-1 * env(safe-area-inset-top));
@@ -4151,6 +4165,7 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 
 <div id="standbyFlash" aria-hidden="true"></div>
 <div id="stealthStandbyCover" aria-label="待機中" role="button" tabindex="0"></div>
+<div id="stealthStandbyMessageDot" aria-hidden="true"></div>
 
 
 <section id="quickMemoScreen" class="hidden" aria-label="メモ">
@@ -4772,10 +4787,10 @@ let miniLeafletMap=null;
 let miniLeafletLayer=null;
 let miniMapSizeIndex=0;
 let appInitialized=false, hiddenAt=0;
-const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","😌","🤔","😍"];
-const REACTION_MORE=["😊","😆","😎","😂","😭","😘","🥰","👀","🙏","🎉","✨","💕","💯","👏","🙌","🤍"];
+const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
+const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.7.5e";
+const APP_VERSION="3.7.5g";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -4804,6 +4819,12 @@ const DEFAULT_SETTINGS={
 let pbSettings={...DEFAULT_SETTINGS};
 let unreadTalkCount=0;
 let standbyMode=false, standbyWakeLock=null;
+let stealthStandbyHadMessage=false;
+
+function setStealthStandbyMessageDot(on){
+  stealthStandbyHadMessage=!!on;
+  $("stealthStandbyMessageDot")?.classList.toggle("show",stealthStandbyHadMessage);
+}
 
 async function acquireStandbyWakeLock(){
   if(!standbyMode||document.hidden||!("wakeLock" in navigator))return;
@@ -4826,7 +4847,10 @@ function applyStandbyVisualState(){
 }
 
 async function setStandbyMode(on){
+  const turningOn=!!on&&!standbyMode;
   standbyMode=!!on;
+  if(turningOn&&stealthReadMode)setStealthStandbyMessageDot(false);
+  if(!standbyMode)setStealthStandbyMessageDot(false);
   applyStandbyVisualState();
   const menu=$("menuStandby");
   if(menu)menu.textContent=standbyMode?"👁 待機モードを終了":"👁 待機モード";
@@ -5320,12 +5344,16 @@ function checkRelock(){
 }
 document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
+    const leavingStealthStandby=standbyMode&&stealthReadMode;
     if(standbyMode)setStandbyMode(false);
+    if(leavingStealthStandby){lockToPin();return;}
     rememberHiddenTime();
   }else setTimeout(checkRelock,0);
 });
 window.addEventListener("pagehide",()=>{
+  const leavingStealthStandby=standbyMode&&stealthReadMode;
   if(standbyMode)setStandbyMode(false);
+  if(leavingStealthStandby){lockToPin();return;}
   rememberHiddenTime();
 });
 window.addEventListener("pageshow",()=>setTimeout(checkRelock,0));
@@ -5770,12 +5798,16 @@ $("menuStandby").onclick=async()=>{
   await setStandbyMode(!standbyMode);
 };
 $("stealthStandbyCover")?.addEventListener("click",async()=>{
-  if(stealthReadMode&&standbyMode)await setStandbyMode(false);
+  if(stealthReadMode&&standbyMode){
+    await setStandbyMode(false);
+    lockToPin();
+  }
 });
 $("stealthStandbyCover")?.addEventListener("keydown",async e=>{
   if((e.key==="Enter"||e.key===" ")&&stealthReadMode&&standbyMode){
     e.preventDefault();
     await setStandbyMode(false);
+    lockToPin();
   }
 });
 $("menuVoice").onclick=async()=>{$("headerMenu").classList.add("hidden");await openVoiceRoom()};
@@ -6009,6 +6041,7 @@ function clearUnreadTalk(){
 function handleIncomingMessage(data){
   // Read-only black standby: visual signal only. Do not sound/vibrate/notify or alter read state.
   if(stealthReadMode&&standbyMode){
+    setStealthStandbyMessageDot(true);
     flashStandbyScreen();
     return;
   }
