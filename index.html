@@ -154,7 +154,6 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .headerRight{display:flex;align-items:center;gap:2px}
 .headerIcon{border:0;background:none;color:#fff;font-size:23px;line-height:1;padding:7px 8px}
 #headerClockButton{border:0;background:none;color:#fff;font-size:18px;line-height:1;padding:7px 7px;opacity:.92}
-body.stealth-read-mode #headerClockButton{display:none!important}
 .headerMenu{position:absolute;right:10px;top:calc(48px + env(safe-area-inset-top));width:220px;background:#fff;color:#222;border-radius:14px;box-shadow:0 5px 24px rgba(0,0,0,.2);overflow:hidden;z-index:100}
 .headerMenu button{display:block;width:100%;border:0;background:#fff;text-align:left;padding:13px 15px;border-bottom:1px solid #eee}
 .headerMenu button:last-child{border:0}
@@ -5297,7 +5296,7 @@ document.addEventListener("click",e=>{
     ["headerMenuButton","menuLock","reloadButton","loadMore","newMessageButton",
      "talkSearchButton","talkDateButton","clearTalkFilter","closeSearchPanel",
      "closeDateFilter","customDateApply","noteFilterMine","noteFilterOther",
-     "scheduleFilterMine","scheduleFilterOther","selfStatusButton","otherStatusButton","menuStandby"].includes(b.id);
+     "scheduleFilterMine","scheduleFilterOther","selfStatusButton","otherStatusButton","menuStandby","headerClockButton"].includes(b.id);
   if(!allowed){e.preventDefault();e.stopImmediatePropagation()}
 },true);
 
