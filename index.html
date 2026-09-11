@@ -2028,16 +2028,32 @@ body.stealth-read-mode.standbyMode #stealthStandbyCover{display:block!important}
   left:calc(-1 * env(safe-area-inset-left));
   z-index:49999;
   display:none;
-  align-items:center;justify-content:center;flex-direction:column;
+  align-items:center;justify-content:flex-start;flex-direction:column;
   background:#000!important;color:#fff;
-  margin:0!important;padding:0!important;border:0!important;
+  margin:0!important;
+  padding:calc(env(safe-area-inset-top) + 37vh) 0 0 0!important;
+  border:0!important;
   outline:0!important;box-shadow:none!important;
   overflow:hidden!important;touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
+  text-align:center;
 }
 body.standbyMode:not(.stealth-read-mode) #clockStandbyCover{display:flex!important}
-#clockStandbyTime{font-size:clamp(62px,19vw,96px);font-weight:300;letter-spacing:-.04em;line-height:1}
-#clockStandbyDate{margin-top:14px;font-size:16px;font-weight:500;letter-spacing:.02em;opacity:.86}
+#clockStandbyTime{
+  font-size:clamp(62px,19vw,96px);
+  font-weight:300;
+  letter-spacing:-.04em;
+  line-height:1;
+  transform:translateX(-6px);
+}
+#clockStandbyDate{
+  margin-top:14px;
+  font-size:16px;
+  font-weight:500;
+  letter-spacing:.02em;
+  opacity:.86;
+  transform:translateX(-4px);
+}
 #clockStandbyMessageDot{
   position:fixed;top:calc(env(safe-area-inset-top) + 6px);right:7px;
   width:5px;height:5px;border-radius:50%;background:#ff2d2d;
