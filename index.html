@@ -480,8 +480,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
   text-overflow:ellipsis;
   text-align:left;
 }
-.eventTitle.mine{background:#2f6fed}
-.eventTitle.other{background:#e24a4a}
+.eventTitle.mine,.eventTitle.other{background:var(--person-color)}
 .calendarModeRow{
   display:flex;
   align-items:center;
@@ -581,9 +580,9 @@ audio{display:none}
 }
 #soloList .post::before{
   content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;
-  border-radius:0 4px 4px 0;background:#e24a4a
+  border-radius:0 4px 4px 0;background:var(--person-color,#e24a4a)
 }
-#soloList .post.mineSolo::before{background:#2f6fed}
+#soloList .post.mineSolo::before{background:var(--person-color,#2f6fed)}
 #soloList .postText{margin-top:5px;line-height:1.48;white-space:pre-wrap;overflow-wrap:anywhere}
 #soloList .postUser{font-size:11px;font-weight:800}
 #soloList .postTime{font-size:9px}
@@ -3197,12 +3196,12 @@ body.night-mode .statusEmpty{color:#aeb4bb!important}
   border-width:2px!important;
 }
 #selfStatusButton{
-  border-color:#2f7df6!important;
-  color:#2f7df6!important;
+  border-color:var(--person-color,#2f7df6)!important;
+  color:var(--person-color,#2f7df6)!important;
 }
 #otherStatusButton{
-  border-color:#e04a4a!important;
-  color:#e04a4a!important;
+  border-color:var(--person-color,#e04a4a)!important;
+  color:var(--person-color,#e04a4a)!important;
 }
 .statusAvatar.hasStatus::after{
   width:7px!important;
@@ -4000,8 +3999,8 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 .recordGrid.two::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:#ddd;transform:translateX(-.5px)}
 .recordGrid.one{display:block}
 .recordCard{position:relative;border-radius:12px;background:#fff;border:1px solid #e4e4e4;padding:8px 9px;margin-bottom:7px;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.025)}
-.recordCard.mine{grid-column:1;border-left:3px solid #2f6fed}
-.recordCard.other{grid-column:3;border-left:3px solid #e24a4a}
+.recordCard.mine{grid-column:1;border-left:3px solid var(--person-color,#2f6fed)}
+.recordCard.other{grid-column:3;border-left:3px solid var(--person-color,#e24a4a)}
 .recordCard.both{grid-column:1/4;border-left:3px solid #8a63d2;margin-left:8px;margin-right:8px}
 .recordGrid.one .recordCard{width:100%;margin-left:0;margin-right:0}
 .recordTime{font-size:9px;color:#999;margin-bottom:2px}
@@ -4022,7 +4021,10 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 .recordTargetBtn{border:1px solid #d8d8d8;background:#fff;color:#666;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:700}
 .recordTargetBtn.active{background:var(--theme,#222);border-color:var(--theme,#222);color:#fff}
 .recordTimeField label{display:block;font-size:11px;color:#777;margin:7px 0 4px}
-#recordModal input[type="date"],#recordModal input[type="time"]{width:100%;box-sizing:border-box}
+#recordModal .modal{box-sizing:border-box;width:calc(100vw - 24px);max-width:520px;min-width:0;overflow-x:hidden}
+#recordModal input,#recordModal textarea{box-sizing:border-box;max-width:100%;min-width:0}
+#recordModal .recordTimeField{min-width:0}
+#recordModal input[type="date"],#recordModal input[type="time"]{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box}
 body.night-mode #recordView,body.night-mode #recordTimeline{background:#111}
 body.night-mode .recordToolbar{background:#171717;border-color:#333}
 body.night-mode .recordCard{background:#1d1d1d;border-color:#343434;color:#eee}
@@ -7919,6 +7921,7 @@ function renderSolo(){
   posts.forEach(data=>{
     const post=document.createElement("article");
     post.className="post"+(data.uid===currentUID?" mineSolo":"");post.dataset.soloId=data.id;
+    post.style.setProperty("--person-color",userColor(data.uid));
 
     const top=document.createElement("div");
     top.className="soloPostTop";
@@ -8419,8 +8422,8 @@ function findOtherId(){
 }
 function updateStatusAvatarLabels(){
   const self=$("selfStatusButton"),other=$("otherStatusButton");
-  if(self)self.textContent=statusInitial(currentId,"自");
-  if(other)other.textContent=statusInitial(findOtherId(),"相");
+  if(self){self.textContent=statusInitial(currentId,"自");self.style.setProperty("--person-color",userColor(currentUID))}
+  if(other){other.textContent=statusInitial(findOtherId(),"相");other.style.setProperty("--person-color",userColor("other"))}
 }
 
 
@@ -8740,8 +8743,10 @@ document.addEventListener("click",e=>{
 function startOfDay(d){const x=new Date(d);x.setHours(0,0,0,0);return x}
 function dateId(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function userColor(uid){
-  if(uid===currentUID)return "#2f6fed";
-  return "#e24a4a"; /* 3.1: 自分=青、相手=赤 */
+  const loginId=(currentId||"").toLowerCase();
+  if(loginId==="natsuki")return uid===currentUID?"#2f6fed":"#e24a4a";
+  if(loginId==="hitomi")return uid===currentUID?"#e24a4a":"#2f6fed";
+  return uid===currentUID?"#2f6fed":"#e24a4a";
 }
 function listenSchedules(){
   if(unsubscribeSchedules)unsubscribeSchedules();
@@ -8889,6 +8894,7 @@ function renderCalendar(){
       events.slice(0,2).forEach(s=>{
         const ev=document.createElement("div");
         ev.className=`eventTitle ${s.uid===currentUID?"mine":"other"}`;
+        ev.style.setProperty("--person-color",userColor(s.uid));
         ev.textContent=s.title||"予定";
         cell.appendChild(ev);
       });
@@ -9221,20 +9227,23 @@ function renderRecordTimeline(){
     items.forEach(r=>{
       const side=recordTargetOwner(r);
       const c=document.createElement("article");c.className=`recordCard ${side}`;
+      if(side!=="both")c.style.setProperty("--person-color",userColor(side==="mine"?currentUID:"other"));
       const tm=recordTimeText(r);if(tm){const t=document.createElement("div");t.className="recordTime";t.textContent=tm;c.appendChild(t)}
       const title=document.createElement("div");title.className="recordTitle";title.textContent=r.title||"(無題)";c.appendChild(title);
       if(r.memo){const memo=document.createElement("div");memo.className="recordMemo";memo.textContent=r.memo;c.appendChild(memo)}
       const meta=document.createElement("div");meta.className="recordMeta";
       const target=document.createElement("span");target.className="target";target.textContent=recordTargetLabel(side);meta.appendChild(target);
       if(r.privateOnly){const lock=document.createElement("span");lock.textContent="🔒 自分のみ";meta.appendChild(lock)}
-      if(r.uid===currentUID){
+      if(r.uid===currentUID||side==="mine"){
         const wrap=document.createElement("span");wrap.className="recordMenu";
         const btn=document.createElement("button");btn.type="button";btn.className="recordMenuBtn";btn.textContent="…";
         const pop=document.createElement("span");pop.className="recordMenuPopup hidden";
         const edit=document.createElement("button");edit.type="button";edit.textContent="編集";edit.onclick=e=>{e.stopPropagation();pop.classList.add("hidden");openRecordEditor(r)};
+        pop.appendChild(edit);
         const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="削除";del.onclick=async e=>{e.stopPropagation();pop.classList.add("hidden");if(confirm("この記録を削除しますか？"))await deleteDoc(doc(db,"records",r.id))};
+        pop.appendChild(del);
         btn.onclick=e=>{e.stopPropagation();document.querySelectorAll(".recordMenuPopup").forEach(x=>{if(x!==pop)x.classList.add("hidden")});pop.classList.toggle("hidden")};
-        pop.append(edit,del);wrap.append(btn,pop);meta.appendChild(wrap);
+        wrap.append(btn,pop);meta.appendChild(wrap);
       }
       c.appendChild(meta);grid.appendChild(c);
     });
@@ -9257,8 +9266,11 @@ function openRecordEditor(r=null){
   if(r){
     if(r.target==="both")setRecordTarget("both");
     else if(r.targetUid)setRecordTarget(r.targetUid===currentUID?"mine":"other");
-    else setRecordTarget(r.target||"mine");
+    else setRecordTarget(recordTargetOwner(r)==="mine"?"mine":recordTargetOwner(r)==="other"?"other":"both");
   }else setRecordTarget("mine");
+  const ownRecord=!r||r.uid===currentUID;
+  document.querySelectorAll(".recordTargetBtn").forEach(b=>b.disabled=!ownRecord);
+  $("recordPrivateInput").disabled=!ownRecord;
   $("recordModal").classList.remove("hidden");
 }
 $("recordPrevMonth")?.addEventListener("click",()=>{recordMonth=new Date(recordMonth.getFullYear(),recordMonth.getMonth()-1,1);renderRecordTimeline()});
@@ -9277,9 +9289,10 @@ $("saveRecord")?.addEventListener("click",async()=>{
   let targetUid=null;
   if(recordTarget==="mine")targetUid=currentUID;
   else if(recordTarget==="other"){const other=[...currentStatuses.keys()].find(uid=>uid!==currentUID);targetUid=other||null}
-  const payload={title,memo,date,time,hasTime:!!time,occurredAt,target:recordTarget,targetUid,privateOnly,updatedAt:serverTimestamp()};
+  const content={title,memo,date,time,hasTime:!!time,occurredAt,updatedAt:serverTimestamp()};
+  const payload={...content,target:recordTarget,targetUid,privateOnly};
   try{
-    if(editingRecord)await updateDoc(doc(db,"records",editingRecord.id),payload);
+    if(editingRecord)await updateDoc(doc(db,"records",editingRecord.id),editingRecord.uid===currentUID?payload:content);
     else await addDoc(collection(db,"records"),{...payload,uid:currentUID,senderId:currentId,createdAt:serverTimestamp()});
     $("recordModal").classList.add("hidden");editingRecord=null;recordMonth=new Date(occurredAt.toDate().getFullYear(),occurredAt.toDate().getMonth(),1);renderRecordTimeline();
   }catch(err){console.error(err);alert("記録を保存できませんでした")}
