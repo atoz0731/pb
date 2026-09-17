@@ -4677,6 +4677,13 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
     </div>
     <div class="settingsNote">Firebaseコンソールの実使用量ではなく、PBが読み取れるドキュメントサイズからの概算です。計算時は全件読み取りが発生します。画像は30日で削除対象になります。</div>
 
+    <div class="settingsGroup">プッシュ通知（テスト）</div>
+    <div class="settingRow"><div><div class="settingText">端末ごとの通知設定</div><div class="settingSub">通知許可・登録・テスト送信は専用ページで操作します</div></div><button type="button" id="openPushSettings">開く ↗</button></div>
+    <div class="settingsGroup">Firestore 読み書き調査</div>
+    <div class="settingsNote">この端末のPBから発行した処理を種類・コレクション別に計測します。Firebaseコンソールの課金対象回数とは一致しません。内容やIDは保存しません。</div>
+    <pre id="firestoreDiagOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f3f3;color:#333;border-radius:10px;padding:10px;font:11px/1.6 ui-monospace,monospace">読み込み中…</pre>
+    <div class="settingRow"><button type="button" id="refreshFirestoreDiag">表示更新</button><button type="button" id="copyFirestoreDiag">結果コピー</button><button type="button" id="resetFirestoreDiag">計測リセット</button></div>
+
     <div class="settingsGroup">通知・バッジ診断</div>
     <div class="settingRow">
       <div>
@@ -4906,9 +4913,9 @@ import {
   getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import {
-  getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot,
-  serverTimestamp, doc, updateDoc, deleteDoc, setDoc, getDoc, startAfter,
-  getDocs, arrayUnion, arrayRemove, where, Timestamp, documentId, startAt, endAt
+  getFirestore, collection, addDoc as fsAddDoc, query, orderBy, limit, onSnapshot as fsOnSnapshot,
+  serverTimestamp, doc, updateDoc as fsUpdateDoc, deleteDoc as fsDeleteDoc, setDoc as fsSetDoc, getDoc as fsGetDoc, startAfter,
+  getDocs as fsGetDocs, arrayUnion, arrayRemove, where, Timestamp, documentId, startAt, endAt
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -4924,6 +4931,71 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const $ = id => document.getElementById(id);
+
+/* Firestore diagnostics: LOCAL per-device telemetry. Not Firebase billing figures.
+   Never record document bodies, message text, UID, or auth information. */
+const pbDiagKey='pb.firestoreDiagnostics.v1';
+let pbDiag=(()=>{try{return JSON.parse(localStorage.getItem(pbDiagKey))||{}}catch{return {}}})();
+if(!pbDiag.byPath||!pbDiag.startedAt)pbDiag={startedAt:Date.now(),byPath:{},activeListeners:0};
+let pbDiagRenderTimer=0;
+function diagPath(ref){
+  try{
+    const p=ref?.path||ref?._query?.path?.canonicalString?.()||'unknown';
+    const seg=String(p).replace(/^projects\/[^/]+\/databases\/[^/]+\/documents\//,'').split('/').filter(Boolean);
+    return seg[0]||'unknown';
+  }catch{return 'unknown'}
+}
+function diagRecord(ref,kind,n=1){
+  try{
+    const k=diagPath(ref),entry=pbDiag.byPath[k]||(pbDiag.byPath[k]={});
+    entry[kind]=(entry[kind]||0)+n;
+    pbDiag[kind]=(pbDiag[kind]||0)+n;
+    pbDiag.updatedAt=Date.now();
+    if(!pbDiagRenderTimer)pbDiagRenderTimer=setTimeout(()=>{
+      pbDiagRenderTimer=0;
+      try{localStorage.setItem(pbDiagKey,JSON.stringify(pbDiag))}catch{}
+      diagRender();
+    },1200);
+  }catch{}
+}
+const addDoc=(...a)=>{diagRecord(a[0],'add');return fsAddDoc(...a)};
+const updateDoc=(...a)=>{diagRecord(a[0],'update');return fsUpdateDoc(...a)};
+const setDoc=(...a)=>{diagRecord(a[0],'set');return fsSetDoc(...a)};
+const deleteDoc=(...a)=>{diagRecord(a[0],'delete');return fsDeleteDoc(...a)};
+const getDoc=async(...a)=>{diagRecord(a[0],'get');return fsGetDoc(...a)};
+const getDocs=async(...a)=>{const r=await fsGetDocs(...a);diagRecord(a[0],'queryDocs',r.size||0);diagRecord(a[0],'queryCalls');return r};
+function onSnapshot(ref,...args){
+  let active=true;
+  const idx=args.findIndex(v=>typeof v==='function'||(v&&typeof v==='object'&&typeof v.next==='function'));
+  if(idx>=0){
+    const next=args[idx];
+    const track=snap=>{
+      try{
+        if(!snap.metadata?.fromCache){
+          const n=typeof snap.docChanges==='function'?snap.docChanges({includeMetadataChanges:false}).length:(snap.exists?.()?1:0);
+          if(n)diagRecord(ref,'snapshotChanges',n);
+        }
+        diagRecord(ref,'snapshotEvents');
+      }catch{}
+    };
+    if(typeof next==='function')args[idx]=snap=>{track(snap);return next(snap)};
+    else args[idx]={...next,next:snap=>{track(snap);return next.next(snap)}};
+  }
+  const unsubscribe=fsOnSnapshot(ref,...args);
+  pbDiag.activeListeners=(pbDiag.activeListeners||0)+1;
+  diagRender();
+  return ()=>{if(active){active=false;pbDiag.activeListeners=Math.max(0,(pbDiag.activeListeners||0)-1);diagRender()}unsubscribe()};
+}
+function diagRender(){
+  const el=$('firestoreDiagOutput');if(!el)return;
+  const keys=Object.entries(pbDiag.byPath||{}).sort((a,b)=>
+    ((b[1].add||0)+(b[1].set||0)+(b[1].update||0))-((a[1].add||0)+(a[1].set||0)+(a[1].update||0)));
+  const total=(pbDiag.add||0)+(pbDiag.set||0)+(pbDiag.update||0);
+  const date=new Date(pbDiag.startedAt||Date.now()).toLocaleString('ja-JP');
+  el.textContent=`この端末・計測開始 ${date}\n書込呼出 ${total}（追加 ${pbDiag.add||0} / 更新 ${pbDiag.update||0} / 保存 ${pbDiag.set||0}）・削除 ${pbDiag.delete||0}\n単発読取 ${pbDiag.get||0} / クエリ取得件数 ${pbDiag.queryDocs||0} / リスナー変更通知 ${pbDiag.snapshotChanges||0}\n稼働中リスナー ${pbDiag.activeListeners||0}\n\n`+
+    (keys.map(([path,v])=>`${path}: 書込 ${(v.add||0)+(v.set||0)+(v.update||0)} / 削除 ${v.delete||0} / 取得 ${(v.get||0)+(v.queryDocs||0)} / 監視変更 ${v.snapshotChanges||0}`).join('\n')||'まだ記録がありません');
+}
+
 
 let pin="", pinPassed=false, currentUID="", currentId="";
 let camouflageMode=false, camoReplyTarget=null;
@@ -6043,10 +6115,29 @@ $("menuSchedulePage")?.addEventListener("click",()=>{
   location.href=u.toString();
 });
 
+$("openPushSettings")?.addEventListener("click",()=>{
+  $("settingsModal")?.classList.add("hidden");
+  forceStandbyOff();
+  location.href=new URL("pb-push-settings.html",location.href).toString();
+});
+$("refreshFirestoreDiag")?.addEventListener("click",diagRender);
+$("copyFirestoreDiag")?.addEventListener("click",()=>{
+  const v=$("firestoreDiagOutput")?.textContent||"";
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(v).then(()=>alert("コピーしました")).catch(()=>prompt("結果をコピー",v));
+  else prompt("結果をコピー",v);
+});
+$("resetFirestoreDiag")?.addEventListener("click",()=>{
+  if(!confirm("この端末の計測結果をリセットしますか？"))return;
+  const active=pbDiag.activeListeners||0;
+  pbDiag={startedAt:Date.now(),byPath:{},activeListeners:active};
+  try{localStorage.setItem(pbDiagKey,JSON.stringify(pbDiag))}catch{}
+  diagRender();
+});
 $("menuSettings").onclick=()=>{
   $("headerMenu").classList.add("hidden");
   closeAuxWindows("settingsModal");
   syncSettingsControls();
+  diagRender();
   $("settingsModal").classList.remove("hidden");
 };
 
