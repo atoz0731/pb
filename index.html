@@ -4684,7 +4684,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
     <div class="settingsGroup">プッシュ通知（テスト）</div>
     <div class="settingRow"><div><div class="settingText">端末ごとの通知設定</div><div class="settingSub">通知許可・登録・テスト送信は専用ページで操作します</div></div><button type="button" id="openPushSettings">開く ↗</button></div>
     <div class="settingsGroup">Firestore 読み書き調査</div>
-    <div class="settingsNote">この端末のPBから発行した処理を種類・コレクション別に計測します。Firebaseコンソールの課金対象回数とは一致しません。内容やIDは保存しません。</div>
+    <div class="settingsNote">この端末のPBから発行した処理を種類・コレクション別に計測します。Firebaseコンソールの課金対象回数とは一致しません。内容やIDは保存しません。稼働中リスナーは現在値のため、リセット後も0にはなりません。</div>
     <pre id="firestoreDiagOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f3f3;color:#333;border-radius:10px;padding:10px;font:11px/1.6 ui-monospace,monospace">読み込み中…</pre>
     <div class="settingRow"><button type="button" id="refreshFirestoreDiag">表示更新</button><button type="button" id="copyFirestoreDiag">結果コピー</button><button type="button" id="resetFirestoreDiag">計測リセット</button></div>
 
@@ -4941,7 +4941,22 @@ const $ = id => document.getElementById(id);
 const pbDiagKey='pb.firestoreDiagnostics.v1';
 let pbDiag=(()=>{try{return JSON.parse(localStorage.getItem(pbDiagKey))||{}}catch{return {}}})();
 if(!pbDiag.byPath||!pbDiag.startedAt)pbDiag={startedAt:Date.now(),byPath:{},activeListeners:0};
+pbDiag.resetVersion=pbDiag.resetVersion||pbDiag.startedAt||Date.now();
+// リスナーはページを開き直すと消えるため、保存済みの件数は引き継がない。
+pbDiag.activeListeners=0;
 let pbDiagRenderTimer=0;
+function diagAdoptLatestReset(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(pbDiagKey)||"null");
+    if(!saved?.byPath)return false;
+    const savedVersion=saved.resetVersion||saved.startedAt||0;
+    const currentVersion=pbDiag.resetVersion||pbDiag.startedAt||0;
+    if(savedVersion<=currentVersion)return false;
+    const active=pbDiag.activeListeners||0;
+    pbDiag={...saved,activeListeners:active,resetVersion:savedVersion};
+    return true;
+  }catch{return false}
+}
 function diagPath(ref){
   try{
     const p=ref?.path||ref?._query?.path?.canonicalString?.()||'unknown';
@@ -4951,12 +4966,15 @@ function diagPath(ref){
 }
 function diagRecord(ref,kind,n=1){
   try{
+    // 別タブでリセットされた場合、古い累計を再保存しない。
+    diagAdoptLatestReset();
     const k=diagPath(ref),entry=pbDiag.byPath[k]||(pbDiag.byPath[k]={});
     entry[kind]=(entry[kind]||0)+n;
     pbDiag[kind]=(pbDiag[kind]||0)+n;
     pbDiag.updatedAt=Date.now();
     if(!pbDiagRenderTimer)pbDiagRenderTimer=setTimeout(()=>{
       pbDiagRenderTimer=0;
+      diagAdoptLatestReset();
       try{localStorage.setItem(pbDiagKey,JSON.stringify(pbDiag))}catch{}
       diagRender();
     },1200);
@@ -4999,6 +5017,9 @@ function diagRender(){
   el.textContent=`この端末・計測開始 ${date}\n書込呼出 ${total}（追加 ${pbDiag.add||0} / 更新 ${pbDiag.update||0} / 保存 ${pbDiag.set||0}）・削除 ${pbDiag.delete||0}\n単発読取 ${pbDiag.get||0} / クエリ取得件数 ${pbDiag.queryDocs||0} / リスナー変更通知 ${pbDiag.snapshotChanges||0}\n稼働中リスナー ${pbDiag.activeListeners||0}\n\n`+
     (keys.map(([path,v])=>`${path}: 書込 ${(v.add||0)+(v.set||0)+(v.update||0)} / 削除 ${v.delete||0} / 取得 ${(v.get||0)+(v.queryDocs||0)} / 監視変更 ${v.snapshotChanges||0}`).join('\n')||'まだ記録がありません');
 }
+window.addEventListener("storage",e=>{
+  if(e.key===pbDiagKey&&diagAdoptLatestReset())diagRender();
+});
 
 
 let pin="", pinPassed=false, currentUID="", currentId="";
@@ -5366,10 +5387,16 @@ async function runShortcutBadgeTest(){
 }
 
 /* v3.4.8 typing presence */
-let typingTimer=null,typingUnsub=null;
+let typingTimer=null,typingUnsub=null,typingIsOn=false,typingLastWriteAt=0,typingStateUid="";
 async function setTypingState(on){
   if(!currentUID||!currentId)return;
-  try{await setDoc(doc(db,"typing",currentUID),{uid:currentUID,senderId:currentId,typing:!!on,updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn(e)}
+  if(typingStateUid!==currentUID){typingStateUid=currentUID;typingIsOn=false;typingLastWriteAt=0}
+  const now=Date.now();
+  if(on?typingIsOn&&now-typingLastWriteAt<3000:!typingIsOn)return;
+  typingIsOn=!!on;typingLastWriteAt=now;
+  const uid=currentUID;
+  try{await setDoc(doc(db,"typing",uid),{uid,senderId:currentId,typing:!!on,updatedAt:serverTimestamp()},{merge:true})}
+  catch(e){if(typingStateUid===uid&&typingIsOn===!!on){typingIsOn=false;typingLastWriteAt=0}console.warn(e)}
 }
 function pulseTyping(){setTypingState(true);clearTimeout(typingTimer);typingTimer=setTimeout(()=>setTypingState(false),2500)}
 function stopTyping(){clearTimeout(typingTimer);setTypingState(false)}
@@ -6133,9 +6160,13 @@ $("copyFirestoreDiag")?.addEventListener("click",()=>{
 $("resetFirestoreDiag")?.addEventListener("click",()=>{
   if(!confirm("この端末の計測結果をリセットしますか？"))return;
   const active=pbDiag.activeListeners||0;
-  pbDiag={startedAt:Date.now(),byPath:{},activeListeners:active};
+  if(pbDiagRenderTimer){clearTimeout(pbDiagRenderTimer);pbDiagRenderTimer=0}
+  const now=Date.now();
+  pbDiag={startedAt:now,resetVersion:Math.max(now,(pbDiag.resetVersion||0)+1),byPath:{},activeListeners:active};
   try{localStorage.setItem(pbDiagKey,JSON.stringify(pbDiag))}catch{}
   diagRender();
+  const btn=$("resetFirestoreDiag");
+  if(btn){const old=btn.textContent;btn.textContent="リセット済み ✓";setTimeout(()=>btn.textContent=old,1400)}
 });
 $("menuSettings").onclick=()=>{
   $("headerMenu").classList.add("hidden");
@@ -7878,13 +7909,23 @@ function listenReadStates(){
     }
   });
 }
-let readTimer=null;
+let readTimer=null,lastReadWriteUid="",lastReadWriteMessageId="";
 function markTalkRead(){
   if(stealthReadMode||standbyMode)return;
   if(!currentUID||!pinPassed||activePage()!=="talkPage"||!isNearBottom()||talkDateFilter)return;
+  const messageId=previousNewestMessageId;
+  const newest=messageId&&messageDocs.get(messageId);
+  if(!newest?.createdAt?.toMillis?.())return;
+  if(lastReadWriteUid===currentUID&&lastReadWriteMessageId===messageId)return;
+  if(readStates[currentUID]?.lastReadAt?.toMillis?.()>=newest.createdAt.toMillis())return;
+  const readUid=currentUID;
   clearTimeout(readTimer);
   readTimer=setTimeout(async()=>{
-    try{await setDoc(doc(db,"readStates",currentUID),{uid:currentUID,senderId:currentId,lastReadAt:serverTimestamp()},{merge:true})}catch(e){console.error(e)}
+    if(!pinPassed||activePage()!=="talkPage"||!isNearBottom()||talkDateFilter||currentUID!==readUid)return;
+    if(lastReadWriteUid===readUid&&lastReadWriteMessageId===messageId)return;
+    lastReadWriteUid=readUid;lastReadWriteMessageId=messageId;
+    try{await setDoc(doc(db,"readStates",readUid),{uid:readUid,senderId:currentId,lastReadAt:serverTimestamp()},{merge:true})}
+    catch(e){if(lastReadWriteUid===readUid&&lastReadWriteMessageId===messageId)lastReadWriteMessageId="";console.error(e)}
   },250);
 }
 function isReadByOther(message){
