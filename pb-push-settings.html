@@ -1,4 +1,36 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><title>PB 通知設定（テスト）</title><style>body{font-family:-apple-system,Arial,sans-serif;max-width:500px;margin:30px auto;padding:18px;color:#111}button,input{font-size:17px;padding:12px;margin:5px 0;width:100%;box-sizing:border-box}button{background:#111;color:#fff;border:0;border-radius:12px}button:disabled{background:#aaa}.status{white-space:pre-wrap;background:#f5f5f5;padding:14px;border-radius:12px;font-size:14px}h1{font-size:22px}p{font-size:13px;color:#666}</style></head><body><h1>通知の設定（テスト版）</h1><p>この端末ごとに通知をON/OFFできます。通知本文や送信者名は表示しません。iPhoneはPBをホーム画面に追加し、そこから開いてください。</p><div id="login"><input id="id" placeholder="PB ID" autocomplete="username"><input id="password" type="password" placeholder="パスワード" autocomplete="current-password"><button id="signIn">ログイン</button></div><div id="controls" hidden><button id="enable">この端末の通知をON</button><button id="test">自分の登録端末へテスト通知</button><button id="disable">この端末の通知をOFF</button></div><div id="status" class="status">認証を確認中…</div>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<title>PB 通知設定</title>
+<style>
+body{font-family:-apple-system,Arial,sans-serif;max-width:500px;margin:30px auto;padding:18px;color:#111}
+button,input{font-size:17px;padding:12px;margin:5px 0;width:100%;box-sizing:border-box}
+button{background:#111;color:#fff;border:0;border-radius:12px}
+button:disabled{background:#aaa}
+.backLink{display:inline-flex;align-items:center;min-height:42px;margin:0 0 10px;color:#111;font-size:15px;font-weight:700;text-decoration:none}
+.status{white-space:pre-wrap;background:#f5f5f5;padding:14px;border-radius:12px;font-size:14px}
+h1{font-size:22px}
+p{font-size:13px;color:#666}
+</style>
+</head>
+<body>
+<a class="backLink" href="index.html" aria-label="PBに戻る">← PBに戻る</a>
+<h1>通知の設定</h1>
+<p>この端末ごとに通知をON/OFFできます。通知本文や送信者名は表示しません。iPhoneはPBをホーム画面に追加し、そこから開いてください。</p>
+<div id="login">
+<input id="id" placeholder="PB ID" autocomplete="username">
+<input id="password" type="password" placeholder="パスワード" autocomplete="current-password">
+<button id="signIn">ログイン</button>
+</div>
+<div id="controls" hidden>
+<button id="enable">この端末の通知をON</button>
+<button id="test">自分の登録端末へテスト通知</button>
+<button id="disable">この端末の通知をOFF</button>
+</div>
+<div id="status" class="status">認証を確認中…</div>
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js';
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword} from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js';
@@ -14,4 +46,6 @@ onAuthStateChanged(auth,user=>{$('login').hidden=!!user;$('controls').hidden=!us
 $('enable').onclick=async()=>{try{say('通知の準備中…');const reg=await registration();if(Notification.permission==='denied')throw Error('iPhoneの設定で通知が拒否されています');const permission=await Notification.requestPermission();if(permission!=='granted')throw Error('通知が許可されませんでした');const {publicKey}=await api('/api/public-key');if(!publicKey)throw Error('WorkerのVAPID公開鍵が未設定です');let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes64(publicKey)});await api('/api/subscription','POST',sub.toJSON());say('この端末の通知をONにしました。')}catch(e){say('設定失敗: '+e.message)}};
 $('disable').onclick=async()=>{try{const reg=await registration(),sub=await reg.pushManager.getSubscription();if(sub){await api('/api/subscription','DELETE',{endpoint:sub.endpoint});await sub.unsubscribe()}say('この端末の通知をOFFにしました。')}catch(e){say('解除失敗: '+e.message)}};
 $('test').onclick=async()=>{try{const result=await api('/api/test','POST');say('テスト送信処理: 成功 '+result.sent+'件 / 失敗 '+result.failed+'件。通知が表示されるか確認してください。')}catch(e){say('テスト失敗: '+e.message)}};
-</script></body></html>
+</script>
+</body>
+</html>
