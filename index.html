@@ -4114,25 +4114,30 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoCompleteBtn.active{background:#4d535b;border-color:#4d535b;color:#fff}
 .todoAddBtn{border:0;border-radius:10px;background:#111;color:#fff;font-weight:700;padding:7px 11px;white-space:nowrap}
 .todoSelect{min-width:0;flex:1;border:1px solid #d7d7d7;border-radius:9px;background:#fff;color:#555;font-size:11px;padding:7px 6px}
-#todoList{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:9px 9px 28px}
-.todoCard{background:#fff;border-radius:13px;border:1px solid #e4e4e4;border-left:4px solid #2f6fed;padding:10px 10px 9px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.025)}
+#todoList{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:7px 9px 24px}
+.todoCard{background:#fff;border-radius:11px;border:1px solid #e4e4e4;border-left:4px solid #2f6fed;padding:7px 8px 6px;margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,.025)}
 .todoCard.ownerHitomi{border-left-color:#e24a4a}
 .todoCard.shared{border-left-color:#8e8e93;background:#f4f4f5}
 .todoCard.completed{opacity:.82}
-.todoHead{display:flex;align-items:flex-start;gap:8px}
-.todoCheck{width:21px!important;height:21px!important;flex:0 0 auto;margin-top:1px}
+.todoHead{display:flex;align-items:flex-start;gap:7px}
+.todoCheck{width:19px!important;height:19px!important;flex:0 0 auto;margin:1px 0 0}
 .todoMain{flex:1;min-width:0}
-.todoTitle{font-size:14px;font-weight:800;line-height:1.3;word-break:break-word}
+.todoTitle{font-size:13px;font-weight:800;line-height:1.25;word-break:break-word}
 .todoCard.completed .todoTitle{text-decoration:line-through;color:#777}
-.todoCategory{display:inline-block;margin-top:5px;border-radius:999px;background:#e9edf4;color:#4e5968;font-size:9px;font-weight:700;padding:3px 7px}
+.todoInfoRow{display:flex;align-items:center;gap:6px;min-width:0;margin-top:4px}
+.todoCategory{display:inline-block;flex:0 0 auto;margin:0;border-radius:999px;background:#e9edf4;color:#4e5968;font-size:9px;font-weight:700;padding:2px 6px}
 .todoCard.ownerHitomi .todoCategory{background:#f8e7e7;color:#9c4545}
 .todoCard.shared .todoCategory{background:#e3e3e5;color:#5f6368}
-.todoDates{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:7px;font-size:10px;color:#777}
+.todoDates{display:flex;flex:1;min-width:0;flex-wrap:wrap;gap:2px 8px;margin:0;font-size:9px;line-height:1.35;color:#777}
 .todoDates .late{color:#d13b3b;font-weight:800}
-.todoDetails{white-space:pre-wrap;word-break:break-word;font-size:11px;line-height:1.45;color:#555;margin-top:7px}
-.todoMeta{font-size:9px;color:#999;margin-top:7px}
-.todoActions{display:flex;gap:10px;margin-top:6px}
-.todoActions button{border:0;background:none;color:#666;font-size:10px;padding:2px 0}
+.todoDetails{white-space:pre-wrap;word-break:break-word;font-size:10px;line-height:1.35;color:#555;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.todoMeta{font-size:8px;color:#999;margin-top:3px}
+.todoMenu{flex:0 0 auto;position:relative;margin-left:1px}
+.todoMenuBtn{border:0;background:none;color:#777;font-size:17px;line-height:1;padding:1px 2px 5px}
+.todoMenuPopup{position:absolute;right:0;top:20px;z-index:65;background:#fff;border:1px solid #ddd;border-radius:9px;box-shadow:0 4px 15px #0002;min-width:82px;overflow:hidden}
+.todoMenuPopup.hidden{display:none!important}
+.todoMenuPopup button{display:block;width:100%;border:0;background:#fff;color:#555;text-align:left;font-size:11px;padding:8px 10px}
+.todoMenuPopup .danger{color:#c33}
 .todoEmpty{text-align:center;color:#999;font-size:12px;padding:34px 10px}
 .todoFormLabel{display:block;font-size:11px;color:#777;margin:9px 0 4px}
 .todoWeekdayHint{font-size:10px;color:#777;text-align:right;margin-top:3px;min-height:14px}
@@ -4177,6 +4182,7 @@ body.night-mode .todoCard{background:#1d1d1d;border-color:#343434;color:#eee}
 body.night-mode .todoCard.shared{background:#242424}
 body.night-mode .todoDetails{color:#bbb}
 body.night-mode .todoDates,body.night-mode .todoMeta{color:#999}
+body.night-mode .todoMenuPopup,body.night-mode .todoMenuPopup button{background:#222;color:#ddd;border-color:#444}
 body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 
 </style>
@@ -8809,23 +8815,31 @@ function renderTodos(){
     const main=document.createElement("div");main.className="todoMain";
     const title=document.createElement("div");title.className="todoTitle";title.textContent=t.title||"無題";
     const cat=document.createElement("span");cat.className="todoCategory";cat.textContent=TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other;
+    const info=document.createElement("div");info.className="todoInfoRow";
     const dates=document.createElement("div");dates.className="todoDates";
     const effective=t.revisedDueDate||t.initialDueDate;
     const delayEnd=t.completedDate||todayId();
     const delay=todoDayDiff(t.initialDueDate,delayEnd);
     const delayed=delay>0;
     dates.innerHTML=`<span>初期 ${todoDateLabel(t.initialDueDate)}</span>${t.revisedDueDate?`<span>改訂 ${todoDateLabel(t.revisedDueDate)}</span>`:""}${delayed?`<span class="late">遅延 ${delay}日</span>`:""}${t.completedDate?`<span>完了 ${todoDateLabel(t.completedDate)}</span>`:""}`;
-    main.append(title,cat,dates);
+    info.append(cat,dates);main.append(title,info);
     if(t.details){const details=document.createElement("div");details.className="todoDetails";details.textContent=t.details;main.appendChild(details)}
-    const meta=document.createElement("div");meta.className="todoMeta";
-    meta.textContent=`${t.shared?"共有":(mine?"自分":(t.senderId||"相手"))}${t.privateOnly?"　🔒自分のみ":""}${t.updatedBy?`　更新:${t.updatedBy}`:""}${!t.completed&&effective<todayId()?"　期限超過":""}`;
-    main.appendChild(meta);head.append(check,main);card.appendChild(head);
+    const states=[];
+    if(t.shared)states.push("共同編集");
+    if(t.privateOnly)states.push("🔒自分のみ");
+    if(!t.completed&&effective<todayId())states.push("期限超過");
+    if(states.length){const meta=document.createElement("div");meta.className="todoMeta";meta.textContent=states.join("　");main.appendChild(meta)}
+    head.append(check,main);
     if(editable){
-      const actions=document.createElement("div");actions.className="todoActions";
-      const edit=document.createElement("button");edit.type="button";edit.textContent="編集";edit.onclick=()=>openTodoEditor(t);actions.appendChild(edit);
-      if(mine){const del=document.createElement("button");del.type="button";del.textContent="削除";del.onclick=async()=>{if(confirm("このTodoを削除しますか？"))await deleteDoc(doc(db,"todos",t.id))};actions.appendChild(del)}
-      card.appendChild(actions);
+      const menu=document.createElement("div");menu.className="todoMenu";
+      const menuBtn=document.createElement("button");menuBtn.type="button";menuBtn.className="todoMenuBtn";menuBtn.textContent="…";menuBtn.setAttribute("aria-label","Todoの操作");
+      const popup=document.createElement("div");popup.className="todoMenuPopup hidden";
+      const edit=document.createElement("button");edit.type="button";edit.textContent="編集";edit.onclick=e=>{e.stopPropagation();popup.classList.add("hidden");openTodoEditor(t)};popup.appendChild(edit);
+      if(mine){const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="削除";del.onclick=async e=>{e.stopPropagation();popup.classList.add("hidden");if(confirm("このTodoを削除しますか？"))await deleteDoc(doc(db,"todos",t.id))};popup.appendChild(del)}
+      menuBtn.onclick=e=>{e.stopPropagation();document.querySelectorAll(".todoMenuPopup").forEach(x=>{if(x!==popup)x.classList.add("hidden")});popup.classList.toggle("hidden")};
+      menu.append(menuBtn,popup);head.appendChild(menu);
     }
+    card.appendChild(head);
     box.appendChild(card);
   });
 }
@@ -8873,6 +8887,7 @@ function showTodoReminders(){
 $("todoMineBtn").onclick=()=>{todoOwnerMode="mine";renderTodos()};
 $("todoOtherBtn").onclick=()=>{todoOwnerMode="other";renderTodos()};
 $("todoCompleteBtn").onclick=()=>{todoShowCompleted=!todoShowCompleted;renderTodos()};
+document.addEventListener("click",e=>{if(!e.target.closest(".todoMenu"))document.querySelectorAll(".todoMenuPopup").forEach(x=>x.classList.add("hidden"))});
 $("todoCategoryFilter").onchange=e=>{todoCategory=e.target.value;renderTodos()};
 $("todoSortSelect").onchange=e=>{todoSortMode=e.target.value;localStorage.setItem("pb.todoSort",todoSortMode);renderTodos()};
 $("openTodoModal").onclick=()=>openTodoEditor();
