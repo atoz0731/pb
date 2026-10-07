@@ -3996,7 +3996,6 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 
 
 /* v3.7.5i 記録タイムライン */
-.scheduleModeHint{font-size:10px;color:#888;text-align:center;padding:5px 0 0;min-height:16px}
 #recordView{display:flex;flex-direction:column;min-height:0;flex:1;background:var(--pb-page-bg,#f7f7f8)}
 .recordToolbar{flex-shrink:0;padding:8px 10px 7px;background:#fff;border-bottom:1px solid #e8e8e8}
 .recordMonthRow{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px}
@@ -4106,7 +4105,6 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 
 /* v3.8.1 ノート裏面：Todo */
 #todoView{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--pb-page-bg,#f7f7f8)}
-.notesModeHint{font-size:10px;color:#888;text-align:center;padding:5px 0 0;min-height:16px;background:#fff}
 .todoToolbar{flex-shrink:0;padding:8px 9px;background:#fff;border-bottom:1px solid #e8e8e8}
 .todoToolbarTop,.todoToolbarBottom{display:flex;align-items:center;gap:6px}
 .todoToolbarBottom{margin-top:7px}
@@ -4171,7 +4169,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoReminderTitle{font-size:13px;font-weight:800}
 .todoReminderMeta{font-size:10px;color:#a33;margin-top:3px}
 body.night-mode #todoView,body.night-mode #todoList{background:#111}
-body.night-mode .notesModeHint,body.night-mode .todoToolbar{background:#171717;border-color:#333;color:#aaa}
+body.night-mode .todoToolbar{background:#171717;border-color:#333;color:#aaa}
 body.night-mode .todoOwnerBtn,body.night-mode .todoCompleteBtn,body.night-mode .todoSelect{background:#222;border-color:#444;color:#ddd}
 body.night-mode .todoOwnerBtn.active{background:#e8ebef;color:#111;border-color:#e8ebef}
 body.night-mode .todoCompleteBtn.active{background:#666;color:#fff}
@@ -4560,7 +4558,6 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 </div>
 
 <div id="notesPage" class="page hidden">
-  <div id="notesModeHint" class="notesModeHint">ノート</div>
   <div id="notesView">
     <div class="notesToolbar">
       <div class="ownerFilters">
@@ -4614,7 +4611,6 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 </div>
 
 <div id="schedulePage" class="page hidden">
-  <div id="scheduleModeHint" class="scheduleModeHint">予定</div>
   <div class="calendarToolbar">
     <div class="calendarMonthRow">
       <button id="prevMonth" class="monthNav">‹</button>
@@ -8716,7 +8712,6 @@ function setNotesViewMode(mode){
   const todoMode=notesViewMode==="todos";
   $("notesView")?.classList.toggle("hidden",todoMode);
   $("todoView")?.classList.toggle("hidden",!todoMode);
-  if($("notesModeHint"))$("notesModeHint").textContent=todoMode?"Todo":"ノート";
   const tab=document.querySelector('.tab[data-page="notesPage"]');
   if(tab)tab.textContent=todoMode?"Todo":"ノート";
   if(todoMode)renderTodos();
@@ -9664,7 +9659,6 @@ function setScheduleViewMode(mode){
   document.querySelector("#schedulePage .calendar")?.classList.toggle("hidden",recordsMode);
   $("dayDetail")?.classList.toggle("hidden",recordsMode);
   $("recordView")?.classList.toggle("hidden",!recordsMode);
-  if($("scheduleModeHint"))$("scheduleModeHint").textContent=recordsMode?"記録":"予定";
   const tab=document.querySelector('.tab[data-page="schedulePage"]');
   if(tab)tab.textContent=recordsMode?"記録":"予定";
   if(recordsMode)renderRecordTimeline();
