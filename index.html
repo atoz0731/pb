@@ -4128,9 +4128,14 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoCategory{display:inline-block;flex:0 0 auto;margin:0;border-radius:999px;background:#e9edf4;color:#4e5968;font-size:9px;font-weight:700;padding:2px 6px}
 .todoCard.ownerHitomi .todoCategory{background:#f8e7e7;color:#9c4545}
 .todoCard.shared .todoCategory{background:#e3e3e5;color:#5f6368}
+.todoCard .todoCategory.category-two{background:#efe5ff;color:#7040a0}
+.todoCard .todoCategory.category-work{background:#dfeeff;color:#245d9c}
+.todoCard .todoCategory.category-home{background:#fff0cf;color:#945c00}
+.todoCard .todoCategory.category-other{background:#ddf3e4;color:#297044}
 .todoDates{display:flex;flex:1;min-width:0;flex-wrap:wrap;gap:2px 8px;margin:0;font-size:9px;line-height:1.35;color:#777}
 .todoDates .late{color:#d13b3b;font-weight:800}
 .todoProgress{flex:0 0 auto;border-radius:999px;background:#eef3ff;color:#2f6fed;font-size:9px;font-weight:800;padding:2px 6px}
+.todoPrivacyIcon{flex:0 0 auto;font-size:12px;line-height:1}
 .todoDetails{white-space:pre-wrap;word-break:break-word;font-size:10px;line-height:1.35;color:#555;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .todoMeta{font-size:8px;color:#999;margin-top:3px}
 .todoMenu{flex:0 0 auto;position:relative;margin-left:1px}
@@ -4190,6 +4195,10 @@ body.night-mode .todoCard.shared{background:#242424}
 body.night-mode .todoDetails{color:#bbb}
 body.night-mode .todoDates,body.night-mode .todoMeta{color:#999}
 body.night-mode .todoProgress{background:#24314a;color:#8ab0ff}
+body.night-mode .todoCategory.category-two{background:#3b2c4c;color:#d8b8ff}
+body.night-mode .todoCategory.category-work{background:#213852;color:#9bc8ff}
+body.night-mode .todoCategory.category-home{background:#493820;color:#ffd28a}
+body.night-mode .todoCategory.category-other{background:#203d2b;color:#9de0b4}
 body.night-mode .todoMultiToggle{background:#222;border-color:#444;color:#ddd}body.night-mode .todoMultiToggle.active{background:#eee;color:#111;border-color:#eee}
 body.night-mode .todoItemsEditor{background:#222}body.night-mode .todoEditItemRow button{background:#333;color:#bbb}
 body.night-mode .todoSubtasks{border-color:#383838}
@@ -4711,6 +4720,8 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.8.5</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoの重複した「期限超過」表示を削除</li><li>自分のみTodoの表示を右端のアイコンへ集約し、カードをコンパクト化</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.8.4</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoのカテゴリを色分けし、ひと目で判別しやすく改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.3</div><div class="updateDate">2026/10/08</div><ul class="updateItems"><li>複数の項目をすべて終えると完了になるTodoを追加</li><li>複数Todoのカードをタップして項目を展開・チェックできるよう対応</li><li>最後の項目をチェックした時に完了日を確認する仕様に対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.2</div><div class="updateDate">2026/10/08</div><ul class="updateItems"><li>本人の「仕事・家のこと・その他」だけを表示する独立型Todoページを追加</li><li>独立型Todoからの新規作成は自分のみTodoとして保存する仕様に対応</li><li>Todoカードをコンパクト化し、カテゴリと日付を横並び、編集・削除を三点メニューへ整理</li><li>ノート／Todo、予定／記録の重複した小見出しを削除</li><li>Todoの日付入力がiPhoneで右にはみ出す問題を修正</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.1</div><div class="updateDate">2026/09/19</div><ul class="updateItems"><li>ノートに「最新／アーカイブ」の切り替えを追加し、残したい過去ノートを整理できるよう対応</li><li>ノートタブの再タップで切り替わるTodo機能を追加</li><li>Todoの自分／相手表示、自分のみ・公開・共有編集、所有者別の色分けに対応</li><li>初期目標日・改訂目標日・遅延日数・カテゴリ・詳細・期限超過リマインダーを追加</li><li>完了日入力、月別の完了履歴、カテゴリ絞り込み、新しい順／目標日順の並び替えに対応</li></ul></div>
@@ -5310,7 +5321,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.8.3";
+const APP_VERSION="3.8.5";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -8843,22 +8854,20 @@ function renderTodos(){
     };
     const main=document.createElement("div");main.className="todoMain";
     const title=document.createElement("div");title.className="todoTitle";title.textContent=t.title||"無題";
-    const cat=document.createElement("span");cat.className="todoCategory";cat.textContent=TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other;
+    const cat=document.createElement("span");cat.className=`todoCategory category-${TODO_CATEGORIES[t.category]?t.category:"other"}`;cat.textContent=TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other;
     const info=document.createElement("div");info.className="todoInfoRow";
     const dates=document.createElement("div");dates.className="todoDates";
-    const effective=t.revisedDueDate||t.initialDueDate;
     const delayEnd=t.completedDate||todayId();
     const delay=todoDayDiff(t.initialDueDate,delayEnd);
     const delayed=delay>0;
     dates.innerHTML=`<span>初期 ${todoDateLabel(t.initialDueDate)}</span>${t.revisedDueDate?`<span>改訂 ${todoDateLabel(t.revisedDueDate)}</span>`:""}${delayed?`<span class="late">遅延 ${delay}日</span>`:""}${t.completedDate?`<span>完了 ${todoDateLabel(t.completedDate)}</span>`:""}`;
     info.append(cat,dates);
     if(isMulti){const progress=document.createElement("span");progress.className="todoProgress";progress.textContent=`${doneCount}/${items.length}`;info.appendChild(progress)}
+    if(t.privateOnly){const privacy=document.createElement("span");privacy.className="todoPrivacyIcon";privacy.textContent="🔓";privacy.title="自分のみ";privacy.setAttribute("aria-label","自分のみ");info.appendChild(privacy)}
     main.append(title,info);
     if(t.details){const details=document.createElement("div");details.className="todoDetails";details.textContent=t.details;main.appendChild(details)}
     const states=[];
     if(t.shared)states.push("共同編集");
-    if(t.privateOnly)states.push("🔒自分のみ");
-    if(!t.completed&&effective<todayId())states.push("期限超過");
     if(states.length){const meta=document.createElement("div");meta.className="todoMeta";meta.textContent=states.join("　");main.appendChild(meta)}
     head.append(check,main);
     if(editable){
