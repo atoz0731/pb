@@ -4130,6 +4130,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoCard.shared .todoCategory{background:#e3e3e5;color:#5f6368}
 .todoDates{display:flex;flex:1;min-width:0;flex-wrap:wrap;gap:2px 8px;margin:0;font-size:9px;line-height:1.35;color:#777}
 .todoDates .late{color:#d13b3b;font-weight:800}
+.todoProgress{flex:0 0 auto;border-radius:999px;background:#eef3ff;color:#2f6fed;font-size:9px;font-weight:800;padding:2px 6px}
 .todoDetails{white-space:pre-wrap;word-break:break-word;font-size:10px;line-height:1.35;color:#555;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .todoMeta{font-size:8px;color:#999;margin-top:3px}
 .todoMenu{flex:0 0 auto;position:relative;margin-left:1px}
@@ -4140,6 +4141,12 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoMenuPopup .danger{color:#c33}
 .todoEmpty{text-align:center;color:#999;font-size:12px;padding:34px 10px}
 .todoFormLabel{display:block;font-size:11px;color:#777;margin:9px 0 4px}
+.todoMultiToggle{display:block;width:100%;border:1px solid #ccc;border-radius:10px;background:#fff;color:#555;font-size:12px;font-weight:800;padding:10px;margin-top:8px}
+.todoMultiToggle.active{background:#111;border-color:#111;color:#fff}
+.todoItemsEditor{margin-top:8px;padding:8px;border-radius:10px;background:#f4f4f5}
+.todoItemComposer{display:flex;align-items:center;gap:6px}.todoItemComposer input{margin:0!important;min-width:0}.todoItemComposer button{flex:0 0 auto;border:0;border-radius:9px;background:#111;color:#fff;font-weight:700;padding:10px 11px;white-space:nowrap}
+.todoEditItemRow{display:flex;align-items:center;gap:6px;margin-top:6px}.todoEditItemRow input{margin:0!important;min-width:0}.todoEditItemRow button{flex:0 0 auto;width:32px;height:32px;border:0;border-radius:50%;background:#e4e4e7;color:#777;font-weight:800}
+.todoCard.multiExpandable{cursor:pointer}.todoSubtasks{margin:7px 0 1px 26px;padding-top:6px;border-top:1px solid #eee}.todoSubtaskRow{display:flex;align-items:flex-start;gap:7px;padding:5px 0;font-size:11px;line-height:1.35}.todoSubtaskRow input{width:18px!important;height:18px!important;flex:0 0 auto;margin:0}.todoSubtaskRow.done span{text-decoration:line-through;color:#888}
 .todoWeekdayHint{font-size:10px;color:#777;text-align:right;margin-top:3px;min-height:14px}
 #todoModal input,#todoModal textarea,#todoModal select,#todoCompleteModal input{width:100%;max-width:100%;box-sizing:border-box}
 /* Todoの日付欄は予定追加と同じiPhone向け幅補正を使う */
@@ -4182,6 +4189,10 @@ body.night-mode .todoCard{background:#1d1d1d;border-color:#343434;color:#eee}
 body.night-mode .todoCard.shared{background:#242424}
 body.night-mode .todoDetails{color:#bbb}
 body.night-mode .todoDates,body.night-mode .todoMeta{color:#999}
+body.night-mode .todoProgress{background:#24314a;color:#8ab0ff}
+body.night-mode .todoMultiToggle{background:#222;border-color:#444;color:#ddd}body.night-mode .todoMultiToggle.active{background:#eee;color:#111;border-color:#eee}
+body.night-mode .todoItemsEditor{background:#222}body.night-mode .todoEditItemRow button{background:#333;color:#bbb}
+body.night-mode .todoSubtasks{border-color:#383838}
 body.night-mode .todoMenuPopup,body.night-mode .todoMenuPopup button{background:#222;color:#ddd;border-color:#444}
 body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 
@@ -4491,6 +4502,7 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
     <button id="menuUpdates">🆕 アップデート</button>
     <button id="menuQuickMemo">📝 メモ</button>
     <button id="menuSchedulePage">📅 スケジュール</button>
+    <button id="menuTodoPage">☑️ Todo</button>
     <button id="menuSettings">⚙️ 設定</button>
     <button id="menuLock">🔒 PIN画面に戻る</button>
     <button id="logoutButton">ログアウト</button>
@@ -4699,6 +4711,8 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.8.3</div><div class="updateDate">2026/10/08</div><ul class="updateItems"><li>複数の項目をすべて終えると完了になるTodoを追加</li><li>複数Todoのカードをタップして項目を展開・チェックできるよう対応</li><li>最後の項目をチェックした時に完了日を確認する仕様に対応</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.8.2</div><div class="updateDate">2026/10/08</div><ul class="updateItems"><li>本人の「仕事・家のこと・その他」だけを表示する独立型Todoページを追加</li><li>独立型Todoからの新規作成は自分のみTodoとして保存する仕様に対応</li><li>Todoカードをコンパクト化し、カテゴリと日付を横並び、編集・削除を三点メニューへ整理</li><li>ノート／Todo、予定／記録の重複した小見出しを削除</li><li>Todoの日付入力がiPhoneで右にはみ出す問題を修正</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.1</div><div class="updateDate">2026/09/19</div><ul class="updateItems"><li>ノートに「最新／アーカイブ」の切り替えを追加し、残したい過去ノートを整理できるよう対応</li><li>ノートタブの再タップで切り替わるTodo機能を追加</li><li>Todoの自分／相手表示、自分のみ・公開・共有編集、所有者別の色分けに対応</li><li>初期目標日・改訂目標日・遅延日数・カテゴリ・詳細・期限超過リマインダーを追加</li><li>完了日入力、月別の完了履歴、カテゴリ絞り込み、新しい順／目標日順の並び替えに対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.0</div><div class="updateDate">2026/09/18</div><ul class="updateItems"><li>メッセージの新着をホーム画面へのプッシュ通知で受け取れるよう対応</li><li>通知にはメッセージ本文や送信者名を表示しない仕様に対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.7.5i</div><div class="updateDate">2026/09/15</div><ul class="updateItems"><li>予定タブをもう一度押すと「記録」へ切り替わるタイムライン機能を追加</li><li>記録を自分・相手・ふたりに分類し、2人表示時は左右2列、1人表示時は広い1列で確認できるよう対応</li><li>日付・時刻・メモ・自分のみ表示に対応し、過去の出来事を検索できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5h</div><div class="updateDate">2026/09/11</div><ul class="updateItems"><li>時計だけを表示して新着を静かに確認できる「時計モード」を追加し、上部の🕐からすぐ切り替えできるよう対応</li><li>時計モード中の新着は既読にせず、画面の明滅と右上の小さな赤丸で表示</li><li>リアクション絵文字を見直し、レギュラー候補と追加候補の構成・並び順を調整</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5e</div><div class="updateDate">2026/08/27</div><ul class="updateItems"><li>トーク写真を全画面で開ける画像ビューアを追加</li><li>ピンチ拡大・拡大後のドラッグ移動・ダブルタップ拡大/リセットに対応</li><li>画像ビューア右上にリセット・閉じるボタンを追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5d</div><div class="updateDate">2026/08/26</div><ul class="updateItems"><li>ノート一覧の本文表示を最大5行程度にして、長文ノートを見やすく整理</li><li>ノート右上の↗から全文を別ウィンドウで開く表示方式に変更</li><li>全文ウィンドウ右上に×を追加し、元の一覧位置へすぐ戻れるよう改善</li><li>全文ウィンドウからそのままノート編集画面へ移動できる「編集」ボタンを追加</li><li>ノートカードに薄い枠を追加し、ノート同士の境界を見やすく改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5c</div><div class="updateDate">2026/08/25</div><ul class="updateItems"><li>自分の予定だけを確認できる独立型「スケジュール」ページを追加</li><li>三点リーダーからスケジュール専用ページへ移動できるよう対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5b</div><div class="updateDate">2026/08/25</div><ul class="updateItems"><li>クイック入力をホーム画面へ独立登録できる専用 memo.html に対応</li><li>通常PBの三点リーダー「メモ」から専用メモ画面へ移動するよう変更</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5a</div><div class="updateDate">2026/08/24</div><ul class="updateItems"><li>ホーム画面から使いやすい「メモ」形式のクイック入力モードを追加（入力・状態・送付・記録・保存）</li><li>クイック送付ではトークを開かず、未読メッセージを既読にしない仕様に対応</li><li>ナイトモードの引用返信部分の配色を修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.5</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部の更新ボタンを廃止し、PBロゴのタップで再読み込みするよう変更</li><li>ヘッダー中央に自分・相手の簡易ステータスを追加</li><li>自分のステータスは自由入力し、入力日時だけを履歴として保存</li><li>予定カレンダーの日付ごとに自分のステータス履歴を確認できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4e</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのカレンダー・ひとりごと・行きたい場所・お知らせの配色漏れを修正</li><li>ひとりごと・ノート・予定・行きたい場所の操作ボタンをテーマ色に統一</li><li>お知らせ・設定・あとで見る・メッセージ検索・日付で見るの上部バーをテーマ色に統一</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4d</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>ナイトモードのノート・ひとりごと・予定・行きたい場所・お知らせの配色を改善</li><li>ノート本文や補助文字のコントラストを改善</li><li>送信中は既存の送信ロックに合わせて送信ボタンを薄く表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.4</div><div class="updateDate">2026/08/23</div><ul class="updateItems"><li>上部バーに🌙ナイトモード切替を追加</li><li>設定にオリジナル・赤・青・黄・水色・ピンクのテーマ配色を追加</li><li>9409メモ帳モードで右上×からPIN画面へ戻れるように改善</li><li>9409メモ帳モードで右下のUTF-8をタップして送信できるように改善</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.3</div><div class="updateDate">2026/08/22</div><ul class="updateItems"><li>トーク・ひとりごとのリアクションを「レギュラー＋追加候補」方式に拡張</li><li>PIN 9409にWindowsメモ帳風のPC表示モードを追加</li><li>ノートにGoogle Drive・OneDrive・Dropbox等の関連リンクを複数登録できる機能を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.2</div><div class="updateDate">2026/08/21</div><ul class="updateItems"><li>トーク専用の「あとで見る・検索・日付で見る」を右側アイコンへ整理</li><li>トークタブ再タップで最新メッセージへ移動</li><li>トーク内未読バッジをホーム画面バッジ設定から分離</li><li>ノートと予定に自分／相手の表示切替を追加</li><li>ノートの作成者を左端の色で判別できるよう変更</li><li>ノートに共同編集とチェックリストを追加</li><li>設定・お知らせの閉じる操作を右上×へ統一</li><li>通知音量を1〜10で調整しテスト再生できる設定を追加</li><li>通常PBから9403へすぐ切り替えられるショートカットを追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.1</div><div class="updateDate">2026/08/20</div><ul class="updateItems"><li>位置情報タブを廃止し、トーク内の地図ウィンドウへ統合</li><li>ノートを上部の独立タブへ移動し、ひとりごと内のノートタブを廃止</li><li>あとで見るをトーク内の☆アイコンから開く方式へ変更し、三点リーダー内から削除</li><li>お知らせを全画面表示からウィンドウ表示へ変更</li><li>iOSでメッセージ入力欄とフォーム補助バーの間にできる余白を縮小</li></ul></div><div class="updateCard"><div class="updateVersion">v3.7.0</div><div class="updateDate">2026/08/18</div><ul class="updateItems"><li>0208の遷移先をGmailへ変更</li><li>アップデートを上部タブから三点リーダー内へ移動（表示不具合を修正）</li><li>行きたい場所を通常の上部タブとして表示し、既存の保存データを読み込めるよう修正</li><li>新バージョンをお知らせに通知し、タップでアップデート画面へ移動</li><li>トークに自分専用「あとで見る」を追加</li><li>あとで見る一覧から元メッセージへジャンプ</li><li>トーク画面の📍からインタラクティブ地図を表示。2人の位置を同一地図に表示し、ピンチズーム・ドラッグ・小/中/大サイズ切替に対応</li><li>アイコン参照をicon-192g.png / icon-512g.pngへ更新</li><li>予定表示をv3.6.8の安定ロジックへ復元し、あとで見る一覧に解除ボタンを追加</li><li>行きたい場所タブ化後に残っていた旧menuPlaces処理がJSを停止させていた不具合を修正。予定表示・行った切替・PIN戻るを復旧</li><li>位置情報共有の開始処理をiOS/PWA向けに安定化し、取得状況・許可エラーを表示するよう修正</li><li>行きたい場所の重複見出しを削除し、行きたい／行った／＋追加を1列化。Talkミニ地図のタイル表示崩れを修正</li><li>Talkミニ地図を表示サイズ確定後に再生成する方式へ変更。iOSキーボード対策を見直し、入力時に入力欄が上へ飛ばないよう修正。キーボードを閉じた後のみ画面位置を復帰</li><li>位置情報ミニ地図の枠とLeaflet内部サイズを同期し、パネルのリサイズ時も地図が枠いっぱいに追従するよう修正</li><li>ミニ地図の初期サイズを「小」に変更。地図アイコンは常時表示し、共有中のみ点滅。位置共有トグルを1回のタップで確実にON/OFFできるよう修正</li><li>Leaflet 1.9.4のCSS整合性ハッシュ誤りを修正し、地図タイル・ズーム操作UIが正しいレイアウトで読み込まれるよう修正</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.8</div><div class="updateDate">2026/08/14</div><ul class="updateItems"><li>予定コメントのお知らせに日付・時刻・予定名・コメント内容を表示</li><li>予定コメント通知をタップすると対象月・対象日へ移動し、該当予定のコメント欄を自動表示</li><li>ひとりごとコメントのお知らせに元投稿の抜粋とコメント内容を表示</li><li>ひとりごと通知をタップすると該当投稿まで移動しコメント欄を自動表示</li><li>既存タブ切替処理は変更せず、通知から既存タブを呼び出す方式を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>三点リーダー内に残っていた重複「お知らせ」を削除し、トップの🔔へ一本化</li><li>ホームへ戻る際のvisibilitychange / pagehideでバッジが直後に消える挙動を修正</li><li>バッジ1テストは「バッジ解除」を押すまで1を維持する診断方式へ変更</li><li>通常時は新着メッセージ・コメントの未読状態に応じてホーム画面バッジ1を維持</li><li>既存タブDOM・タブ切替処理は変更なし</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.6</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>通知権限表示と「通知・バッジを有効にする」を追加</li><li>トップバーに🔔を追加しPB内お知らせの実未読数を表示</li><li>ホーム画面バッジは未読あり＝1固定を維持</li><li>🔔には位置共有開始も含む</li><li>既存ヘッダー・タブDOMとタブ切替処理は変更せず追加方式で実装</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.5</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>入力中表示の高さ変化で最新メッセージが下に隠れる問題を改善し、最下部閲覧中は新着へ自動追従</li><li>PB内の未読状態とホーム画面バッジ「1」の同期を強化</li><li>badgecheck処理がCSS内に入り実行されていなかった問題を修正</li><li>お知らせ処理がCSS内に入り購読されていなかった問題を修正</li><li>設定に通知・バッジ診断を追加</li><li>badgetest=1 と手動「バッジ1テスト」を追加</li><li>お知らせテストボタンを追加しFirestore書込・購読を確認可能に</li><li>PWAアイコン用manifest.jsonとicons/icon-192g.png / icon-512.png参照を追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.4</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>一度読み込んだ共有画像を画面再描画後も保持するよう変更</li><li>上へスクロールした際に画像がタップ前表示へ戻る問題を改善</li><li>メッセージ内のhttp / https URLを自動リンク化</li><li>URLタップでSafariなどの外部ブラウザへ開くよう対応</li><li>9401〜9405のカモフラージュ表示でもURLリンクに対応</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.3</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>安定版v3.6.1を土台に予定UIを安全に再改修</li><li>予定のNatsuki / Hitomi表示をなくし、左側の色で判別</li><li>予定を時刻・内容・💬・三点リーダーのコンパクトな1行表示へ変更</li><li>予定コメントを初期非表示にし、💬から開閉</li><li>予定の編集・削除を三点リーダー内へ集約</li><li>自分の予定コメントを三点リーダーから削除可能に</li><li>?badgecheck=1 を新設し、既読を付けずに新着だけ確認</li><li>ホーム画面バッジは新着メッセージ／ひとりごとコメント／予定コメントの有無だけを判定し、何件あっても「1」表示</li><li>位置情報共有開始はホーム画面バッジの対象外</li><li>PB内のお知らせは従来どおり三点リーダー内に維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.1</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>予定コメントの追加操作を三点リーダー方式へ変更</li><li>自分の予定コメントに三点リーダーから削除機能を追加</li><li>予定1件の上下余白・文字サイズ・行間を詰めてコンパクト化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.6.0</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>トークに一時画像共有を追加（送信前圧縮・タップ時だけ読込・30日で削除対象）</li><li>設定にストレージ・デバッグ画面を追加</li><li>予定ごとのコメント機能を追加</li><li>ひとりごとコメント・予定コメント・位置共有開始のお知らせ欄を追加</li><li>PWAバッジをトーク未読＋お知らせ件数に連動</li><li>9403をショートカットから起動して新着確認できる weathercheck モードを追加</li><li>過去メッセージを100件ずつ追加読込に変更</li><li>全履歴検索と検索結果前後へのピンポイントジャンプを追加</li><li>v3.5.7の日曜赤・土曜青・祝日赤、最終共有位置、共有中📍を継承</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.7</div><div class="updateDate">2026/08/13</div><ul class="updateItems"><li>カレンダーの日曜・祝日を赤、土曜を青で表示</li><li>祝日はカレンダー内に祝日名も小さく表示</li><li>位置情報共有終了後も最終共有位置と時刻を参照できるよう変更</li><li>位置情報共有中は通常PB上部の黒いバーに📍を表示</li><li>📍タップで位置情報ページへ移動できるよう追加</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.6</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」の削除処理を修正</li><li>削除時は画面から即時反映し、Firestore削除に失敗した場合だけ元へ戻す方式に変更</li><li>削除失敗時に権限エラーが分かるメッセージを表示</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.5</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>「行きたい場所」のリアルタイム購読が起動していなかった不具合を修正</li><li>場所画面を開いた際にも購読状態を確認して自動開始するよう改善</li><li>「最初から行った」で登録する機能はそのまま維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.4</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>行きたい場所を追加しても一覧に反映されない問題を修正</li><li>places読み込みをフォールバック対応し、古いデータやクエリ条件でも表示しやすく改善</li><li>場所登録時に「最初から行った」を選べるよう追加</li><li>保存後は「行きたい／行った」の登録先タブへ自動切替</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.3</div><div class="updateDate">2026/08/11</div><ul class="updateItems"><li>Safe Areaを黒くする試験変更を撤回し、v3.5.1の画面構造へ復元</li><li>予定の「＋ 予定」ボタンから追加画面が確実に開くよう修正</li><li>予定作成モーダルを常に最前面に表示するよう調整</li><li>9401〜9405の三点リーダーはタップ即PIN画面に戻る仕様を維持</li></ul></div><div class="updateCard"><div class="updateVersion">v3.5.1</div><div class="updateDate">2026/08/10</div><ul class="updateItems"><li>PIN 9405にメモ帳風モードを追加</li><li>9402ニュース・9403天気のコメントを新着順＋初期20件表示に変更</li><li>9404 Teams風を投稿カードから通常チャット形式へ変更</li><li>9401〜9405の3点メニューからPIN画面へ戻れるよう追加</li><li>通常PBの右上メニューに「PIN画面に戻る」を追加</li><li>通常PBに共有の「行きたい場所」機能を追加</li><li>行きたい場所から予定への追加・行った管理・行きたいリアクションに対応</li></ul></div>
@@ -5025,6 +5039,11 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
     <h3 id="todoModalTitle">Todoを追加</h3>
     <label class="todoFormLabel" for="todoTitleInput">件名</label>
     <input id="todoTitleInput" placeholder="やること">
+    <button id="todoMultiToggle" class="todoMultiToggle" type="button" aria-pressed="false">複数項目</button>
+    <div id="todoItemsEditor" class="todoItemsEditor hidden">
+      <div class="todoItemComposer"><input id="todoItemInput" placeholder="項目を入力"><button id="addTodoItem" type="button">＋ 追加</button></div>
+      <div id="todoItemEditorList"></div>
+    </div>
     <label class="todoFormLabel" for="todoInitialDueInput">初期目標終了日</label>
     <input id="todoInitialDueInput" type="date">
     <div id="todoInitialDueWeekday" class="todoWeekdayHint"></div>
@@ -5277,7 +5296,7 @@ let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let records=[], recordMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1), recordShowMine=true, recordShowOther=true, editingRecord=null, recordTarget="mine", scheduleViewMode="schedule";
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, noteArchiveMode=false, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
-let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, todoReminderShown=false;
+let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShown=false;
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeTodos=null, unsubscribeSchedules=null, unsubscribeRecords=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -5291,7 +5310,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.8.1";
+const APP_VERSION="3.8.3";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -6383,6 +6402,13 @@ $("menuSchedulePage")?.addEventListener("click",()=>{
   $("headerMenu")?.classList.add("hidden");
   forceStandbyOff();
   const u=new URL("schedule.html",location.href);
+  location.href=u.toString();
+});
+
+$("menuTodoPage")?.addEventListener("click",()=>{
+  $("headerMenu")?.classList.add("hidden");
+  forceStandbyOff();
+  const u=new URL("todo.html",location.href);
   location.href=u.toString();
 });
 
@@ -8798,19 +8824,22 @@ function renderTodos(){
       }
     }
     const mine=t.uid===currentUID,editable=canEditTodo(t);
+    const items=Array.isArray(t.items)?t.items:[],isMulti=items.length>0,doneCount=items.filter(x=>x.done).length;
     const card=document.createElement("div");
     const ownerClass=String(t.senderId||"").toLowerCase()==="hitomi"?"ownerHitomi":"ownerNatsuki";
-    card.className=`todoCard ${t.shared?"shared":ownerClass} ${t.completed?"completed":""}`;
+    card.className=`todoCard ${t.shared?"shared":ownerClass} ${t.completed?"completed":""} ${isMulti?"multiExpandable":""}`;
     const head=document.createElement("div");head.className="todoHead";
-    const check=document.createElement("input");check.type="checkbox";check.className="todoCheck";check.checked=!!t.completed;check.disabled=!editable;
+    const check=document.createElement("input");check.type="checkbox";check.className="todoCheck";check.checked=!!t.completed;check.disabled=!editable||(isMulti&&!t.completed);
     check.setAttribute("aria-label",t.completed?"未完了に戻す":"完了にする");
     check.onchange=async()=>{
       if(!editable)return;
       if(t.completed){
         if(!confirm("このTodoを未完了に戻しますか？")){renderTodos();return}
-        try{await updateDoc(doc(db,"todos",t.id),{completed:false,completedDate:null,completedAt:null,completedBy:null,updatedAt:serverTimestamp(),updatedBy:currentId})}
+        const payload={completed:false,completedDate:null,completedAt:null,completedBy:null,updatedAt:serverTimestamp(),updatedBy:currentId};
+        if(isMulti){const reopened=items.map(x=>({...x}));for(let i=reopened.length-1;i>=0;i--){if(reopened[i].done){reopened[i].done=false;break}}payload.items=reopened}
+        try{await updateDoc(doc(db,"todos",t.id),payload)}
         catch(e){console.error(e);alert("未完了に戻せませんでした。");renderTodos()}
-      }else openTodoComplete(t);
+      }else if(!isMulti)openTodoComplete(t);
     };
     const main=document.createElement("div");main.className="todoMain";
     const title=document.createElement("div");title.className="todoTitle";title.textContent=t.title||"無題";
@@ -8822,7 +8851,9 @@ function renderTodos(){
     const delay=todoDayDiff(t.initialDueDate,delayEnd);
     const delayed=delay>0;
     dates.innerHTML=`<span>初期 ${todoDateLabel(t.initialDueDate)}</span>${t.revisedDueDate?`<span>改訂 ${todoDateLabel(t.revisedDueDate)}</span>`:""}${delayed?`<span class="late">遅延 ${delay}日</span>`:""}${t.completedDate?`<span>完了 ${todoDateLabel(t.completedDate)}</span>`:""}`;
-    info.append(cat,dates);main.append(title,info);
+    info.append(cat,dates);
+    if(isMulti){const progress=document.createElement("span");progress.className="todoProgress";progress.textContent=`${doneCount}/${items.length}`;info.appendChild(progress)}
+    main.append(title,info);
     if(t.details){const details=document.createElement("div");details.className="todoDetails";details.textContent=t.details;main.appendChild(details)}
     const states=[];
     if(t.shared)states.push("共同編集");
@@ -8840,11 +8871,47 @@ function renderTodos(){
       menu.append(menuBtn,popup);head.appendChild(menu);
     }
     card.appendChild(head);
+    if(isMulti&&expandedTodoIds.has(t.id)){
+      const list=document.createElement("div");list.className="todoSubtasks";
+      items.forEach((item,index)=>{
+        const row=document.createElement("label");row.className=`todoSubtaskRow ${item.done?"done":""}`;
+        const subCheck=document.createElement("input");subCheck.type="checkbox";subCheck.checked=!!item.done;subCheck.disabled=!editable;
+        const text=document.createElement("span");text.textContent=item.text||`項目${index+1}`;
+        subCheck.onchange=async e=>{
+          e.stopPropagation();
+          const next=items.map((x,i)=>i===index?{...x,done:subCheck.checked}:{...x});
+          if(!t.completed&&next.every(x=>x.done)){openTodoComplete(t,next);return}
+          const payload={items:next,updatedAt:serverTimestamp(),updatedBy:currentId};
+          if(t.completed&&!subCheck.checked)Object.assign(payload,{completed:false,completedDate:null,completedAt:null,completedBy:null});
+          try{await updateDoc(doc(db,"todos",t.id),payload)}catch(err){console.error(err);alert("項目を更新できませんでした。");renderTodos()}
+        };
+        row.onclick=e=>e.stopPropagation();row.append(subCheck,text);list.appendChild(row);
+      });
+      card.appendChild(list);
+    }
+    if(isMulti)card.onclick=e=>{if(e.target.closest("button,input,.todoMenu,.todoSubtasks"))return;expandedTodoIds.has(t.id)?expandedTodoIds.delete(t.id):expandedTodoIds.add(t.id);renderTodos()};
     box.appendChild(card);
   });
 }
+function todoItemId(){return globalThis.crypto?.randomUUID?.()||`item-${Date.now()}-${Math.random().toString(36).slice(2)}`}
+function renderTodoItemEditor(){
+  const box=$("todoItemEditorList");box.innerHTML="";
+  editingTodoItems.forEach((item,index)=>{
+    const row=document.createElement("div");row.className="todoEditItemRow";
+    const input=document.createElement("input");input.value=item.text||"";input.placeholder=`項目${index+1}`;input.oninput=()=>{editingTodoItems[index].text=input.value};
+    const remove=document.createElement("button");remove.type="button";remove.textContent="×";remove.setAttribute("aria-label",`項目${index+1}を削除`);remove.onclick=()=>{editingTodoItems.splice(index,1);renderTodoItemEditor()};
+    row.append(input,remove);box.appendChild(row);
+  });
+}
+function syncTodoMultiEditor(){
+  const toggle=$("todoMultiToggle");toggle.classList.toggle("active",todoMultiMode);toggle.setAttribute("aria-pressed",String(todoMultiMode));toggle.textContent=`複数項目 ${todoMultiMode?"ON":"OFF"}`;
+  $("todoItemsEditor").classList.toggle("hidden",!todoMultiMode);renderTodoItemEditor();
+}
+function addTodoEditorItem(){const input=$("todoItemInput"),text=input.value.trim();if(!text)return;editingTodoItems.push({id:todoItemId(),text,done:false});input.value="";renderTodoItemEditor();input.focus()}
 function openTodoEditor(t=null){
   editingTodo=t;
+  editingTodoItems=(Array.isArray(t?.items)?t.items:[]).map(x=>({id:x.id||todoItemId(),text:String(x.text||""),done:!!x.done}));
+  todoMultiMode=editingTodoItems.length>0||!!t?.multiItem;
   $("todoModalTitle").textContent=t?"Todoを編集":"Todoを追加";
   $("todoTitleInput").value=t?.title||"";
   $("todoInitialDueInput").value=t?.initialDueDate||todayId();
@@ -8854,18 +8921,20 @@ function openTodoEditor(t=null){
   $("todoDetailsInput").value=t?.details||"";
   $("todoPrivateInput").checked=!!t?.privateOnly;
   $("todoSharedInput").checked=!!t?.shared;
+  $("todoItemInput").value="";syncTodoMultiEditor();
   updateTodoWeekdayHints();
   $("todoModal").classList.remove("hidden");
 }
-function closeTodoEditor(){editingTodo=null;$("todoModal").classList.add("hidden")}
-function openTodoComplete(t){
+function closeTodoEditor(){editingTodo=null;editingTodoItems=[];todoMultiMode=false;$("todoModal").classList.add("hidden")}
+function openTodoComplete(t,pendingItems=null){
   completingTodo=t;
+  completingTodoItems=pendingItems?pendingItems.map(x=>({...x})):null;
   $("todoCompleteTitle").textContent=t.title||"無題";
   $("todoCompletedDateInput").value=todayId();
   $("todoCompleteModal").classList.remove("hidden");
   renderTodos();
 }
-function closeTodoComplete(){completingTodo=null;$("todoCompleteModal").classList.add("hidden")}
+function closeTodoComplete(){completingTodo=null;completingTodoItems=null;$("todoCompleteModal").classList.add("hidden");renderTodos()}
 function showTodoReminders(){
   const today=todayId();
   const overdue=todos.filter(t=>!t.completed&&!t.revisedDueDate&&t.initialDueDate&&t.initialDueDate<today&&(t.uid===currentUID||t.shared));
@@ -8891,6 +8960,12 @@ document.addEventListener("click",e=>{if(!e.target.closest(".todoMenu"))document
 $("todoCategoryFilter").onchange=e=>{todoCategory=e.target.value;renderTodos()};
 $("todoSortSelect").onchange=e=>{todoSortMode=e.target.value;localStorage.setItem("pb.todoSort",todoSortMode);renderTodos()};
 $("openTodoModal").onclick=()=>openTodoEditor();
+$("todoMultiToggle").onclick=()=>{
+  if(todoMultiMode&&editingTodoItems.length&&!confirm("複数項目を解除すると、入力した項目は削除されます。解除しますか？"))return;
+  todoMultiMode=!todoMultiMode;if(!todoMultiMode)editingTodoItems=[];syncTodoMultiEditor();
+};
+$("addTodoItem").onclick=addTodoEditorItem;
+$("todoItemInput").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addTodoEditorItem()}};
 $("todoPrivateInput").onchange=()=>{if($("todoPrivateInput").checked)$("todoSharedInput").checked=false};
 $("todoSharedInput").onchange=()=>{if($("todoSharedInput").checked)$("todoPrivateInput").checked=false};
 $("todoInitialDueInput").onchange=updateTodoWeekdayHints;
@@ -8900,8 +8975,10 @@ $("todoModal").onclick=e=>{if(e.target===$("todoModal"))closeTodoEditor()};
 $("saveTodo").onclick=async()=>{
   const title=$("todoTitleInput").value.trim(),initialDueDate=$("todoInitialDueInput").value;
   if(!title||!initialDueDate){alert("件名と初期目標終了日を入力してください");return}
+  const cleanedItems=editingTodoItems.map(x=>({...x,text:String(x.text||"").trim()})).filter(x=>x.text);
+  if(todoMultiMode&&cleanedItems.length<2){alert("複数Todoには項目を2つ以上追加してください");return}
   const privateOnly=$("todoPrivateInput").checked,shared=!privateOnly&&$("todoSharedInput").checked;
-  const payload={title,initialDueDate,revisedDueDate:$("todoRevisedDueInput").value||null,category:$("todoCategoryInput").value,details:$("todoDetailsInput").value.trim(),privateOnly,shared,updatedAt:serverTimestamp(),updatedBy:currentId};
+  const payload={title,initialDueDate,revisedDueDate:$("todoRevisedDueInput").value||null,category:$("todoCategoryInput").value,details:$("todoDetailsInput").value.trim(),privateOnly,shared,multiItem:todoMultiMode,items:todoMultiMode?cleanedItems:[],updatedAt:serverTimestamp(),updatedBy:currentId};
   const btn=$("saveTodo");btn.disabled=true;
   try{
     if(editingTodo){
@@ -8918,7 +8995,9 @@ $("saveTodoComplete").onclick=async()=>{
   if(!completingTodo)return;
   const completedDate=$("todoCompletedDateInput").value;if(!completedDate){alert("完了日を入力してください");return}
   const btn=$("saveTodoComplete");btn.disabled=true;
-  try{await updateDoc(doc(db,"todos",completingTodo.id),{completed:true,completedDate,completedAt:serverTimestamp(),completedBy:currentId,updatedAt:serverTimestamp(),updatedBy:currentId});closeTodoComplete()}
+  const payload={completed:true,completedDate,completedAt:serverTimestamp(),completedBy:currentId,updatedAt:serverTimestamp(),updatedBy:currentId};
+  if(completingTodoItems)payload.items=completingTodoItems;
+  try{await updateDoc(doc(db,"todos",completingTodo.id),payload);closeTodoComplete()}
   catch(e){console.error("complete todo",e);alert("完了を保存できませんでした。")}finally{btn.disabled=false}
 };
 $("closeTodoReminder").onclick=()=>$("todoReminderModal").classList.add("hidden");
