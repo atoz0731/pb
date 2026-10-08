@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>PB 個人ページ</title>
+<link rel="manifest" href="personal-manifest.json">
+<link rel="apple-touch-icon" href="icons/iconmemo-192.png">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#f4f5f7;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+body{min-height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.shell{width:100%;max-width:680px;min-height:100dvh;margin:0 auto;background:#f7f7f8}
+.header{height:74px;background:#111;color:#fff;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 18px}
+.brand{font-size:24px;font-weight:900;letter-spacing:-1px}.brand small{display:block;color:#999;font-size:9px;font-weight:600;letter-spacing:.08em;margin-top:2px}
+.avatar{width:42px;height:42px;border:3px solid #3877ed;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;background:#171717}
+.personalLabel{justify-self:end;color:#aaa;font-size:10px;font-weight:700;letter-spacing:.08em}
+.content{padding:22px 16px 30px}.greeting{font-size:22px;font-weight:900;line-height:1.25}.date{margin-top:5px;color:#777;font-size:12px}
+.tools{display:grid;gap:12px;margin-top:22px}
+.tool{display:grid;grid-template-columns:54px 1fr 28px;align-items:center;gap:13px;min-height:82px;padding:13px 14px;background:#fff;border:1px solid #e3e3e5;border-radius:18px;color:#111;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.045)}
+.tool:active{transform:scale(.985)}.toolIcon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:27px}
+.memo .toolIcon{background:#e4efff}.schedule .toolIcon{background:#fff0d5}.todo .toolIcon{background:#e1f5e7}
+.toolTitle{display:block;font-size:17px;font-weight:900}.toolText{display:block;font-size:10px;color:#888;margin-top:4px;line-height:1.4}.arrow{color:#aaa;font-size:24px;text-align:right}
+.installHint{margin:20px 5px 0;padding:12px 14px;border-radius:12px;background:#eceef1;color:#777;font-size:10px;line-height:1.55;text-align:center}.version{text-align:center;color:#aaa;font-size:9px;margin-top:18px}
+@media (display-mode:standalone){.installHint{display:none}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="header"><div class="brand">PB<small>PERSONAL</small></div><div class="avatar" aria-label="Natsuki">N</div><div class="personalLabel">MY PAGE</div></header>
+  <section class="content">
+    <div class="greeting">個人ページ</div>
+    <div id="today" class="date"></div>
+    <nav class="tools" aria-label="個人用ツール">
+      <a class="tool memo" href="memo.html"><span class="toolIcon">📝</span><span><span class="toolTitle">メモ</span><span class="toolText">入力・状態・送付・記録・保存</span></span><span class="arrow">›</span></a>
+      <a class="tool schedule" href="schedule.html"><span class="toolIcon">📅</span><span><span class="toolTitle">予定</span><span class="toolText">自分のスケジュールを確認・追加</span></span><span class="arrow">›</span></a>
+      <a class="tool todo" href="todo.html"><span class="toolIcon">✓</span><span><span class="toolTitle">Todo</span><span class="toolText">自分のTodoと複数項目を管理</span></span><span class="arrow">›</span></a>
+    </nav>
+    <div class="installHint">Safariの共有ボタンから「ホーム画面に追加」すると、<br>この1つのアイコンから3つすべて開けます。</div>
+    <div class="version">PB PERSONAL v1.0</div>
+  </section>
+</main>
+<script>document.getElementById('today').textContent=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'long',day:'numeric',weekday:'long'}).format(new Date());</script>
+</body>
+</html>
