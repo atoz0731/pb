@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f7">
+<title>Todo</title>
+<link rel="manifest" href="todo-manifest.json">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#f3f4f6;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+button,input,textarea,select{font:inherit}.hidden{display:none!important}
+#screen{min-height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.shell{width:100%;max-width:760px;min-height:100dvh;margin:0 auto;background:#f7f7f8;display:flex;flex-direction:column}
+.appTitle{height:48px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:#fff;border-bottom:1px solid #ddd;font-size:16px;font-weight:800}
+.login{padding:16px;background:#fff}.login input{width:100%;border:1px solid #ccc;border-radius:10px;padding:11px;margin:5px 0;font-size:16px}
+.loginBtn{width:100%;border:0;border-radius:10px;padding:11px;background:#111;color:#fff;font-weight:700;margin-top:8px}.hint{text-align:center;color:#888;font-size:10px;margin-top:8px}
+#todoBox{min-height:0;flex:1;display:flex;flex-direction:column}
+.toolbar{flex:0 0 auto;padding:8px 9px;background:#fff;border-bottom:1px solid #e4e4e4}
+.toolbarTop,.toolbarBottom{display:flex;align-items:center;gap:6px}.toolbarBottom{margin-top:7px}
+.completeBtn{border:1px solid #d7d7d7;border-radius:999px;background:#fff;color:#666;font-size:11px;font-weight:700;padding:6px 12px}
+.completeBtn.active{background:#4d535b;border-color:#4d535b;color:#fff}
+.addBtn{margin-left:auto;border:0;border-radius:10px;background:#111;color:#fff;font-weight:700;padding:7px 12px;white-space:nowrap}
+.filterSelect{min-width:0;flex:1;border:1px solid #d7d7d7;border-radius:9px;background:#fff;color:#555;font-size:11px;padding:7px 6px}
+#todoList{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:7px 9px 24px}
+.monthLabel{font-size:12px;font-weight:800;color:#666;margin:8px 2px 5px}
+.empty{text-align:center;color:#999;font-size:12px;padding:34px 10px}
+.todoCard{background:#fff;border-radius:11px;border:1px solid #e4e4e4;border-left:4px solid #2f6fed;padding:7px 8px 6px;margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,.025)}
+.todoCard.completed{opacity:.82}.todoHead{display:flex;align-items:flex-start;gap:7px}.todoCheck{width:19px!important;height:19px!important;flex:0 0 auto;margin:1px 0 0}
+.todoMain{flex:1;min-width:0}.todoTitle{font-size:13px;font-weight:800;line-height:1.25;word-break:break-word}.todoCard.completed .todoTitle{text-decoration:line-through;color:#777}
+.todoInfoRow{display:flex;align-items:center;gap:6px;min-width:0;margin-top:4px}.todoCategory{flex:0 0 auto;border-radius:999px;background:#e9edf4;color:#4e5968;font-size:9px;font-weight:700;padding:2px 6px}
+.todoDates{display:flex;flex:1;min-width:0;flex-wrap:wrap;gap:2px 8px;font-size:9px;line-height:1.35;color:#777}.todoDates .late{color:#d13b3b;font-weight:800}
+.todoProgress{flex:0 0 auto;border-radius:999px;background:#eef3ff;color:#2f6fed;font-size:9px;font-weight:800;padding:2px 6px}
+.todoDetails{white-space:pre-wrap;word-break:break-word;font-size:10px;line-height:1.35;color:#555;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.todoCard.multiExpandable{cursor:pointer}.todoSubtasks{margin:7px 0 1px 26px;padding-top:6px;border-top:1px solid #eee}.todoSubtaskRow{display:flex;align-items:flex-start;gap:7px;padding:5px 0;font-size:11px;line-height:1.35}.todoSubtaskRow input{width:18px!important;height:18px!important;flex:0 0 auto;margin:0}.todoSubtaskRow.done span{text-decoration:line-through;color:#888}
+.todoMenu{flex:0 0 auto;position:relative;margin-left:1px}.todoMenuBtn{border:0;background:none;color:#777;font-size:17px;line-height:1;padding:1px 2px 5px}
+.todoMenuPopup{position:absolute;right:0;top:20px;z-index:65;background:#fff;border:1px solid #ddd;border-radius:9px;box-shadow:0 4px 15px #0002;min-width:82px;overflow:hidden}
+.todoMenuPopup button{display:block;width:100%;border:0;background:#fff;color:#555;text-align:left;font-size:11px;padding:8px 10px}.todoMenuPopup .danger{color:#c33}
+.modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:200;padding-top:env(safe-area-inset-top)}
+.modal{width:calc(100vw - 24px);max-width:520px;background:#fff;border-radius:20px 20px 0 0;padding:20px 16px calc(22px + env(safe-area-inset-bottom));max-height:calc(100dvh - env(safe-area-inset-top) - 10px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.modal h3{margin:0 0 12px}.formLabel{display:block;font-size:11px;color:#777;margin:9px 0 4px}
+.modal input,.modal textarea,.modal select{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;padding:11px;border:1px solid #ccc;border-radius:10px;margin:5px 0}.modal textarea{resize:none;min-height:100px}
+.modal input[type="date"]{height:56px;min-height:56px;line-height:56px;padding:0 16px;margin:0;border-radius:14px;background:#f3f3f3;-webkit-appearance:none;appearance:none;text-align:center;font-size:18px}
+.modal input[type="date"]::-webkit-date-and-time-value{min-width:0;min-height:56px;line-height:56px;text-align:center}
+.multiToggle{display:block;width:100%;border:1px solid #ccc;border-radius:10px;background:#fff;color:#555;font-size:12px;font-weight:800;padding:10px;margin-top:8px}.multiToggle.active{background:#111;border-color:#111;color:#fff}
+.itemsEditor{margin-top:8px;padding:8px;border-radius:10px;background:#f4f4f5}.itemComposer,.editItemRow{display:flex;align-items:center;gap:6px}.itemComposer input,.editItemRow input{margin:0!important;min-width:0}.itemComposer button{flex:0 0 auto;border:0;border-radius:9px;background:#111;color:#fff;font-weight:700;padding:10px 11px;white-space:nowrap}.editItemRow{margin-top:6px}.editItemRow button{flex:0 0 auto;width:32px;height:32px;border:0;border-radius:50%;background:#e4e4e7;color:#777;font-weight:800}
+.weekday{font-size:10px;color:#777;text-align:right;margin-top:3px;min-height:14px}.modalBtns{display:flex;gap:8px;margin-top:12px}.modalBtns button{flex:1;border:0;border-radius:10px;min-height:44px}.saveBtn{background:#111;color:#fff;font-weight:700}
+.reminderList{max-height:52vh;overflow:auto;margin:8px 0 12px}.reminderItem{border-left:4px solid #d13b3b;background:#fff4f3;border-radius:9px;padding:9px 10px;margin-bottom:7px}.reminderTitle{font-size:13px;font-weight:800}.reminderMeta{font-size:10px;color:#a33;margin-top:3px}
+</style>
+</head>
+<body>
+<div id="screen"><main class="shell">
+  <div class="appTitle">Todo</div>
+  <section id="loginBox" class="login hidden">
+    <input id="loginId" autocomplete="username" placeholder="ID">
+    <input id="loginPassword" type="password" autocomplete="current-password" placeholder="パスワード">
+    <button id="loginButton" class="loginBtn" type="button">開く</button>
+    <div id="loginError" class="hint"></div>
+  </section>
+  <section id="todoBox" class="hidden">
+    <div class="toolbar">
+      <div class="toolbarTop">
+        <button id="completeButton" class="completeBtn" type="button">完了</button>
+        <button id="addButton" class="addBtn" type="button">＋ 作成</button>
+      </div>
+      <div class="toolbarBottom">
+        <select id="categoryFilter" class="filterSelect" aria-label="カテゴリ">
+          <option value="all">すべてのカテゴリ</option><option value="work">仕事</option><option value="home">家のこと</option><option value="other">その他</option>
+        </select>
+        <select id="sortSelect" class="filterSelect" aria-label="並び替え">
+          <option value="new">新しい順</option><option value="due">目標日順</option>
+        </select>
+      </div>
+    </div>
+    <div id="todoList"></div>
+  </section>
+</main></div>
+
+<div id="editModal" class="modalOverlay hidden"><div class="modal">
+  <h3 id="editModalTitle">Todoを追加</h3>
+  <label class="formLabel" for="titleInput">件名</label><input id="titleInput" placeholder="やること">
+  <button id="multiToggle" class="multiToggle" type="button" aria-pressed="false">複数項目 OFF</button>
+  <div id="itemsEditor" class="itemsEditor hidden"><div class="itemComposer"><input id="itemInput" placeholder="項目を入力"><button id="addItem" type="button">＋ 追加</button></div><div id="itemEditorList"></div></div>
+  <label class="formLabel" for="initialDueInput">初期目標終了日</label><input id="initialDueInput" type="date"><div id="initialWeekday" class="weekday"></div>
+  <label class="formLabel" for="revisedDueInput">改訂目標終了日（任意）</label><input id="revisedDueInput" type="date"><div id="revisedWeekday" class="weekday"></div>
+  <label class="formLabel" for="categoryInput">カテゴリ</label><select id="categoryInput"><option value="work">仕事</option><option value="home">家のこと</option><option value="other">その他</option></select>
+  <label class="formLabel" for="detailsInput">詳細</label><textarea id="detailsInput" placeholder="メモ（任意）"></textarea>
+  <div class="modalBtns"><button id="cancelEdit" type="button">キャンセル</button><button id="saveEdit" class="saveBtn" type="button">保存</button></div>
+</div></div>
+
+<div id="completeModal" class="modalOverlay hidden"><div class="modal">
+  <h3>完了日を入力</h3><div id="completeTitle" class="hint"></div>
+  <label class="formLabel" for="completedDateInput">完了日</label><input id="completedDateInput" type="date">
+  <div class="modalBtns"><button id="cancelComplete" type="button">キャンセル</button><button id="saveComplete" class="saveBtn" type="button">完了にする</button></div>
+</div></div>
+
+<div id="reminderModal" class="modalOverlay hidden"><div class="modal">
+  <h3>期限を過ぎたTodo</h3><div id="reminderList" class="reminderList"></div>
+  <div class="modalBtns"><button id="closeReminder" class="saveBtn" type="button">閉じる</button></div>
+</div></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import {getFirestore,collection,query,where,onSnapshot,doc,addDoc,updateDoc,deleteDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyBYEhnK2xJPYW457kgCme2KQJJEtJlowgk",authDomain:"message-57e2d.firebaseapp.com",projectId:"message-57e2d",storageBucket:"message-57e2d.firebasestorage.app",messagingSenderId:"560072908841",appId:"1:560072908841:web:a6d0e92a57a24c152a3c38"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const CATEGORIES={work:"仕事",home:"家のこと",other:"その他"};
+let currentUID="",currentId="",todos=[],unsub=null,showCompleted=false,category="all",sortMode=localStorage.getItem("pb.todoStandaloneSort")||"new",editing=null,completing=null,completingItems=null,multiMode=false,editingItems=[],expandedIds=new Set(),reminderShown=false;
+
+function todayId(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function asDate(v){if(!v)return null;const d=new Date(`${v}T00:00:00`);return Number.isNaN(d.getTime())?null:d}
+function dateLabel(v){const d=asDate(v);return d?d.toLocaleDateString("ja-JP",{year:"numeric",month:"numeric",day:"numeric",weekday:"short"}):"－"}
+function dayDiff(a,b){const x=asDate(a),y=asDate(b);return x&&y?Math.max(0,Math.floor((y-x)/86400000)):0}
+function millis(t,k="createdAt"){const v=t?.[k];return typeof v?.toMillis==="function"?v.toMillis():0}
+function updateWeekdays(){const a=asDate($("initialDueInput").value),b=asDate($("revisedDueInput").value);$("initialWeekday").textContent=a?a.toLocaleDateString("ja-JP",{weekday:"long"}):"";$("revisedWeekday").textContent=b?b.toLocaleDateString("ja-JP",{weekday:"long"}):""}
+function visibleTodos(){const rows=todos.filter(t=>t.category!=="two").filter(t=>!!t.completed===showCompleted).filter(t=>category==="all"||t.category===category);rows.sort((a,b)=>showCompleted?String(b.completedDate||"").localeCompare(String(a.completedDate||""))||millis(b,"completedAt")-millis(a,"completedAt"):sortMode==="due"?String(a.revisedDueDate||a.initialDueDate||"9999").localeCompare(String(b.revisedDueDate||b.initialDueDate||"9999")):millis(b)-millis(a));return rows}
+
+function render(){
+  $("completeButton").classList.toggle("active",showCompleted);$("completeButton").textContent=showCompleted?"未完了":"完了";$("categoryFilter").value=category;$("sortSelect").value=sortMode;
+  const box=$("todoList");box.innerHTML="";const rows=visibleTodos();if(!rows.length){box.innerHTML=`<div class="empty">${showCompleted?"該当する完了Todoはありません。":"Todoはありません。"}</div>`;return}
+  let lastMonth="";
+  rows.forEach(t=>{
+    if(showCompleted&&t.completedDate){const month=t.completedDate.slice(0,7);if(month!==lastMonth){lastMonth=month;const h=document.createElement("div");h.className="monthLabel";const [y,m]=month.split("-");h.textContent=`${y}年${Number(m)}月`;box.appendChild(h)}}
+    const items=Array.isArray(t.items)?t.items:[],isMulti=items.length>0,doneCount=items.filter(x=>x.done).length;
+    const card=document.createElement("div");card.className=`todoCard ${t.completed?"completed":""} ${isMulti?"multiExpandable":""}`;
+    const head=document.createElement("div");head.className="todoHead";
+    const check=document.createElement("input");check.type="checkbox";check.className="todoCheck";check.checked=!!t.completed;check.disabled=isMulti&&!t.completed;check.setAttribute("aria-label",t.completed?"未完了に戻す":"完了にする");check.onchange=async()=>{if(t.completed){if(!confirm("このTodoを未完了に戻しますか？")){render();return}const payload={completed:false,completedDate:null,completedAt:null,completedBy:null,updatedAt:serverTimestamp(),updatedBy:currentId};if(isMulti){const reopened=items.map(x=>({...x}));for(let i=reopened.length-1;i>=0;i--){if(reopened[i].done){reopened[i].done=false;break}}payload.items=reopened}try{await updateDoc(doc(db,"todos",t.id),payload)}catch(e){console.error(e);alert("未完了に戻せませんでした。");render()}}else if(!isMulti)openComplete(t)};
+    const main=document.createElement("div");main.className="todoMain";const title=document.createElement("div");title.className="todoTitle";title.textContent=t.title||"無題";
+    const info=document.createElement("div");info.className="todoInfoRow";const cat=document.createElement("span");cat.className="todoCategory";cat.textContent=CATEGORIES[t.category]||CATEGORIES.other;
+    const dates=document.createElement("div");dates.className="todoDates";const delay=dayDiff(t.initialDueDate,t.completedDate||todayId());dates.innerHTML=`<span>初期 ${dateLabel(t.initialDueDate)}</span>${t.revisedDueDate?`<span>改訂 ${dateLabel(t.revisedDueDate)}</span>`:""}${delay>0?`<span class="late">遅延 ${delay}日</span>`:""}${t.completedDate?`<span>完了 ${dateLabel(t.completedDate)}</span>`:""}`;info.append(cat,dates);if(isMulti){const progress=document.createElement("span");progress.className="todoProgress";progress.textContent=`${doneCount}/${items.length}`;info.appendChild(progress)}main.append(title,info);
+    if(t.details){const details=document.createElement("div");details.className="todoDetails";details.textContent=t.details;main.appendChild(details)}
+    const menu=document.createElement("div");menu.className="todoMenu";const mb=document.createElement("button");mb.type="button";mb.className="todoMenuBtn";mb.textContent="…";mb.setAttribute("aria-label","Todoの操作");const pop=document.createElement("div");pop.className="todoMenuPopup hidden";
+    const edit=document.createElement("button");edit.type="button";edit.textContent="編集";edit.onclick=e=>{e.stopPropagation();pop.classList.add("hidden");openEdit(t)};const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="削除";del.onclick=async e=>{e.stopPropagation();pop.classList.add("hidden");if(confirm("このTodoを削除しますか？"))await deleteDoc(doc(db,"todos",t.id))};pop.append(edit,del);mb.onclick=e=>{e.stopPropagation();document.querySelectorAll(".todoMenuPopup").forEach(x=>{if(x!==pop)x.classList.add("hidden")});pop.classList.toggle("hidden")};menu.append(mb,pop);
+    head.append(check,main,menu);card.appendChild(head);
+    if(isMulti&&expandedIds.has(t.id)){const list=document.createElement("div");list.className="todoSubtasks";items.forEach((item,index)=>{const row=document.createElement("label");row.className=`todoSubtaskRow ${item.done?"done":""}`;const sub=document.createElement("input");sub.type="checkbox";sub.checked=!!item.done;const text=document.createElement("span");text.textContent=item.text||`項目${index+1}`;sub.onchange=async e=>{e.stopPropagation();const next=items.map((x,i)=>i===index?{...x,done:sub.checked}:{...x});if(!t.completed&&next.every(x=>x.done)){openComplete(t,next);return}const payload={items:next,updatedAt:serverTimestamp(),updatedBy:currentId};if(t.completed&&!sub.checked)Object.assign(payload,{completed:false,completedDate:null,completedAt:null,completedBy:null});try{await updateDoc(doc(db,"todos",t.id),payload)}catch(err){console.error(err);alert("項目を更新できませんでした。");render()}};row.onclick=e=>e.stopPropagation();row.append(sub,text);list.appendChild(row)});card.appendChild(list)}
+    if(isMulti)card.onclick=e=>{if(e.target.closest("button,input,.todoMenu,.todoSubtasks"))return;expandedIds.has(t.id)?expandedIds.delete(t.id):expandedIds.add(t.id);render()};box.appendChild(card);
+  });
+}
+
+function itemId(){return globalThis.crypto?.randomUUID?.()||`item-${Date.now()}-${Math.random().toString(36).slice(2)}`}
+function renderItemEditor(){const box=$("itemEditorList");box.innerHTML="";editingItems.forEach((item,index)=>{const row=document.createElement("div");row.className="editItemRow";const input=document.createElement("input");input.value=item.text||"";input.placeholder=`項目${index+1}`;input.oninput=()=>{editingItems[index].text=input.value};const remove=document.createElement("button");remove.type="button";remove.textContent="×";remove.onclick=()=>{editingItems.splice(index,1);renderItemEditor()};row.append(input,remove);box.appendChild(row)})}
+function syncMultiEditor(){const toggle=$("multiToggle");toggle.classList.toggle("active",multiMode);toggle.setAttribute("aria-pressed",String(multiMode));toggle.textContent=`複数項目 ${multiMode?"ON":"OFF"}`;$("itemsEditor").classList.toggle("hidden",!multiMode);renderItemEditor()}
+function addEditorItem(){const input=$("itemInput"),text=input.value.trim();if(!text)return;editingItems.push({id:itemId(),text,done:false});input.value="";renderItemEditor();input.focus()}
+function openEdit(t=null){editing=t;editingItems=(Array.isArray(t?.items)?t.items:[]).map(x=>({id:x.id||itemId(),text:String(x.text||""),done:!!x.done}));multiMode=editingItems.length>0||!!t?.multiItem;$("editModalTitle").textContent=t?"Todoを編集":"Todoを追加";$("titleInput").value=t?.title||"";$("initialDueInput").value=t?.initialDueDate||todayId();$("initialDueInput").disabled=!!t;$("revisedDueInput").value=t?.revisedDueDate||"";$("categoryInput").value=CATEGORIES[t?.category]?t.category:"work";$("detailsInput").value=t?.details||"";$("itemInput").value="";syncMultiEditor();updateWeekdays();$("editModal").classList.remove("hidden")}
+function closeEdit(){editing=null;editingItems=[];multiMode=false;$("editModal").classList.add("hidden")}
+function openComplete(t,pendingItems=null){completing=t;completingItems=pendingItems?pendingItems.map(x=>({...x})):null;$("completeTitle").textContent=t.title||"無題";$("completedDateInput").value=todayId();$("completeModal").classList.remove("hidden");render()}
+function closeComplete(){completing=null;completingItems=null;$("completeModal").classList.add("hidden");render()}
+function showReminders(){const overdue=todos.filter(t=>t.category!=="two"&&!t.completed&&!t.revisedDueDate&&t.initialDueDate&&t.initialDueDate<todayId());if(!overdue.length)return;const box=$("reminderList");box.innerHTML="";overdue.sort((a,b)=>String(a.initialDueDate).localeCompare(String(b.initialDueDate))).forEach(t=>{const item=document.createElement("div");item.className="reminderItem";const title=document.createElement("div");title.className="reminderTitle";title.textContent=t.title||"無題";const meta=document.createElement("div");meta.className="reminderMeta";meta.textContent=`目標 ${dateLabel(t.initialDueDate)}・${dayDiff(t.initialDueDate,todayId())}日超過`;item.append(title,meta);item.onclick=()=>{$("reminderModal").classList.add("hidden");openEdit(t)};box.appendChild(item)});$("reminderModal").classList.remove("hidden")}
+function listen(){if(unsub)unsub();unsub=onSnapshot(query(collection(db,"todos"),where("uid","==",currentUID)),snap=>{todos=snap.docs.map(d=>({id:d.id,...d.data()}));render();if(!reminderShown){reminderShown=true;setTimeout(showReminders,250)}},e=>{console.error(e);$("todoList").innerHTML='<div class="empty">Todoを読み込めませんでした。</div>'})}
+
+$("addButton").onclick=()=>openEdit();$("completeButton").onclick=()=>{showCompleted=!showCompleted;render()};$("categoryFilter").onchange=e=>{category=e.target.value;render()};$("sortSelect").onchange=e=>{sortMode=e.target.value;localStorage.setItem("pb.todoStandaloneSort",sortMode);render()};
+$("multiToggle").onclick=()=>{if(multiMode&&editingItems.length&&!confirm("複数項目を解除すると、入力した項目は削除されます。解除しますか？"))return;multiMode=!multiMode;if(!multiMode)editingItems=[];syncMultiEditor()};$("addItem").onclick=addEditorItem;$("itemInput").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addEditorItem()}};
+$("initialDueInput").onchange=updateWeekdays;$("revisedDueInput").onchange=updateWeekdays;$("cancelEdit").onclick=closeEdit;$("editModal").onclick=e=>{if(e.target===$("editModal"))closeEdit()};
+$("saveEdit").onclick=async()=>{const title=$("titleInput").value.trim(),initialDueDate=$("initialDueInput").value;if(!title||!initialDueDate){alert("件名と初期目標終了日を入力してください");return}const cleanedItems=editingItems.map(x=>({...x,text:String(x.text||"").trim()})).filter(x=>x.text);if(multiMode&&cleanedItems.length<2){alert("複数Todoには項目を2つ以上追加してください");return}const payload={title,initialDueDate,revisedDueDate:$("revisedDueInput").value||null,category:$("categoryInput").value,details:$("detailsInput").value.trim(),multiItem:multiMode,items:multiMode?cleanedItems:[],updatedAt:serverTimestamp(),updatedBy:currentId};const btn=$("saveEdit");btn.disabled=true;try{if(editing)await updateDoc(doc(db,"todos",editing.id),payload);else await addDoc(collection(db,"todos"),{...payload,uid:currentUID,senderId:currentId,privateOnly:true,shared:false,completed:false,completedDate:null,completedAt:null,createdAt:serverTimestamp()});closeEdit()}catch(e){console.error(e);alert("Todoを保存できませんでした。")}finally{btn.disabled=false}};
+$("cancelComplete").onclick=closeComplete;$("completeModal").onclick=e=>{if(e.target===$("completeModal"))closeComplete()};$("saveComplete").onclick=async()=>{if(!completing)return;const completedDate=$("completedDateInput").value;if(!completedDate){alert("完了日を入力してください");return}const btn=$("saveComplete");btn.disabled=true;const payload={completed:true,completedDate,completedAt:serverTimestamp(),completedBy:currentId,updatedAt:serverTimestamp(),updatedBy:currentId};if(completingItems)payload.items=completingItems;try{await updateDoc(doc(db,"todos",completing.id),payload);closeComplete()}catch(e){console.error(e);alert("完了にできませんでした。")}finally{btn.disabled=false}};
+$("closeReminder").onclick=()=>$("reminderModal").classList.add("hidden");document.addEventListener("click",e=>{if(!e.target.closest(".todoMenu"))document.querySelectorAll(".todoMenuPopup").forEach(x=>x.classList.add("hidden"))});
+$("loginButton").onclick=async()=>{const id=$("loginId").value.trim(),pw=$("loginPassword").value;if(!id||!pw)return;$("loginError").textContent="";try{await signInWithEmailAndPassword(auth,`${id}@pb.local`,pw)}catch(e){$("loginError").textContent="開けませんでした"}};$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginButton").click()});
+onAuthStateChanged(auth,user=>{if(user){currentUID=user.uid;currentId=(user.email||"").replace("@pb.local","");$("loginBox").classList.add("hidden");$("todoBox").classList.remove("hidden");listen()}else{currentUID="";currentId="";if(unsub){unsub();unsub=null}$("todoBox").classList.add("hidden");$("loginBox").classList.remove("hidden")}});
+</script>
+</body>
+</html>
