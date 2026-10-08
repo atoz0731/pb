@@ -4509,9 +4509,7 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
   <div id="headerMenu" class="headerMenu hidden">
     <button id="menuVoice">📞 音声通話を開始</button>
     <button id="menuUpdates">🆕 アップデート</button>
-    <button id="menuQuickMemo">📝 メモ</button>
-    <button id="menuSchedulePage">📅 スケジュール</button>
-    <button id="menuTodoPage">☑️ Todo</button>
+    <button id="menuPersonalPage">👤 個人ページ</button>
     <button id="menuSettings">⚙️ 設定</button>
     <button id="menuLock">🔒 PIN画面に戻る</button>
     <button id="logoutButton">ログアウト</button>
@@ -4720,6 +4718,7 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.8.6</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>メモ・スケジュール・Todoの独立版を1つにまとめた個人ページを追加</li><li>個人ページはHitomi表示とPIN入力なしで利用できる仕様に対応</li><li>各独立ページから個人ページへ戻れるホームボタンを追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.5</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoの重複した「期限超過」表示を削除</li><li>自分のみTodoの表示を右端のアイコンへ集約し、カードをコンパクト化</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.4</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoのカテゴリを色分けし、ひと目で判別しやすく改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.3</div><div class="updateDate">2026/10/08</div><ul class="updateItems"><li>複数の項目をすべて終えると完了になるTodoを追加</li><li>複数Todoのカードをタップして項目を展開・チェックできるよう対応</li><li>最後の項目をチェックした時に完了日を確認する仕様に対応</li></ul></div>
@@ -5321,7 +5320,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.8.5";
+const APP_VERSION="3.8.6";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -6401,25 +6400,10 @@ $("talkSearchButton").onclick=openTalkSearch;
 $("talkDateButton").onclick=openTalkDateFilter;
 $("closeSavedMessages").onclick=()=>$("savedMessagesPanel").classList.add("hidden");
 
-$("menuQuickMemo")?.addEventListener("click",()=>{
+$("menuPersonalPage")?.addEventListener("click",()=>{
   $("headerMenu")?.classList.add("hidden");
   forceStandbyOff();
-  const u=new URL("memo.html",location.href);
-  location.href=u.toString();
-});
-
-
-$("menuSchedulePage")?.addEventListener("click",()=>{
-  $("headerMenu")?.classList.add("hidden");
-  forceStandbyOff();
-  const u=new URL("schedule.html",location.href);
-  location.href=u.toString();
-});
-
-$("menuTodoPage")?.addEventListener("click",()=>{
-  $("headerMenu")?.classList.add("hidden");
-  forceStandbyOff();
-  const u=new URL("todo.html",location.href);
+  const u=new URL("personal.html",location.href);
   location.href=u.toString();
 });
 
