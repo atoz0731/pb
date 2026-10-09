@@ -4144,6 +4144,8 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoMenuPopup.hidden{display:none!important}
 .todoMenuPopup button{display:block;width:100%;border:0;background:#fff;color:#555;text-align:left;font-size:11px;padding:8px 10px}
 .todoMenuPopup .danger{color:#c33}
+.todoNextAction{display:block;width:calc(100% - 26px);margin:7px 0 1px 26px;border:1px solid #9aa9c4;border-radius:9px;background:#f4f7fc;color:#36547f;font-size:10px;font-weight:800;padding:7px 10px;text-align:center}
+.todoNextStatus{font-size:8px;color:#71809a;margin-top:3px}
 .todoEmpty{text-align:center;color:#999;font-size:12px;padding:34px 10px}
 .todoFormLabel{display:block;font-size:11px;color:#777;margin:9px 0 4px}
 .todoMultiToggle{display:block;width:100%;border:1px solid #ccc;border-radius:10px;background:#fff;color:#555;font-size:12px;font-weight:800;padding:10px;margin-top:8px}
@@ -4153,9 +4155,9 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoEditItemRow{display:flex;align-items:center;gap:6px;margin-top:6px}.todoEditItemRow input{margin:0!important;min-width:0}.todoEditItemRow button{flex:0 0 auto;width:32px;height:32px;border:0;border-radius:50%;background:#e4e4e7;color:#777;font-weight:800}
 .todoCard.multiExpandable{cursor:pointer}.todoSubtasks{margin:7px 0 1px 26px;padding-top:6px;border-top:1px solid #eee}.todoSubtaskRow{display:flex;align-items:flex-start;gap:7px;padding:5px 0;font-size:11px;line-height:1.35}.todoSubtaskRow input{width:18px!important;height:18px!important;flex:0 0 auto;margin:0}.todoSubtaskRow.done span{text-decoration:line-through;color:#888}
 .todoWeekdayHint{font-size:10px;color:#777;text-align:right;margin-top:3px;min-height:14px}
-#todoModal input,#todoModal textarea,#todoModal select,#todoCompleteModal input{width:100%;max-width:100%;box-sizing:border-box}
+#todoModal input,#todoModal textarea,#todoModal select,#todoCompleteModal input,#todoNextModal input{width:100%;max-width:100%;box-sizing:border-box}
 /* Todoの日付欄は予定追加と同じiPhone向け幅補正を使う */
-#todoModal input[type="date"],#todoCompleteModal input[type="date"]{
+#todoModal input[type="date"],#todoCompleteModal input[type="date"],#todoNextModal input[type="date"]{
   display:block!important;
   width:100%!important;
   max-width:100%!important;
@@ -4173,7 +4175,8 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
   font-size:18px!important;
 }
 #todoModal input[type="date"]::-webkit-date-and-time-value,
-#todoCompleteModal input[type="date"]::-webkit-date-and-time-value{
+#todoCompleteModal input[type="date"]::-webkit-date-and-time-value,
+#todoNextModal input[type="date"]::-webkit-date-and-time-value{
   min-width:0!important;
   min-height:56px!important;
   line-height:56px!important;
@@ -4181,6 +4184,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 }
 .todoFlagRow{display:flex;align-items:center;justify-content:space-between;padding:9px 2px}
 .todoFlagRow input{width:22px!important;height:22px!important}
+.todoCompleteBtns{flex-wrap:wrap}.todoCompleteBtns #saveTodoCompletePending{flex-basis:100%;order:3}
 .todoReminderList{max-height:52vh;overflow:auto;margin:8px 0 12px}
 .todoReminderItem{border-left:4px solid #d13b3b;background:#fff4f3;border-radius:9px;padding:9px 10px;margin-bottom:7px}
 .todoReminderTitle{font-size:13px;font-weight:800}
@@ -4204,6 +4208,8 @@ body.night-mode .todoItemsEditor{background:#222}body.night-mode .todoEditItemRo
 body.night-mode .todoSubtasks{border-color:#383838}
 body.night-mode .todoMenuPopup,body.night-mode .todoMenuPopup button{background:#222;color:#ddd;border-color:#444}
 body.night-mode .todoReminderItem{background:#33201f;color:#eee}
+body.night-mode .todoNextAction{background:#202b3b;border-color:#526886;color:#a9c8f5}
+body.night-mode .todoNextStatus{color:#8fa6c8}
 
 </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -4718,6 +4724,7 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.8.7</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todo完了時に次回予定日を選び、同じ内容の次回Todoを作成できる機能を追加</li><li>次回日が未定でも完了でき、完了カードから後日登録できるよう対応</li><li>目標日順では、同じ日のTodoをカテゴリごとにまとめる並びへ改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.6</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>メモ・スケジュール・Todoの独立版を1つにまとめた個人ページを追加</li><li>個人ページはHitomi表示とPIN入力なしで利用できる仕様に対応</li><li>各独立ページから個人ページへ戻れるホームボタンを追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.5</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoの重複した「期限超過」表示を削除</li><li>自分のみTodoの表示を右端のアイコンへ集約し、カードをコンパクト化</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.4</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoのカテゴリを色分けし、ひと目で判別しやすく改善</li></ul></div>
@@ -5077,6 +5084,10 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
       <label for="todoSharedInput">共有（2人とも編集可）</label>
       <input id="todoSharedInput" type="checkbox">
     </div>
+    <div class="todoFlagRow">
+      <label for="todoRepeatNextInput">完了時に次回予定を登録</label>
+      <input id="todoRepeatNextInput" type="checkbox">
+    </div>
     <div class="modalBtns">
       <button id="cancelTodoModal" type="button">キャンセル</button>
       <button id="saveTodo" class="modalSave" type="button">保存</button>
@@ -5090,9 +5101,30 @@ body.night-mode .todoReminderItem{background:#33201f;color:#eee}
     <div id="todoCompleteTitle" class="settingText"></div>
     <label class="todoFormLabel" for="todoCompletedDateInput">完了日</label>
     <input id="todoCompletedDateInput" type="date">
-    <div class="modalBtns">
+    <div id="todoNextDueFields" class="hidden">
+      <label class="todoFormLabel" for="todoNextDueInput">次回予定日</label>
+      <input id="todoNextDueInput" type="date">
+      <div id="todoNextDueWeekday" class="todoWeekdayHint"></div>
+      <div class="settingSub">未定の場合は「次回未定で完了」を選べます。</div>
+    </div>
+    <div class="modalBtns todoCompleteBtns">
       <button id="cancelTodoComplete" type="button">キャンセル</button>
+      <button id="saveTodoCompletePending" type="button" class="hidden">次回未定で完了</button>
       <button id="saveTodoComplete" class="modalSave" type="button">完了にする</button>
+    </div>
+  </div>
+</div>
+
+<div id="todoNextModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3>次回Todoを登録</h3>
+    <div id="todoNextTitle" class="settingText"></div>
+    <label class="todoFormLabel" for="todoLaterNextDueInput">次回予定日</label>
+    <input id="todoLaterNextDueInput" type="date">
+    <div id="todoLaterNextDueWeekday" class="todoWeekdayHint"></div>
+    <div class="modalBtns">
+      <button id="cancelTodoNext" type="button">キャンセル</button>
+      <button id="saveTodoNext" class="modalSave" type="button">登録する</button>
     </div>
   </div>
 </div>
@@ -5187,7 +5219,7 @@ import {
 import {
   getFirestore, collection, addDoc as fsAddDoc, query, orderBy, limit, onSnapshot as fsOnSnapshot,
   serverTimestamp, doc, updateDoc as fsUpdateDoc, deleteDoc as fsDeleteDoc, setDoc as fsSetDoc, getDoc as fsGetDoc, startAfter,
-  getDocs as fsGetDocs, arrayUnion, arrayRemove, where, Timestamp, documentId, startAt, endAt
+  getDocs as fsGetDocs, arrayUnion, arrayRemove, where, Timestamp, documentId, startAt, endAt, runTransaction
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -5306,7 +5338,7 @@ let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let records=[], recordMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1), recordShowMine=true, recordShowOther=true, editingRecord=null, recordTarget="mine", scheduleViewMode="schedule";
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, noteArchiveMode=false, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
-let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShown=false;
+let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShown=false;
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeTodos=null, unsubscribeSchedules=null, unsubscribeRecords=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -5320,7 +5352,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.8.6";
+const APP_VERSION="3.8.7";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -8734,6 +8766,7 @@ $("saveNote").onclick=async()=>{
 
 /* TODO / ノートの裏タブ */
 const TODO_CATEGORIES={two:"2人のこと",work:"仕事",home:"家のこと",other:"その他"};
+const TODO_CATEGORY_ORDER={two:0,work:1,home:2,other:3};
 function setNotesViewMode(mode){
   notesViewMode=mode==="todos"?"todos":"notes";
   const todoMode=notesViewMode==="todos";
@@ -8792,7 +8825,12 @@ function filteredTodos(){
     .filter(t=>todoCategory==="all"||t.category===todoCategory);
   rows.sort((a,b)=>{
     if(todoShowCompleted)return String(b.completedDate||"").localeCompare(String(a.completedDate||""))||todoMillis(b,"completedAt")-todoMillis(a,"completedAt");
-    if(todoSortMode==="due")return String(a.revisedDueDate||a.initialDueDate||"9999").localeCompare(String(b.revisedDueDate||b.initialDueDate||"9999"));
+    if(todoSortMode==="due"){
+      const byDate=String(a.revisedDueDate||a.initialDueDate||"9999").localeCompare(String(b.revisedDueDate||b.initialDueDate||"9999"));
+      if(byDate)return byDate;
+      const byCategory=(TODO_CATEGORY_ORDER[a.category]??99)-(TODO_CATEGORY_ORDER[b.category]??99);
+      return byCategory||todoMillis(b,"createdAt")-todoMillis(a,"createdAt");
+    }
     return todoMillis(b,"createdAt")-todoMillis(a,"createdAt");
   });
   return rows;
@@ -8853,6 +8891,7 @@ function renderTodos(){
     const states=[];
     if(t.shared)states.push("共同編集");
     if(states.length){const meta=document.createElement("div");meta.className="todoMeta";meta.textContent=states.join("　");main.appendChild(meta)}
+    if(t.completed&&t.repeatNext&&t.nextTodoCreated){const status=document.createElement("div");status.className="todoNextStatus";status.textContent=`次回 ${todoDateLabel(t.nextDueDate)} 登録済み`;main.appendChild(status)}
     head.append(check,main);
     if(editable){
       const menu=document.createElement("div");menu.className="todoMenu";
@@ -8864,6 +8903,7 @@ function renderTodos(){
       menu.append(menuBtn,popup);head.appendChild(menu);
     }
     card.appendChild(head);
+    if(t.completed&&t.repeatNext&&t.nextTodoPending&&!t.nextTodoCreated&&editable){const nextBtn=document.createElement("button");nextBtn.type="button";nextBtn.className="todoNextAction";nextBtn.textContent="次回を登録";nextBtn.onclick=e=>{e.stopPropagation();openTodoNext(t)};card.appendChild(nextBtn)}
     if(isMulti&&expandedTodoIds.has(t.id)){
       const list=document.createElement("div");list.className="todoSubtasks";
       items.forEach((item,index)=>{
@@ -8914,6 +8954,7 @@ function openTodoEditor(t=null){
   $("todoDetailsInput").value=t?.details||"";
   $("todoPrivateInput").checked=!!t?.privateOnly;
   $("todoSharedInput").checked=!!t?.shared;
+  $("todoRepeatNextInput").checked=!!t?.repeatNext;
   $("todoItemInput").value="";syncTodoMultiEditor();
   updateTodoWeekdayHints();
   $("todoModal").classList.remove("hidden");
@@ -8924,10 +8965,33 @@ function openTodoComplete(t,pendingItems=null){
   completingTodoItems=pendingItems?pendingItems.map(x=>({...x})):null;
   $("todoCompleteTitle").textContent=t.title||"無題";
   $("todoCompletedDateInput").value=todayId();
+  const needsNext=!!t.repeatNext&&!t.nextTodoCreated;
+  $("todoNextDueFields").classList.toggle("hidden",!needsNext);
+  $("saveTodoCompletePending").classList.toggle("hidden",!needsNext);
+  $("todoNextDueInput").value="";
+  $("todoNextDueInput").min=$("todoCompletedDateInput").value;
+  $("todoNextDueWeekday").textContent="";
+  $("saveTodoComplete").textContent=needsNext?"次回Todoも作成":"完了にする";
   $("todoCompleteModal").classList.remove("hidden");
   renderTodos();
 }
 function closeTodoComplete(){completingTodo=null;completingTodoItems=null;$("todoCompleteModal").classList.add("hidden");renderTodos()}
+function openTodoNext(t){registeringNextTodo=t;$("todoNextTitle").textContent=t.title||"無題";$("todoLaterNextDueInput").value="";$("todoLaterNextDueInput").min=t.completedDate||todayId();$("todoLaterNextDueWeekday").textContent="";$("todoNextModal").classList.remove("hidden")}
+function closeTodoNext(){registeringNextTodo=null;$("todoNextModal").classList.add("hidden")}
+function nextTodoPayload(t,dueDate){
+  const items=(Array.isArray(t.items)?t.items:[]).map(x=>({id:todoItemId(),text:String(x.text||""),done:false}));
+  return {title:t.title||"",initialDueDate:dueDate,revisedDueDate:null,category:t.category||"other",details:t.details||"",privateOnly:!!t.privateOnly,shared:!!t.shared,multiItem:items.length>0,items,repeatNext:!!t.repeatNext,uid:t.uid,senderId:t.senderId||currentId,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,previousTodoId:t.id,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),updatedBy:currentId};
+}
+async function createNextTodo(t,dueDate,completionPayload=null){
+  const sourceRef=doc(db,"todos",t.id),nextRef=doc(collection(db,"todos"));
+  await runTransaction(db,async transaction=>{
+    const fresh=await transaction.get(sourceRef);if(!fresh.exists())throw new Error("Todoが見つかりません");
+    const current={id:fresh.id,...fresh.data()};
+    if(current.nextTodoCreated)throw new Error("NEXT_ALREADY_CREATED");
+    transaction.set(nextRef,nextTodoPayload(current,dueDate));
+    transaction.update(sourceRef,{...(completionPayload||{}),nextTodoPending:false,nextTodoCreated:true,nextTodoId:nextRef.id,nextDueDate:dueDate,updatedAt:serverTimestamp(),updatedBy:currentId});
+  });
+}
 function showTodoReminders(){
   const today=todayId();
   const overdue=todos.filter(t=>!t.completed&&!t.revisedDueDate&&t.initialDueDate&&t.initialDueDate<today&&(t.uid===currentUID||t.shared));
@@ -8971,28 +9035,41 @@ $("saveTodo").onclick=async()=>{
   const cleanedItems=editingTodoItems.map(x=>({...x,text:String(x.text||"").trim()})).filter(x=>x.text);
   if(todoMultiMode&&cleanedItems.length<2){alert("複数Todoには項目を2つ以上追加してください");return}
   const privateOnly=$("todoPrivateInput").checked,shared=!privateOnly&&$("todoSharedInput").checked;
-  const payload={title,initialDueDate,revisedDueDate:$("todoRevisedDueInput").value||null,category:$("todoCategoryInput").value,details:$("todoDetailsInput").value.trim(),privateOnly,shared,multiItem:todoMultiMode,items:todoMultiMode?cleanedItems:[],updatedAt:serverTimestamp(),updatedBy:currentId};
+  const payload={title,initialDueDate,revisedDueDate:$("todoRevisedDueInput").value||null,category:$("todoCategoryInput").value,details:$("todoDetailsInput").value.trim(),privateOnly,shared,repeatNext:$("todoRepeatNextInput").checked,multiItem:todoMultiMode,items:todoMultiMode?cleanedItems:[],updatedAt:serverTimestamp(),updatedBy:currentId};
   const btn=$("saveTodo");btn.disabled=true;
   try{
     if(editingTodo){
       if(!canEditTodo(editingTodo))throw new Error("編集権限がありません");
       delete payload.initialDueDate;
       await updateDoc(doc(db,"todos",editingTodo.id),payload);
-    }else await addDoc(collection(db,"todos"),{...payload,uid:currentUID,senderId:currentId,completed:false,completedDate:null,createdAt:serverTimestamp()});
+    }else await addDoc(collection(db,"todos"),{...payload,uid:currentUID,senderId:currentId,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,createdAt:serverTimestamp()});
     closeTodoEditor();
   }catch(e){console.error("save todo",e);alert("Todoを保存できませんでした。")}finally{btn.disabled=false}
 };
 $("cancelTodoComplete").onclick=closeTodoComplete;
 $("todoCompleteModal").onclick=e=>{if(e.target===$("todoCompleteModal"))closeTodoComplete()};
-$("saveTodoComplete").onclick=async()=>{
+async function saveTodoCompletion(nextPending=false){
   if(!completingTodo)return;
   const completedDate=$("todoCompletedDateInput").value;if(!completedDate){alert("完了日を入力してください");return}
-  const btn=$("saveTodoComplete");btn.disabled=true;
+  const needsNext=!!completingTodo.repeatNext&&!completingTodo.nextTodoCreated;
+  const nextDueDate=needsNext&&!nextPending?$("todoNextDueInput").value:"";
+  if(needsNext&&!nextPending&&!nextDueDate){alert("次回予定日を選ぶか、『次回未定で完了』を押してください");return}
+  if(nextDueDate&&nextDueDate<completedDate){alert("次回予定日は完了日以降を選んでください");return}
+  const buttons=[$("saveTodoComplete"),$("saveTodoCompletePending")];buttons.forEach(b=>b.disabled=true);
   const payload={completed:true,completedDate,completedAt:serverTimestamp(),completedBy:currentId,updatedAt:serverTimestamp(),updatedBy:currentId};
   if(completingTodoItems)payload.items=completingTodoItems;
-  try{await updateDoc(doc(db,"todos",completingTodo.id),payload);closeTodoComplete()}
-  catch(e){console.error("complete todo",e);alert("完了を保存できませんでした。")}finally{btn.disabled=false}
-};
+  if(needsNext&&nextPending)Object.assign(payload,{nextTodoPending:true,nextTodoCreated:false,nextTodoId:null,nextDueDate:null});
+  try{if(needsNext&&nextDueDate)await createNextTodo(completingTodo,nextDueDate,payload);else await updateDoc(doc(db,"todos",completingTodo.id),payload);closeTodoComplete()}
+  catch(e){console.error("complete todo",e);alert(e?.message==="NEXT_ALREADY_CREATED"?"次回Todoはすでに登録されています。":"完了を保存できませんでした。")}finally{buttons.forEach(b=>b.disabled=false)}
+}
+$("saveTodoComplete").onclick=()=>saveTodoCompletion(false);
+$("saveTodoCompletePending").onclick=()=>saveTodoCompletion(true);
+$("todoCompletedDateInput").onchange=e=>{$("todoNextDueInput").min=e.target.value||todayId()};
+$("todoNextDueInput").onchange=e=>{$("todoNextDueWeekday").textContent=e.target.value?todoDate(e.target.value).toLocaleDateString("ja-JP",{weekday:"long"}):""};
+$("cancelTodoNext").onclick=closeTodoNext;
+$("todoNextModal").onclick=e=>{if(e.target===$("todoNextModal"))closeTodoNext()};
+$("todoLaterNextDueInput").onchange=e=>{$("todoLaterNextDueWeekday").textContent=e.target.value?todoDate(e.target.value).toLocaleDateString("ja-JP",{weekday:"long"}):""};
+$("saveTodoNext").onclick=async()=>{if(!registeringNextTodo)return;const dueDate=$("todoLaterNextDueInput").value;if(!dueDate){alert("次回予定日を選んでください");return}if(registeringNextTodo.completedDate&&dueDate<registeringNextTodo.completedDate){alert("次回予定日は完了日以降を選んでください");return}const btn=$("saveTodoNext");btn.disabled=true;try{await createNextTodo(registeringNextTodo,dueDate);closeTodoNext()}catch(e){console.error("create next todo",e);alert(e?.message==="NEXT_ALREADY_CREATED"?"次回Todoはすでに登録されています。":"次回Todoを登録できませんでした。")}finally{btn.disabled=false}};
 $("closeTodoReminder").onclick=()=>$("todoReminderModal").classList.add("hidden");
 $("todoReminderModal").onclick=e=>{if(e.target===$("todoReminderModal"))$("todoReminderModal").classList.add("hidden")};
 /* CURRENT STATUS */
