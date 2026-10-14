@@ -4187,8 +4187,11 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoCompleteBtns{flex-wrap:wrap}.todoCompleteBtns #saveTodoCompletePending{flex-basis:100%;order:3}
 .todoReminderList{max-height:52vh;overflow:auto;margin:8px 0 12px}
 .todoReminderItem{border-left:4px solid #d13b3b;background:#fff4f3;border-radius:9px;padding:9px 10px;margin-bottom:7px}
+.todoReminderItem.today{border-left-color:#2f6fed;background:#f1f6ff}
+.todoReminderSection{font-size:11px;font-weight:800;color:#666;margin:10px 2px 6px}
 .todoReminderTitle{font-size:13px;font-weight:800}
 .todoReminderMeta{font-size:10px;color:#a33;margin-top:3px}
+.todoReminderItem.today .todoReminderMeta{color:#365f9c}
 body.night-mode #todoView,body.night-mode #todoList{background:#111}
 body.night-mode .todoToolbar{background:#171717;border-color:#333;color:#aaa}
 body.night-mode .todoOwnerBtn,body.night-mode .todoCompleteBtn,body.night-mode .todoSelect{background:#222;border-color:#444;color:#ddd}
@@ -4208,6 +4211,7 @@ body.night-mode .todoItemsEditor{background:#222}body.night-mode .todoEditItemRo
 body.night-mode .todoSubtasks{border-color:#383838}
 body.night-mode .todoMenuPopup,body.night-mode .todoMenuPopup button{background:#222;color:#ddd;border-color:#444}
 body.night-mode .todoReminderItem{background:#33201f;color:#eee}
+body.night-mode .todoReminderItem.today{background:#1d2a3d}body.night-mode .todoReminderSection{color:#aaa}
 body.night-mode .todoNextAction{background:#202b3b;border-color:#526886;color:#a9c8f5}
 body.night-mode .todoNextStatus{color:#8fa6c8}
 
@@ -4724,8 +4728,9 @@ body.night-mode .todoNextStatus{color:#8fa6c8}
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.8.8</div><div class="updateDate">2026/10/15</div><ul class="updateItems"><li>ログイン時のTodo通知に「本日期限」を追加</li><li>今日のTodoと期限超過Todoを分けて確認できるよう改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.7</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todo完了時に次回予定日を選び、同じ内容の次回Todoを作成できる機能を追加</li><li>次回日が未定でも完了でき、完了カードから後日登録できるよう対応</li><li>目標日順では、同じ日のTodoをカテゴリごとにまとめる並びへ改善</li></ul></div>
-<div class="updateCard"><div class="updateVersion">v3.8.6</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>メモ・スケジュール・Todoの独立版を1つにまとめた個人ページを追加</li><li>個人ページはHitomi表示とPIN入力なしで利用できる仕様に対応</li><li>各独立ページから個人ページへ戻れるホームボタンを追加</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.8.6</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>メモ・スケジュール・Todoの独立版を1つにまとめた個人ページを追加</li><li>個人ページは相手の表示とPIN入力なしで利用できる仕様に対応</li><li>各独立ページから個人ページへ戻れるホームボタンを追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.5</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoの重複した「期限超過」表示を削除</li><li>自分のみTodoの表示を右端のアイコンへ集約し、カードをコンパクト化</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.4</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todoのカテゴリを色分けし、ひと目で判別しやすく改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.3</div><div class="updateDate">2026/10/08</div><ul class="updateItems"><li>複数の項目をすべて終えると完了になるTodoを追加</li><li>複数Todoのカードをタップして項目を展開・チェックできるよう対応</li><li>最後の項目をチェックした時に完了日を確認する仕様に対応</li></ul></div>
@@ -5131,8 +5136,8 @@ body.night-mode .todoNextStatus{color:#8fa6c8}
 
 <div id="todoReminderModal" class="modalOverlay hidden">
   <div class="modal">
-    <h3>期限を過ぎたTodo</h3>
-    <div class="settingSub">まだ完了していないTodoがあります。改訂目標日を入れると、次回からこの一覧には表示されません。</div>
+    <h3>今日のTodo・期限のお知らせ</h3>
+    <div class="settingSub">今日が目標日のTodoと、期限を過ぎた未完了Todoを確認できます。</div>
     <div id="todoReminderList" class="todoReminderList"></div>
     <div class="modalBtns">
       <button id="closeTodoReminder" class="modalSave" type="button">確認した</button>
@@ -5338,7 +5343,7 @@ let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let records=[], recordMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1), recordShowMine=true, recordShowOther=true, editingRecord=null, recordTarget="mine", scheduleViewMode="schedule";
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, noteArchiveMode=false, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
-let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShown=false;
+let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShownDate="";
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeTodos=null, unsubscribeSchedules=null, unsubscribeRecords=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -5352,7 +5357,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.8.7";
+const APP_VERSION="3.8.8";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -8810,10 +8815,7 @@ function listenTodos(){
   unsubscribeTodos=onSnapshot(query(collection(db,"todos"),orderBy("createdAt","desc")),snap=>{
     todos=snap.docs.map(d=>({id:d.id,...d.data()})).filter(canSeeTodo);
     if(notesViewMode==="todos")renderTodos();
-    if(!todoReminderShown){
-      todoReminderShown=true;
-      setTimeout(showTodoReminders,250);
-    }
+    maybeShowTodoReminders();
   },e=>{
     console.error("todos listen",e);
     if($("todoList"))$("todoList").innerHTML='<div class="todoEmpty">Todoを読み込めませんでした。</div>';
@@ -8994,22 +8996,25 @@ async function createNextTodo(t,dueDate,completionPayload=null){
 }
 function showTodoReminders(){
   const today=todayId();
-  const overdue=todos.filter(t=>!t.completed&&!t.revisedDueDate&&t.initialDueDate&&t.initialDueDate<today&&(t.uid===currentUID||t.shared));
-  if(!overdue.length)return;
+  const eligible=todos.filter(t=>!t.completed&&(t.uid===currentUID||t.shared));
+  const dueToday=eligible.filter(t=>(t.revisedDueDate||t.initialDueDate)===today);
+  const overdue=eligible.filter(t=>!t.revisedDueDate&&t.initialDueDate&&t.initialDueDate<today);
+  if(!dueToday.length&&!overdue.length)return;
   const box=$("todoReminderList");box.innerHTML="";
-  overdue.sort((a,b)=>String(a.initialDueDate).localeCompare(String(b.initialDueDate))).forEach(t=>{
-    const item=document.createElement("div");item.className="todoReminderItem";
-    const title=document.createElement("div");title.className="todoReminderTitle";title.textContent=t.title||"無題";
-    const meta=document.createElement("div");meta.className="todoReminderMeta";meta.textContent=`目標 ${todoDateLabel(t.initialDueDate)}・${todoDayDiff(t.initialDueDate,today)}日超過`;
-    item.append(title,meta);item.onclick=()=>{
-      $("todoReminderModal").classList.add("hidden");
-      const tab=document.querySelector('.tab[data-page="notesPage"]');
-      if(tab&&!tab.classList.contains("active"))tab.click();
-      setNotesViewMode("todos");openTodoEditor(t);
-    };box.appendChild(item);
-  });
+  const openFromReminder=t=>{$("todoReminderModal").classList.add("hidden");const tab=document.querySelector('.tab[data-page="notesPage"]');if(tab&&!tab.classList.contains("active"))tab.click();setNotesViewMode("todos");openTodoEditor(t)};
+  const appendSection=(label,rows,isToday)=>{
+    if(!rows.length)return;
+    const section=document.createElement("div");section.className="todoReminderSection";section.textContent=label;box.appendChild(section);
+    rows.forEach(t=>{const item=document.createElement("div");item.className=`todoReminderItem ${isToday?"today":""}`;const title=document.createElement("div");title.className="todoReminderTitle";title.textContent=t.title||"無題";const meta=document.createElement("div");meta.className="todoReminderMeta";meta.textContent=isToday?`本日 ${todoDateLabel(t.revisedDueDate||t.initialDueDate)}・${TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other}`:`目標 ${todoDateLabel(t.initialDueDate)}・${todoDayDiff(t.initialDueDate,today)}日超過`;item.append(title,meta);item.onclick=()=>openFromReminder(t);box.appendChild(item)});
+  };
+  dueToday.sort((a,b)=>(TODO_CATEGORY_ORDER[a.category]??99)-(TODO_CATEGORY_ORDER[b.category]??99)||todoMillis(b,"createdAt")-todoMillis(a,"createdAt"));
+  overdue.sort((a,b)=>String(a.initialDueDate).localeCompare(String(b.initialDueDate))||(TODO_CATEGORY_ORDER[a.category]??99)-(TODO_CATEGORY_ORDER[b.category]??99));
+  appendSection("本日期限",dueToday,true);
+  appendSection("期限超過",overdue,false);
   $("todoReminderModal").classList.remove("hidden");
 }
+function maybeShowTodoReminders(){const today=todayId();if(todoReminderShownDate===today)return;todoReminderShownDate=today;setTimeout(showTodoReminders,250)}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&todos.length)maybeShowTodoReminders()});
 $("todoMineBtn").onclick=()=>{todoOwnerMode="mine";renderTodos()};
 $("todoOtherBtn").onclick=()=>{todoOwnerMode="other";renderTodos()};
 $("todoCompleteBtn").onclick=()=>{todoShowCompleted=!todoShowCompleted;renderTodos()};
