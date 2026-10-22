@@ -4732,7 +4732,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
-<div class="updateCard"><div class="updateVersion">v3.8.9</div><div class="updateDate">2026/10/22</div><ul class="updateItems"><li>複数項目ごとに完了期限を設定し、期限が近い順に自動整理するよう対応</li><li>カードを展開しなくても、次に対応する未完了項目と期限が分かる表示を追加</li><li>目標日順では、複数項目Todoを直近の未完了項目の期限で並べるよう改善</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.8.9</div><div class="updateDate">2026/10/22</div><ul class="updateItems"><li>複数項目ごとに完了期限を設定し、期限が近い順に自動整理するよう対応</li><li>カードを展開しなくても、次に対応する未完了項目と期限が分かる表示を追加</li><li>目標日順では、複数項目Todoを直近の未完了項目の期限で並べるよう改善</li><li>今日のTodo通知でも、直近の未完了項目の期限を判定して項目名を表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.8</div><div class="updateDate">2026/10/15</div><ul class="updateItems"><li>ログイン時のTodo通知に「本日期限」を追加</li><li>今日のTodoと期限超過Todoを分けて確認できるよう改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.7</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todo完了時に次回予定日を選び、同じ内容の次回Todoを作成できる機能を追加</li><li>次回日が未定でも完了でき、完了カードから後日登録できるよう対応</li><li>目標日順では、同じ日のTodoをカテゴリごとにまとめる並びへ改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.6</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>メモ・スケジュール・Todoの独立版を1つにまとめた個人ページを追加</li><li>個人ページは相手の表示とPIN入力なしで利用できる仕様に対応</li><li>各独立ページから個人ページへ戻れるホームボタンを追加</li></ul></div>
@@ -9011,18 +9011,19 @@ async function createNextTodo(t,dueDate,completionPayload=null){
 function showTodoReminders(){
   const today=todayId();
   const eligible=todos.filter(t=>!t.completed&&(t.uid===currentUID||t.shared));
-  const dueToday=eligible.filter(t=>(t.revisedDueDate||t.initialDueDate)===today);
-  const overdue=eligible.filter(t=>!t.revisedDueDate&&t.initialDueDate&&t.initialDueDate<today);
+  const reminderRows=eligible.map(t=>{const nextItem=nearestTodoItem(t.items);return {t,nextItem,dueDate:nextItem?.dueDate||t.revisedDueDate||t.initialDueDate||""}});
+  const dueToday=reminderRows.filter(row=>row.dueDate===today);
+  const overdue=reminderRows.filter(row=>row.dueDate&&row.dueDate<today);
   if(!dueToday.length&&!overdue.length)return;
   const box=$("todoReminderList");box.innerHTML="";
   const openFromReminder=t=>{$("todoReminderModal").classList.add("hidden");const tab=document.querySelector('.tab[data-page="notesPage"]');if(tab&&!tab.classList.contains("active"))tab.click();setNotesViewMode("todos");openTodoEditor(t)};
   const appendSection=(label,rows,isToday)=>{
     if(!rows.length)return;
     const section=document.createElement("div");section.className="todoReminderSection";section.textContent=label;box.appendChild(section);
-    rows.forEach(t=>{const item=document.createElement("div");item.className=`todoReminderItem ${isToday?"today":""}`;const title=document.createElement("div");title.className="todoReminderTitle";title.textContent=t.title||"無題";const meta=document.createElement("div");meta.className="todoReminderMeta";meta.textContent=isToday?`本日 ${todoDateLabel(t.revisedDueDate||t.initialDueDate)}・${TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other}`:`目標 ${todoDateLabel(t.initialDueDate)}・${todoDayDiff(t.initialDueDate,today)}日超過`;item.append(title,meta);item.onclick=()=>openFromReminder(t);box.appendChild(item)});
+    rows.forEach(({t,nextItem,dueDate})=>{const item=document.createElement("div");item.className=`todoReminderItem ${isToday?"today":""}`;const title=document.createElement("div");title.className="todoReminderTitle";title.textContent=t.title||"無題";const meta=document.createElement("div");meta.className="todoReminderMeta";const nextLabel=nextItem?`・次：${nextItem.text||"未入力の項目"}`:"";meta.textContent=isToday?`本日 ${todoDateLabel(dueDate)}・${TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other}${nextLabel}`:`目標 ${todoDateLabel(dueDate)}・${todoDayDiff(dueDate,today)}日超過${nextLabel}`;item.append(title,meta);item.onclick=()=>openFromReminder(t);box.appendChild(item)});
   };
-  dueToday.sort((a,b)=>(TODO_CATEGORY_ORDER[a.category]??99)-(TODO_CATEGORY_ORDER[b.category]??99)||todoMillis(b,"createdAt")-todoMillis(a,"createdAt"));
-  overdue.sort((a,b)=>String(a.initialDueDate).localeCompare(String(b.initialDueDate))||(TODO_CATEGORY_ORDER[a.category]??99)-(TODO_CATEGORY_ORDER[b.category]??99));
+  dueToday.sort((a,b)=>(TODO_CATEGORY_ORDER[a.t.category]??99)-(TODO_CATEGORY_ORDER[b.t.category]??99)||todoMillis(b.t,"createdAt")-todoMillis(a.t,"createdAt"));
+  overdue.sort((a,b)=>String(a.dueDate).localeCompare(String(b.dueDate))||(TODO_CATEGORY_ORDER[a.t.category]??99)-(TODO_CATEGORY_ORDER[b.t.category]??99));
   appendSection("本日期限",dueToday,true);
   appendSection("期限超過",overdue,false);
   $("todoReminderModal").classList.remove("hidden");
