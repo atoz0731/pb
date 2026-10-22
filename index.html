@@ -4105,19 +4105,25 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 
 /* v3.8.1 ノート裏面：Todo */
 #todoView{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--pb-page-bg,#f7f7f8)}
-.todoToolbar{flex-shrink:0;padding:8px 9px;background:#fff;border-bottom:1px solid #e8e8e8}
-.todoToolbarTop,.todoToolbarBottom{display:flex;align-items:center;gap:6px}
-.todoToolbarBottom{margin-top:7px}
-.todoOwnerFilters{display:flex;gap:5px;flex:1}
-.todoOwnerBtn,.todoCompleteBtn{border:1px solid #d7d7d7;border-radius:999px;background:#fff;color:#666;font-size:11px;font-weight:700;padding:6px 11px}
-.todoOwnerBtn.active{background:#111;border-color:#111;color:#fff}
-.todoCompleteBtn.active{background:#4d535b;border-color:#4d535b;color:#fff}
-.todoAddBtn{border:0;border-radius:10px;background:#111;color:#fff;font-weight:700;padding:7px 11px;white-space:nowrap}
-.todoSelect{min-width:0;flex:1;border:1px solid #d7d7d7;border-radius:9px;background:#fff;color:#555;font-size:11px;padding:7px 6px}
+.todoToolbar{position:relative;flex-shrink:0;padding:7px 9px;background:#fff;border-bottom:1px solid #e8e8e8}
+.todoToolbarTop{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.todoOwnerFilters{display:flex;gap:4px;flex:0 0 auto}
+.todoOwnerBtn,.todoCompleteBtn{border:1px solid var(--pb-border);border-radius:999px;background:var(--pb-surface);color:var(--pb-accent);font-size:10px;font-weight:700;padding:6px 9px;white-space:nowrap}
+.todoOwnerBtn.active,.todoCompleteBtn.active{background:var(--pb-accent);border-color:var(--pb-accent);color:#fff}
+.todoToolbarActions{display:flex;align-items:center;justify-content:flex-end;gap:4px;min-width:0}
+.todoIconBtn{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border:1px solid var(--pb-border);border-radius:50%;background:var(--pb-surface);color:var(--pb-accent);font-size:16px;padding:0}
+.todoIconBtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.todoIconBtn.active{background:var(--pb-own);border-color:var(--pb-accent)}
+.todoAddBtn{border:1px solid var(--pb-accent);border-radius:999px;background:var(--pb-accent);color:#fff;font-size:11px;font-weight:700;padding:7px 10px;white-space:nowrap}
+.todoToolMenu{position:absolute;right:76px;top:43px;z-index:90;min-width:160px;background:var(--pb-surface);border:1px solid var(--pb-border);border-radius:12px;box-shadow:0 5px 18px rgba(0,0,0,.16);overflow:hidden}
+.todoToolMenu button{display:block;width:100%;border:0;border-bottom:1px solid var(--pb-border);background:var(--pb-surface);color:var(--pb-text);text-align:left;padding:10px 12px;font-size:11px}
+.todoToolMenu button:last-child{border-bottom:0}.todoToolMenu button.active{font-weight:800;background:var(--pb-surface-2);color:var(--pb-accent)}
 #todoList{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:7px 9px 24px}
 .todoCard{background:#fff;border-radius:11px;border:1px solid #e4e4e4;border-left:4px solid #2f6fed;padding:7px 8px 6px;margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,.025)}
 .todoCard.ownerHitomi{border-left-color:#e24a4a}
 .todoCard.shared{border-left-color:#8e8e93;background:#f4f4f5}
+.todoCard.due-today{background:#fff7e8}
+.todoCard.due-overdue{background:#fff0f0}
 .todoCard.completed{opacity:.82}
 .todoHead{display:flex;align-items:flex-start;gap:7px}
 .todoCheck{width:19px!important;height:19px!important;flex:0 0 auto;margin:1px 0 0}
@@ -4195,6 +4201,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoReminderTitle{font-size:13px;font-weight:800}
 .todoReminderMeta{font-size:10px;color:#a33;margin-top:3px}
 .todoReminderItem.today .todoReminderMeta{color:#365f9c}
+.todoReportNav{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 5px}.todoReportNav button{width:36px;height:34px;border:1px solid var(--pb-border);border-radius:50%;background:var(--pb-surface);color:var(--pb-accent);font-size:20px}.todoReportMonth{min-width:128px;text-align:center;font-size:15px;font-weight:800}.todoReportOwner{text-align:center;color:var(--pb-muted);font-size:10px;margin-bottom:10px}.todoReportBody{border:1px solid var(--pb-border);border-radius:12px;background:var(--pb-bg);padding:12px;white-space:pre-wrap;font-size:13px;line-height:1.75;min-height:170px}.todoReportCopy{background:var(--pb-accent)!important;color:#fff!important;font-weight:700}
 body.night-mode #todoView,body.night-mode #todoList{background:#111}
 body.night-mode .todoToolbar{background:#171717;border-color:#333;color:#aaa}
 body.night-mode .todoOwnerBtn,body.night-mode .todoCompleteBtn,body.night-mode .todoSelect{background:#222;border-color:#444;color:#ddd}
@@ -4202,6 +4209,8 @@ body.night-mode .todoOwnerBtn.active{background:#e8ebef;color:#111;border-color:
 body.night-mode .todoCompleteBtn.active{background:#666;color:#fff}
 body.night-mode .todoCard{background:#1d1d1d;border-color:#343434;color:#eee}
 body.night-mode .todoCard.shared{background:#242424}
+body.night-mode .todoCard.due-today{background:#352b1d}
+body.night-mode .todoCard.due-overdue{background:#382121}
 body.night-mode .todoDetails{color:#bbb}
 body.night-mode .todoDates,body.night-mode .todoMeta{color:#999}
 body.night-mode .todoProgress{background:#24314a;color:#8ab0ff}
@@ -4628,21 +4637,19 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
           <button id="todoMineBtn" class="todoOwnerBtn active" type="button">自分</button>
           <button id="todoOtherBtn" class="todoOwnerBtn" type="button">相手</button>
         </div>
-        <button id="todoCompleteBtn" class="todoCompleteBtn" type="button">完了</button>
-        <button id="openTodoModal" class="todoAddBtn" type="button">＋ Todo</button>
+        <div class="todoToolbarActions">
+          <button id="todoReportButton" class="todoIconBtn" type="button" aria-label="仕事Todoレポート" title="仕事Todoレポート">📒</button>
+          <button id="todoCategoryButton" class="todoIconBtn" type="button" aria-label="カテゴリで絞り込み" title="カテゴリで絞り込み"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg></button>
+          <button id="todoSortButton" class="todoIconBtn" type="button" aria-label="並び替え" title="並び替え">⇅</button>
+          <button id="todoCompleteBtn" class="todoCompleteBtn" type="button">完了</button>
+          <button id="openTodoModal" class="todoAddBtn" type="button">＋ 作成</button>
+        </div>
       </div>
-      <div class="todoToolbarBottom">
-        <select id="todoCategoryFilter" class="todoSelect" aria-label="カテゴリで絞り込み">
-          <option value="all">すべてのカテゴリ</option>
-          <option value="two">2人のこと</option>
-          <option value="work">仕事</option>
-          <option value="home">家のこと</option>
-          <option value="other">その他</option>
-        </select>
-        <select id="todoSortSelect" class="todoSelect" aria-label="並び替え">
-          <option value="new">新しい順</option>
-          <option value="due">目標日順</option>
-        </select>
+      <div id="todoCategoryMenu" class="todoToolMenu hidden">
+        <button type="button" data-todo-category="all">すべてのカテゴリ</button><button type="button" data-todo-category="two">2人のこと</button><button type="button" data-todo-category="work">仕事</button><button type="button" data-todo-category="home">家のこと</button><button type="button" data-todo-category="other">その他</button>
+      </div>
+      <div id="todoSortMenu" class="todoToolMenu hidden">
+        <button type="button" data-todo-sort="new">新しい順</button><button type="button" data-todo-sort="due">目標日順</button>
       </div>
     </div>
     <div id="todoList"></div>
@@ -4732,6 +4739,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.9.0</div><div class="updateDate">2026/10/23</div><ul class="updateItems"><li>本日期限のTodoを薄いオレンジ、期限切れを薄い赤で表示</li><li>Todoの操作ボタンをテーマ連動のコンパクト表示に刷新</li><li>仕事Todoを月別に振り返ってコピーできるレポート機能を追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.9</div><div class="updateDate">2026/10/22</div><ul class="updateItems"><li>複数項目ごとに完了期限を設定し、期限が近い順に自動整理するよう対応</li><li>カードを展開しなくても、次に対応する未完了項目と期限が分かる表示を追加</li><li>目標日順では、複数項目Todoを直近の未完了項目の期限で並べるよう改善</li><li>今日のTodo通知でも、直近の未完了項目の期限を判定して項目名を表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.8</div><div class="updateDate">2026/10/15</div><ul class="updateItems"><li>ログイン時のTodo通知に「本日期限」を追加</li><li>今日のTodoと期限超過Todoを分けて確認できるよう改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.7</div><div class="updateDate">2026/10/09</div><ul class="updateItems"><li>Todo完了時に次回予定日を選び、同じ内容の次回Todoを作成できる機能を追加</li><li>次回日が未定でも完了でき、完了カードから後日登録できるよう対応</li><li>目標日順では、同じ日のTodoをカテゴリごとにまとめる並びへ改善</li></ul></div>
@@ -5150,6 +5158,16 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
   </div>
 </div>
 
+<div id="todoReportModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3>仕事Todoレポート</h3>
+    <div class="todoReportNav"><button id="todoReportPrev" type="button" aria-label="前月">‹</button><div id="todoReportMonth" class="todoReportMonth"></div><button id="todoReportNext" type="button" aria-label="次月">›</button></div>
+    <div id="todoReportOwner" class="todoReportOwner"></div>
+    <div id="todoReportBody" class="todoReportBody"></div>
+    <div class="modalBtns"><button id="closeTodoReport" type="button">閉じる</button><button id="copyTodoReport" class="todoReportCopy" type="button">コピー</button></div>
+  </div>
+</div>
+
 <div id="scheduleModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="scheduleModalTitle">予定を追加</h3>
@@ -5348,7 +5366,7 @@ let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let records=[], recordMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1), recordShowMine=true, recordShowOther=true, editingRecord=null, recordTarget="mine", scheduleViewMode="schedule";
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, noteArchiveMode=false, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
-let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShownDate="";
+let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShownDate="", todoReportMonth="";
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeTodos=null, unsubscribeSchedules=null, unsubscribeRecords=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -5362,7 +5380,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.8.9";
+const APP_VERSION="3.9.0";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -8853,8 +8871,11 @@ function renderTodos(){
   $("todoOtherBtn")?.classList.toggle("active",todoOwnerMode==="other");
   $("todoCompleteBtn")?.classList.toggle("active",todoShowCompleted);
   if($("todoCompleteBtn"))$("todoCompleteBtn").textContent=todoShowCompleted?"未完了":"完了";
-  if($("todoCategoryFilter"))$("todoCategoryFilter").value=todoCategory;
-  if($("todoSortSelect"))$("todoSortSelect").value=todoSortMode;
+  $("todoCategoryButton")?.classList.toggle("active",todoCategory!=="all");
+  if($("todoCategoryButton"))$("todoCategoryButton").title=`カテゴリ：${todoCategory==="all"?"すべて":TODO_CATEGORIES[todoCategory]||"すべて"}`;
+  if($("todoSortButton"))$("todoSortButton").title=todoSortMode==="due"?"並び替え：目標日順":"並び替え：新しい順";
+  document.querySelectorAll("#todoCategoryMenu [data-todo-category]").forEach(b=>b.classList.toggle("active",b.dataset.todoCategory===todoCategory));
+  document.querySelectorAll("#todoSortMenu [data-todo-sort]").forEach(b=>b.classList.toggle("active",b.dataset.todoSort===todoSortMode));
   const rows=filteredTodos();
   if(!rows.length){box.innerHTML=`<div class="todoEmpty">${todoShowCompleted?"該当する完了Todoはありません。":"該当するTodoはありません。"}</div>`;return}
   let lastCompletedMonth="";
@@ -8872,7 +8893,8 @@ function renderTodos(){
     const items=Array.isArray(t.items)?t.items:[],isMulti=items.length>0,doneCount=items.filter(x=>x.done).length;
     const card=document.createElement("div");
     const ownerClass=String(t.senderId||"").toLowerCase()==="hitomi"?"ownerHitomi":"ownerNatsuki";
-    card.className=`todoCard ${t.shared?"shared":ownerClass} ${t.completed?"completed":""} ${isMulti?"multiExpandable":""}`;
+    const effectiveDue=t.completed?"":todoEffectiveSortDue(t),dueClass=effectiveDue&&effectiveDue!=="9999"?(effectiveDue<todayId()?"due-overdue":effectiveDue===todayId()?"due-today":""):"";
+    card.className=`todoCard ${t.shared?"shared":ownerClass} ${t.completed?"completed":""} ${dueClass} ${isMulti?"multiExpandable":""}`;
     const head=document.createElement("div");head.className="todoHead";
     const check=document.createElement("input");check.type="checkbox";check.className="todoCheck";check.checked=!!t.completed;check.disabled=!editable||(isMulti&&!t.completed);
     check.setAttribute("aria-label",t.completed?"未完了に戻す":"完了にする");
@@ -9008,6 +9030,36 @@ async function createNextTodo(t,dueDate,completionPayload=null){
     transaction.update(sourceRef,{...(completionPayload||{}),nextTodoPending:false,nextTodoCreated:true,nextTodoId:nextRef.id,nextDueDate:dueDate,updatedAt:serverTimestamp(),updatedBy:currentId});
   });
 }
+function shiftTodoReportMonth(delta){
+  const [year,month]=(todoReportMonth||todayId().slice(0,7)).split("-").map(Number),d=new Date(year,month-1+delta,1);
+  todoReportMonth=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  renderTodoReport();
+}
+function todoReportData(){
+  const month=todoReportMonth||todayId().slice(0,7);
+  const work=todos.filter(canSeeTodo).filter(todoOwnerMatches).filter(t=>t.category==="work");
+  const completed=work.filter(t=>t.completed&&String(t.completedDate||"").startsWith(month)).sort((a,b)=>String(a.completedDate||"").localeCompare(String(b.completedDate||""))||todoMillis(a,"completedAt")-todoMillis(b,"completedAt"));
+  const incomplete=work.filter(t=>!t.completed&&String(todoEffectiveSortDue(t)||"").startsWith(month)).sort((a,b)=>String(todoEffectiveSortDue(a)).localeCompare(String(todoEffectiveSortDue(b)))||todoMillis(a,"createdAt")-todoMillis(b,"createdAt"));
+  return {month,completed,incomplete};
+}
+function todoReportText(){
+  const {month,completed,incomplete}=todoReportData(),[year,monthNo]=month.split("-");
+  const lines=rows=>rows.length?rows.map(t=>`● ${t.title||"無題"}`).join("\n"):"（なし）";
+  return `${year}年${Number(monthNo)}月\nカテゴリ：仕事\n\n完了\n${lines(completed)}\n\n未完了\n${lines(incomplete)}`;
+}
+function renderTodoReport(){
+  const month=todoReportMonth||todayId().slice(0,7),[year,monthNo]=month.split("-");
+  $("todoReportMonth").textContent=`${year}年${Number(monthNo)}月`;
+  $("todoReportOwner").textContent=`${todoOwnerMode==="mine"?"自分":"相手"}のTodo・カテゴリ：仕事`;
+  $("todoReportBody").textContent=todoReportText();
+}
+function openTodoReport(){todoReportMonth=todayId().slice(0,7);renderTodoReport();$("todoReportModal").classList.remove("hidden")}
+function closeTodoReport(){$("todoReportModal").classList.add("hidden")}
+async function copyTodoReport(){
+  const text=todoReportText();
+  try{await navigator.clipboard.writeText(text)}catch(_){const area=document.createElement("textarea");area.value=text;area.style.position="fixed";area.style.opacity="0";document.body.appendChild(area);area.select();document.execCommand("copy");area.remove()}
+  const button=$("copyTodoReport"),before=button.textContent;button.textContent="コピーしました";setTimeout(()=>button.textContent=before,1200);
+}
 function showTodoReminders(){
   const today=todayId();
   const eligible=todos.filter(t=>!t.completed&&(t.uid===currentUID||t.shared));
@@ -9033,9 +9085,17 @@ document.addEventListener("visibilitychange",()=>{if(document.visibilityState===
 $("todoMineBtn").onclick=()=>{todoOwnerMode="mine";renderTodos()};
 $("todoOtherBtn").onclick=()=>{todoOwnerMode="other";renderTodos()};
 $("todoCompleteBtn").onclick=()=>{todoShowCompleted=!todoShowCompleted;renderTodos()};
-document.addEventListener("click",e=>{if(!e.target.closest(".todoMenu"))document.querySelectorAll(".todoMenuPopup").forEach(x=>x.classList.add("hidden"))});
-$("todoCategoryFilter").onchange=e=>{todoCategory=e.target.value;renderTodos()};
-$("todoSortSelect").onchange=e=>{todoSortMode=e.target.value;localStorage.setItem("pb.todoSort",todoSortMode);renderTodos()};
+$("todoCategoryButton").onclick=e=>{e.stopPropagation();$("todoSortMenu").classList.add("hidden");$("todoCategoryMenu").classList.toggle("hidden")};
+$("todoSortButton").onclick=e=>{e.stopPropagation();$("todoCategoryMenu").classList.add("hidden");$("todoSortMenu").classList.toggle("hidden")};
+document.querySelectorAll("#todoCategoryMenu [data-todo-category]").forEach(b=>b.onclick=e=>{e.stopPropagation();todoCategory=b.dataset.todoCategory;$("todoCategoryMenu").classList.add("hidden");renderTodos()});
+document.querySelectorAll("#todoSortMenu [data-todo-sort]").forEach(b=>b.onclick=e=>{e.stopPropagation();todoSortMode=b.dataset.todoSort;localStorage.setItem("pb.todoSort",todoSortMode);$("todoSortMenu").classList.add("hidden");renderTodos()});
+document.addEventListener("click",e=>{if(!e.target.closest(".todoMenu"))document.querySelectorAll(".todoMenuPopup").forEach(x=>x.classList.add("hidden"));if(!e.target.closest("#todoCategoryButton")&&!e.target.closest("#todoCategoryMenu"))$("todoCategoryMenu")?.classList.add("hidden");if(!e.target.closest("#todoSortButton")&&!e.target.closest("#todoSortMenu"))$("todoSortMenu")?.classList.add("hidden")});
+$("todoReportButton").onclick=openTodoReport;
+$("todoReportPrev").onclick=()=>shiftTodoReportMonth(-1);
+$("todoReportNext").onclick=()=>shiftTodoReportMonth(1);
+$("closeTodoReport").onclick=closeTodoReport;
+$("copyTodoReport").onclick=copyTodoReport;
+$("todoReportModal").onclick=e=>{if(e.target===$("todoReportModal"))closeTodoReport()};
 $("openTodoModal").onclick=()=>openTodoEditor();
 $("todoMultiToggle").onclick=()=>{
   if(todoMultiMode&&editingTodoItems.length&&!confirm("複数項目を解除すると、入力した項目は削除されます。解除しますか？"))return;
