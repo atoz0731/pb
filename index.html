@@ -4739,6 +4739,8 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.9.2</div><div class="updateDate">2026/11/2</div><ul class="updateItems"><li>PIN再ロック時にTodo通知や編集画面がPIN画面の上へ残る問題を修正</li><li>Todo通知を未確認のまま画面を離れた場合は、PIN認証後に再表示するよう改善</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.9.1</div><div class="updateDate">2026/10/30</div><ul class="updateItems"><li>行きたい場所のカードに🌍を追加し、場所名をGoogleマップで検索できるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.0</div><div class="updateDate">2026/10/23</div><ul class="updateItems"><li>本日期限のTodoを薄いオレンジ、期限切れを薄い赤で表示</li><li>Todoの操作ボタンをテーマ連動のコンパクト表示に刷新</li><li>仕事Todoを月別に振り返ってコピーできるレポート機能を追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.9</div><div class="updateDate">2026/10/22</div><ul class="updateItems"><li>複数項目ごとに完了期限を設定し、期限が近い順に自動整理するよう対応</li><li>カードを展開しなくても、次に対応する未完了項目と期限が分かる表示を追加</li><li>目標日順では、複数項目Todoを直近の未完了項目の期限で並べるよう改善</li><li>今日のTodo通知でも、直近の未完了項目の期限を判定して項目名を表示</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.8.8</div><div class="updateDate">2026/10/15</div><ul class="updateItems"><li>ログイン時のTodo通知に「本日期限」を追加</li><li>今日のTodoと期限超過Todoを分けて確認できるよう改善</li></ul></div>
@@ -5366,7 +5368,7 @@ let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
 let records=[], recordMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1), recordShowMine=true, recordShowOther=true, editingRecord=null, recordTarget="mine", scheduleViewMode="schedule";
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, noteArchiveMode=false, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
-let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShownDate="", todoReportMonth="";
+let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShownDate="", todoReminderQueued=false, todoReportMonth="";
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeTodos=null, unsubscribeSchedules=null, unsubscribeRecords=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -5380,7 +5382,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.9.0";
+const APP_VERSION="3.9.2";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -5898,6 +5900,10 @@ function clearHiddenStamp(){
   try{sessionStorage.removeItem("pb.hiddenAt")}catch(e){}
   try{localStorage.removeItem("pb.hiddenAt.fallback")}catch(e){}
 }
+function hideSensitiveOverlaysForPin(){
+  document.querySelectorAll(".modalOverlay").forEach(el=>el.classList.add("hidden"));
+  todoReminderQueued=false;
+}
 function lockToPin(){
   forceStandbyOff();
   if(standbyMode)setStandbyMode(false);
@@ -5915,6 +5921,7 @@ function lockToPin(){
   $("pinError").textContent="";
   $("headerMenu")?.classList.add("hidden");
   closeAuxWindows();
+  hideSensitiveOverlaysForPin();
   $("decoyMenu")?.classList.add("hidden");
   $("miniLocationPanel")?.classList.add("hidden");
   $("savedMessagesPanel")?.classList.add("hidden");
@@ -5944,7 +5951,7 @@ function readHiddenTime(){
 }
 function checkRelock(){
   if(standbyMode){clearHiddenStamp();return;}
-  if(!pinPassed || !auth.currentUser)return;
+  if(!pinPassed || !auth.currentUser){if(!pinPassed)hideSensitiveOverlaysForPin();return;}
   const delay=relockDelayMs();
   if(delay<0){
     clearHiddenStamp();
@@ -6307,6 +6314,7 @@ function showApp(user){
     appInitialized=true;
     listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenTodos();listenSchedules();listenRecords();listenCurrentStatuses();listenLocations();listenVoiceRoom();listenPlaces();listenNotifications();loadSavedMessageIds();cleanupExpiredImages();
   }
+  if(!camouflageMode&&!stealthReadMode&&todos.length)maybeShowTodoReminders();
 }
 
 /* HEADER NOTICE: existing header/tab DOM is not rebuilt */
@@ -7931,6 +7939,7 @@ function returnToPin(){
   $("savedMessagesPanel")?.classList.add("hidden");
   $("notificationsPanel")?.classList.add("hidden");
   $("headerMenu")?.classList.add("hidden");
+  hideSensitiveOverlaysForPin();
   ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"].forEach(id=>$(id)?.classList.add("hidden"));
   $("pinScreen").classList.remove("hidden");
   window.scrollTo(0,0);
@@ -8077,6 +8086,17 @@ function renderPlaces(){
       await updateDoc(doc(db,"places",p.id),{wants:next});
     };
     actions.appendChild(want);
+
+    const map=document.createElement("button");
+    map.textContent="🌍";
+    map.title="Googleマップで検索";
+    map.setAttribute("aria-label",`${p.name||"場所"}をGoogleマップで検索`);
+    map.onclick=()=>{
+      const query=(p.name||"").trim();
+      if(!query)return;
+      window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,"_blank","noopener");
+    };
+    actions.appendChild(map);
 
     if(!p.visited){
       const sched=document.createElement("button");sched.textContent="📅 予定に追加";sched.onclick=()=>{
@@ -9061,14 +9081,15 @@ async function copyTodoReport(){
   const button=$("copyTodoReport"),before=button.textContent;button.textContent="コピーしました";setTimeout(()=>button.textContent=before,1200);
 }
 function showTodoReminders(){
+  if(!pinPassed||!auth.currentUser||camouflageMode||stealthReadMode||!$("pinScreen").classList.contains("hidden")||$("appScreen").classList.contains("hidden"))return false;
   const today=todayId();
   const eligible=todos.filter(t=>!t.completed&&(t.uid===currentUID||t.shared));
   const reminderRows=eligible.map(t=>{const nextItem=nearestTodoItem(t.items);return {t,nextItem,dueDate:nextItem?.dueDate||t.revisedDueDate||t.initialDueDate||""}});
   const dueToday=reminderRows.filter(row=>row.dueDate===today);
   const overdue=reminderRows.filter(row=>row.dueDate&&row.dueDate<today);
-  if(!dueToday.length&&!overdue.length)return;
+  if(!dueToday.length&&!overdue.length)return false;
   const box=$("todoReminderList");box.innerHTML="";
-  const openFromReminder=t=>{$("todoReminderModal").classList.add("hidden");const tab=document.querySelector('.tab[data-page="notesPage"]');if(tab&&!tab.classList.contains("active"))tab.click();setNotesViewMode("todos");openTodoEditor(t)};
+  const openFromReminder=t=>{todoReminderShownDate=today;$("todoReminderModal").classList.add("hidden");const tab=document.querySelector('.tab[data-page="notesPage"]');if(tab&&!tab.classList.contains("active"))tab.click();setNotesViewMode("todos");openTodoEditor(t)};
   const appendSection=(label,rows,isToday)=>{
     if(!rows.length)return;
     const section=document.createElement("div");section.className="todoReminderSection";section.textContent=label;box.appendChild(section);
@@ -9079,8 +9100,20 @@ function showTodoReminders(){
   appendSection("本日期限",dueToday,true);
   appendSection("期限超過",overdue,false);
   $("todoReminderModal").classList.remove("hidden");
+  return true;
 }
-function maybeShowTodoReminders(){const today=todayId();if(todoReminderShownDate===today)return;todoReminderShownDate=today;setTimeout(showTodoReminders,250)}
+function maybeShowTodoReminders(){
+  const today=todayId();
+  if(todoReminderShownDate===today||todoReminderQueued||!$("todoReminderModal").classList.contains("hidden"))return;
+  if(!pinPassed||!auth.currentUser||camouflageMode||stealthReadMode||!$("pinScreen").classList.contains("hidden")||$("appScreen").classList.contains("hidden"))return;
+  todoReminderQueued=true;
+  setTimeout(()=>{
+    todoReminderQueued=false;
+    if(todoReminderShownDate===today)return;
+    const shown=showTodoReminders();
+    if(shown===false&&pinPassed&&auth.currentUser&&!camouflageMode&&!stealthReadMode)todoReminderShownDate=today;
+  },250);
+}
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&todos.length)maybeShowTodoReminders()});
 $("todoMineBtn").onclick=()=>{todoOwnerMode="mine";renderTodos()};
 $("todoOtherBtn").onclick=()=>{todoOwnerMode="other";renderTodos()};
@@ -9151,8 +9184,9 @@ $("cancelTodoNext").onclick=closeTodoNext;
 $("todoNextModal").onclick=e=>{if(e.target===$("todoNextModal"))closeTodoNext()};
 $("todoLaterNextDueInput").onchange=e=>{$("todoLaterNextDueWeekday").textContent=e.target.value?todoDate(e.target.value).toLocaleDateString("ja-JP",{weekday:"long"}):""};
 $("saveTodoNext").onclick=async()=>{if(!registeringNextTodo)return;const dueDate=$("todoLaterNextDueInput").value;if(!dueDate){alert("次回予定日を選んでください");return}if(registeringNextTodo.completedDate&&dueDate<registeringNextTodo.completedDate){alert("次回予定日は完了日以降を選んでください");return}const btn=$("saveTodoNext");btn.disabled=true;try{await createNextTodo(registeringNextTodo,dueDate);closeTodoNext()}catch(e){console.error("create next todo",e);alert(e?.message==="NEXT_ALREADY_CREATED"?"次回Todoはすでに登録されています。":"次回Todoを登録できませんでした。")}finally{btn.disabled=false}};
-$("closeTodoReminder").onclick=()=>$("todoReminderModal").classList.add("hidden");
-$("todoReminderModal").onclick=e=>{if(e.target===$("todoReminderModal"))$("todoReminderModal").classList.add("hidden")};
+function acknowledgeTodoReminder(){todoReminderShownDate=todayId();$("todoReminderModal").classList.add("hidden")}
+$("closeTodoReminder").onclick=acknowledgeTodoReminder;
+$("todoReminderModal").onclick=e=>{if(e.target===$("todoReminderModal"))acknowledgeTodoReminder()};
 /* CURRENT STATUS */
 
 function statusInitial(id,fallback){
