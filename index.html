@@ -4887,19 +4887,6 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
       </select>
     </div>
 
-    <div class="settingRow">
-      <div>
-        <div class="settingText">PIN誤入力時の撮影（試験）</div>
-        <div class="settingSub">無効なPINが2回連続したとき、インカメラで1枚記録します。入力した番号自体は保存しません。</div>
-      </div>
-      <input id="settingFailedPinCamera" class="settingCheck" type="checkbox">
-    </div>
-    <div class="settingRow">
-      <button id="testFailedPinCamera" type="button">撮影テスト</button>
-      <button id="openFailedPinHistory" type="button">撮影履歴</button>
-    </div>
-    <div id="failedPinCameraStatus" class="settingsNote">カメラは撮影直後に停止し、記録は30日で削除対象になります。</div>
-
     <div class="settingsGroup">カレンダー</div>
     <div class="calendarModeRow">
       <div>
@@ -5220,17 +5207,6 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
   </div>
 </div>
 
-<div id="failedPinHistoryModal" class="modalOverlay hidden">
-  <div class="modal" style="max-height:86dvh;display:flex;flex-direction:column">
-    <div class="windowHeader">
-      <span class="windowHeaderTitle">PIN誤入力の撮影履歴</span>
-      <button id="closeFailedPinHistory" class="windowCloseX" type="button" aria-label="閉じる">×</button>
-    </div>
-    <div id="failedPinHistoryList" style="overflow:auto;display:grid;gap:12px;padding:4px 0 12px"></div>
-    <button id="deleteAllFailedPinPhotos" type="button" style="color:#b42318">履歴をすべて削除</button>
-  </div>
-</div>
-
 
 <div id="recordModal" class="modalOverlay hidden">
   <div class="modal">
@@ -5377,7 +5353,6 @@ window.addEventListener("storage",e=>{
 
 
 let pin="", pinPassed=false, currentUID="", currentId="";
-let failedPinStreak=0, failedPinCaptureBusy=false;
 let camouflageMode=false, camoReplyTarget=null;
 let decoyMode="";
 let stealthReadMode=false;
@@ -5431,8 +5406,7 @@ const DEFAULT_SETTINGS={
   vibrate:false,
   backgroundNotification:false,
   calendarMode:"titles",
-  relockSeconds:10,
-  failedPinCamera:true
+  relockSeconds:10
 };
 let pbSettings={...DEFAULT_SETTINGS};
 let unreadTalkCount=0;
@@ -5782,62 +5756,12 @@ $("messageInput")?.addEventListener("input",()=>{$("messageInput").value.trim()?
 
 /* PIN */
 function updateDots(){ document.querySelectorAll(".pinDot").forEach((d,i)=>d.classList.toggle("on",i<pin.length)); }
-const PB_VALID_PINS=new Set(["0208","0814","1126","9401","9402","9403","9404","9405","9409"]);
-function resetFailedPinStreak(){failedPinStreak=0}
-async function cameraFrameData(){
-  if(!navigator.mediaDevices?.getUserMedia)throw new Error("この端末はカメラ撮影に対応していません");
-  const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:"user",width:{ideal:640},height:{ideal:480}}});
-  const video=document.createElement("video");
-  try{
-    video.playsInline=true;video.muted=true;video.srcObject=stream;
-    video.style.cssText="position:fixed;left:-10000px;top:0;width:2px;height:2px;pointer-events:none";
-    document.body.appendChild(video);
-    await video.play();
-    if(video.readyState<2)await new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>reject(new Error("カメラの準備がタイムアウトしました")),5000);
-      video.addEventListener("loadeddata",()=>{clearTimeout(timer);resolve()},{once:true});
-    });
-    await new Promise(r=>setTimeout(r,220));
-    const sourceW=video.videoWidth||640,sourceH=video.videoHeight||480;
-    const scale=Math.min(1,480/sourceW);
-    const canvas=document.createElement("canvas");
-    canvas.width=Math.max(1,Math.round(sourceW*scale));canvas.height=Math.max(1,Math.round(sourceH*scale));
-    canvas.getContext("2d").drawImage(video,0,0,canvas.width,canvas.height);
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",.62));
-    if(!blob)throw new Error("画像を作成できませんでした");
-    const data=await new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(blob)});
-    return {data,size:blob.size,width:canvas.width,height:canvas.height};
-  }finally{video.srcObject=null;video.remove();stream.getTracks().forEach(track=>track.stop())}
-}
-function failedPinStatus(message){const el=$("failedPinCameraStatus");if(el)el.textContent=message}
-async function captureFailedPinAttempt(reason="failed_pin"){
-  if(failedPinCaptureBusy||!pbSettings.failedPinCamera)return false;
-  const user=auth.currentUser;
-  if(!user){failedPinStatus("Firebaseログイン中のみ撮影を保存できます。");return false}
-  failedPinCaptureBusy=true;
-  try{
-    const image=await cameraFrameData();
-    await addDoc(collection(db,"pinAttemptPhotos"),{
-      data:image.data,size:image.size,width:image.width,height:image.height,
-      uid:user.uid,reason,createdAt:serverTimestamp(),
-      expiresAt:Timestamp.fromDate(new Date(Date.now()+30*24*60*60*1000))
-    });
-    failedPinStatus(reason==="test"?"撮影テストを保存しました。":"PIN誤入力時の写真を保存しました。");
-    return true;
-  }catch(e){
-    console.warn("failed PIN camera",e);
-    failedPinStatus(`撮影できませんでした：${e?.name==="NotAllowedError"?"カメラが許可されていません":e?.message||e}`);
-    return false;
-  }finally{failedPinCaptureBusy=false}
-}
 document.querySelectorAll(".key").forEach(k=>{
   if(k.id==="backKey"||k.classList.contains("blank")) return;
   k.onclick=()=>{ if(pin.length>=4)return; pin+=k.textContent; updateDots(); if(pin.length===4)setTimeout(checkPin,120); };
 });
 $("backKey").onclick=()=>{pin=pin.slice(0,-1);updateDots()};
 function checkPin(){
-  const enteredPin=pin;
-  if(PB_VALID_PINS.has(enteredPin))resetFailedPinStreak();
   if(pin==="0208"){
     try{window.location.href="googlegmail://";setTimeout(()=>{window.location.href="https://mail.google.com/";},700)}
     catch(e){window.location.href="https://mail.google.com/"}
@@ -5917,8 +5841,6 @@ function checkPin(){
     if(auth.currentUser)showApp(auth.currentUser);else $("camoLoginScreen").classList.remove("hidden");
     return;
   }
-  failedPinStreak++;
-  if(failedPinStreak>=2){failedPinStreak=0;void captureFailedPinAttempt("failed_pin")}
   $("pinError").textContent="PINが違います";pin="";updateDots();
   setTimeout(()=>$("pinError").textContent="",1000);
 }
@@ -5994,7 +5916,6 @@ function lockToPin(){
   decoyMode="";
 
   pinPassed=false;
-  resetFailedPinStreak();
   pin="";
   updateDots();
   $("pinError").textContent="";
@@ -6338,11 +6259,6 @@ onAuthStateChanged(auth,user=>{
     else saveBadgeDebug({mode:"badgecheck",hasUnread:false,error:"Firebase未ログイン"});
     return;
   }
-  if(user&&!pinPassed){
-    currentUID=user.uid;
-    currentId=(user.email||"").replace("@pb.local","");
-    loadSettings();
-  }
   if(user&&pinPassed)showApp(user);
   if(!user&&pinPassed){["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","pcNotepadScreen"].forEach(id=>$(id)?.classList.add("hidden"));if(camouflageMode)$("camoLoginScreen").classList.remove("hidden");else $("loginScreen").classList.remove("hidden")}
 });
@@ -6396,7 +6312,7 @@ function showApp(user){
   updateUpdateBadge();
   if(!appInitialized){
     appInitialized=true;
-    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenTodos();listenSchedules();listenRecords();listenCurrentStatuses();listenLocations();listenVoiceRoom();listenPlaces();listenNotifications();loadSavedMessageIds();cleanupExpiredImages();cleanupExpiredPinAttemptPhotos();
+    listenMessages();listenTyping();listenReadStates();listenSolo();listenNotes();listenTodos();listenSchedules();listenRecords();listenCurrentStatuses();listenLocations();listenVoiceRoom();listenPlaces();listenNotifications();loadSavedMessageIds();cleanupExpiredImages();
   }
   if(!camouflageMode&&!stealthReadMode&&todos.length)maybeShowTodoReminders();
 }
@@ -6622,7 +6538,6 @@ function syncSettingsControls(){
   $("settingTitle").checked=!!pbSettings.title;
   $("settingVibrate").checked=!!pbSettings.vibrate;
   $("settingBackgroundNotification").checked=!!pbSettings.backgroundNotification;
-  $("settingFailedPinCamera").checked=!!pbSettings.failedPinCamera;
   $("settingCalendarMode").value=pbSettings.calendarMode||"titles";
   $("settingRelockSeconds").value=String(
     Number.isFinite(Number(pbSettings.relockSeconds)) ? Number(pbSettings.relockSeconds) : 10
@@ -6635,45 +6550,6 @@ function syncSettingsControls(){
     pbSettings[key]=el.checked;saveSettings();
   };
 });
-$("settingFailedPinCamera").onchange=()=>{
-  pbSettings.failedPinCamera=$("settingFailedPinCamera").checked;
-  saveSettings();
-  failedPinStatus(pbSettings.failedPinCamera?"有効です。無効なPINが2回連続すると撮影します。":"無効です。PIN誤入力時の撮影は行いません。");
-};
-async function loadFailedPinHistory(){
-  const list=$("failedPinHistoryList");if(!list)return;
-  list.innerHTML='<div class="small">読み込み中…</div>';
-  try{
-    const uid=auth.currentUser?.uid;
-    const snap=await getDocs(collection(db,"pinAttemptPhotos"));
-    const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.uid===uid).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
-    list.innerHTML="";
-    if(!rows.length){list.innerHTML='<div class="small">撮影履歴はありません。</div>';return}
-    rows.forEach(row=>{
-      const card=document.createElement("div");card.style.cssText="border:1px solid #ddd;border-radius:12px;padding:10px;background:var(--pb-surface,#fff)";
-      const when=row.createdAt?.toDate?.()?.toLocaleString("ja-JP")||"保存日時を取得中";
-      card.innerHTML=`<img alt="PIN誤入力時の写真" src="${row.data}" style="display:block;width:100%;max-height:320px;object-fit:contain;border-radius:8px;background:#111"><div class="settingSub" style="margin-top:7px">${escapeHtml(when)}${row.reason==="test"?"　撮影テスト":""}</div>`;
-      const del=document.createElement("button");del.type="button";del.textContent="削除";del.style.marginTop="7px";
-      del.onclick=async()=>{if(!confirm("この写真を削除しますか？"))return;await deleteDoc(doc(db,"pinAttemptPhotos",row.id));await loadFailedPinHistory()};
-      card.appendChild(del);list.appendChild(card);
-    });
-  }catch(e){console.error(e);list.innerHTML='<div class="small">撮影履歴を読み込めませんでした。</div>'}
-}
-$("testFailedPinCamera").onclick=async()=>{
-  if(!pbSettings.failedPinCamera){alert("先に「PIN誤入力時の撮影」をONにしてください。");return}
-  const btn=$("testFailedPinCamera");btn.disabled=true;btn.textContent="撮影中…";
-  const ok=await captureFailedPinAttempt("test");btn.disabled=false;btn.textContent="撮影テスト";
-  if(ok){$("failedPinHistoryModal").classList.remove("hidden");await loadFailedPinHistory()}
-};
-$("openFailedPinHistory").onclick=async()=>{$("failedPinHistoryModal").classList.remove("hidden");await loadFailedPinHistory()};
-$("closeFailedPinHistory").onclick=()=>$("failedPinHistoryModal").classList.add("hidden");
-$("failedPinHistoryModal").addEventListener("click",e=>{if(e.target===$("failedPinHistoryModal"))$("failedPinHistoryModal").classList.add("hidden")});
-$("deleteAllFailedPinPhotos").onclick=async()=>{
-  if(!confirm("PIN誤入力の撮影履歴をすべて削除しますか？"))return;
-  const uid=auth.currentUser?.uid,snap=await getDocs(collection(db,"pinAttemptPhotos"));
-  await Promise.all(snap.docs.filter(d=>d.data().uid===uid).map(d=>deleteDoc(d.ref)));
-  await loadFailedPinHistory();
-};
 $("settingSoundVolume").onchange=()=>{
   pbSettings.soundVolume=Math.min(10,Math.max(1,Number($("settingSoundVolume").value)||5));
   saveSettings();
@@ -6757,7 +6633,7 @@ $("testNotice").onclick=async()=>{
 $("calculateStorage").onclick=async()=>{
   const btn=$("calculateStorage");btn.disabled=true;btn.textContent="計算中…";
   try{
-    const cols=["messages","messageImages","pinAttemptPhotos","solo","notes","schedules","places","notifications"];
+    const cols=["messages","messageImages","solo","notes","schedules","places","notifications"];
     let bytes=0,count=0,images=0,imageBytes=0;
     for(const c of cols){
       const snap=await getDocs(collection(db,c));
@@ -7634,16 +7510,6 @@ async function cleanupExpiredImages(){
     const snap=await getDocs(q);
     await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
   }catch(e){console.warn("image cleanup",e)}
-}
-async function cleanupExpiredPinAttemptPhotos(){
-  const key="pb.pinPhotoCleanup",last=Number(localStorage.getItem(key)||0);
-  if(Date.now()-last<24*60*60*1000)return;
-  localStorage.setItem(key,String(Date.now()));
-  try{
-    const q=query(collection(db,"pinAttemptPhotos"),where("expiresAt","<=",Timestamp.now()),limit(20));
-    const snap=await getDocs(q);
-    await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
-  }catch(e){console.warn("PIN photo cleanup",e)}
 }
 
 // Push is best effort and cannot change message or read state.
