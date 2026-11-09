@@ -4119,6 +4119,9 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoToolMenu button{display:block;width:100%;border:0;border-bottom:1px solid var(--pb-border);background:var(--pb-surface);color:var(--pb-text);text-align:left;padding:10px 12px;font-size:11px}
 .todoToolMenu button:last-child{border-bottom:0}.todoToolMenu button.active{font-weight:800;background:var(--pb-surface-2);color:var(--pb-accent)}
 #todoList{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:7px 9px 24px}
+.todoMonthDivider{display:flex;align-items:center;gap:8px;margin:10px 4px 7px;color:#8a8a8f;font-size:10px;font-weight:700;line-height:1;letter-spacing:.02em}
+.todoMonthDivider::before,.todoMonthDivider::after{content:"";flex:1;border-top:1px dashed #d4d4d8}
+.todoMonthDivider span{white-space:nowrap}
 .todoCard{background:#fff;border-radius:11px;border:1px solid #e4e4e4;border-left:4px solid #2f6fed;padding:7px 8px 6px;margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,.025)}
 .todoCard.ownerHitomi{border-left-color:#e24a4a}
 .todoCard.shared{border-left-color:#8e8e93;background:#f4f4f5}
@@ -4203,6 +4206,8 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoReminderItem.today .todoReminderMeta{color:#365f9c}
 .todoReportNav{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 5px}.todoReportNav button{width:36px;height:34px;border:1px solid var(--pb-border);border-radius:50%;background:var(--pb-surface);color:var(--pb-accent);font-size:20px}.todoReportMonth{min-width:128px;text-align:center;font-size:15px;font-weight:800}.todoReportOwner{text-align:center;color:var(--pb-muted);font-size:10px;margin-bottom:10px}.todoReportBody{border:1px solid var(--pb-border);border-radius:12px;background:var(--pb-bg);padding:12px;white-space:pre-wrap;font-size:13px;line-height:1.75;min-height:170px}.todoReportCopy{background:var(--pb-accent)!important;color:#fff!important;font-weight:700}
 body.night-mode #todoView,body.night-mode #todoList{background:#111}
+body.night-mode .todoMonthDivider{color:#909095}
+body.night-mode .todoMonthDivider::before,body.night-mode .todoMonthDivider::after{border-top-color:#3a3a3c}
 body.night-mode .todoToolbar{background:#171717;border-color:#333;color:#aaa}
 body.night-mode .todoOwnerBtn,body.night-mode .todoCompleteBtn,body.night-mode .todoSelect{background:#222;border-color:#444;color:#ddd}
 body.night-mode .todoOwnerBtn.active{background:#e8ebef;color:#111;border-color:#e8ebef}
@@ -4739,6 +4744,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.2</div><div class="updateDate">2026/11/2</div><ul class="updateItems"><li>PIN再ロック時にTodo通知や編集画面がPIN画面の上へ残る問題を修正</li><li>Todo通知を未確認のまま画面を離れた場合は、PIN認証後に再表示するよう改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.1</div><div class="updateDate">2026/10/30</div><ul class="updateItems"><li>行きたい場所のカードに🌍を追加し、場所名をGoogleマップで検索できるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.0</div><div class="updateDate">2026/10/23</div><ul class="updateItems"><li>本日期限のTodoを薄いオレンジ、期限切れを薄い赤で表示</li><li>Todoの操作ボタンをテーマ連動のコンパクト表示に刷新</li><li>仕事Todoを月別に振り返ってコピーできるレポート機能を追加</li></ul></div>
@@ -5207,7 +5213,6 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
   </div>
 </div>
 
-
 <div id="recordModal" class="modalOverlay hidden">
   <div class="modal">
     <h3 id="recordModalTitle">記録を追加</h3>
@@ -5382,7 +5387,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.9.2";
+const APP_VERSION="3.9.3";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -6258,6 +6263,11 @@ onAuthStateChanged(auth,user=>{
     if(user)runShortcutBadgeCheck(user);
     else saveBadgeDebug({mode:"badgecheck",hasUnread:false,error:"Firebase未ログイン"});
     return;
+  }
+  if(user&&!pinPassed){
+    currentUID=user.uid;
+    currentId=(user.email||"").replace("@pb.local","");
+    loadSettings();
   }
   if(user&&pinPassed)showApp(user);
   if(!user&&pinPassed){["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen","notesDecoyScreen","pcNotepadScreen"].forEach(id=>$(id)?.classList.add("hidden"));if(camouflageMode)$("camoLoginScreen").classList.remove("hidden");else $("loginScreen").classList.remove("hidden")}
@@ -7511,7 +7521,6 @@ async function cleanupExpiredImages(){
     await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
   }catch(e){console.warn("image cleanup",e)}
 }
-
 // Push is best effort and cannot change message or read state.
 function queuePushNotice(messageId){
   if(!messageId || !auth.currentUser)return;
@@ -8899,6 +8908,7 @@ function renderTodos(){
   const rows=filteredTodos();
   if(!rows.length){box.innerHTML=`<div class="todoEmpty">${todoShowCompleted?"該当する完了Todoはありません。":"該当するTodoはありません。"}</div>`;return}
   let lastCompletedMonth="";
+  let lastDueMonth="";
   rows.forEach(t=>{
     if(todoShowCompleted&&t.completedDate){
       const month=t.completedDate.slice(0,7);
@@ -8907,6 +8917,20 @@ function renderTodos(){
         const h=document.createElement("div");h.className="recordDayLabel";
         const [y,m]=month.split("-");h.textContent=`${y}年${Number(m)}月`;
         box.appendChild(h);
+      }
+    }
+    if(!todoShowCompleted&&todoSortMode==="due"){
+      const due=todoEffectiveSortDue(t);
+      const match=String(due).match(/^(\d{4})-(\d{2})-/);
+      if(match){
+        const month=`${match[1]}-${match[2]}`;
+        if(lastDueMonth&&month!==lastDueMonth){
+          const divider=document.createElement("div");divider.className="todoMonthDivider";
+          const label=document.createElement("span");label.textContent=`${Number(match[2])}月`;
+          divider.setAttribute("aria-label",`${match[1]}年${Number(match[2])}月`);
+          divider.appendChild(label);box.appendChild(divider);
+        }
+        lastDueMonth=month;
       }
     }
     const mine=t.uid===currentUID,editable=canEditTodo(t);
