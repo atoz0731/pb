@@ -5546,17 +5546,33 @@ async function clearHomeBadge(){
   if("clearAppBadge" in navigator)await navigator.clearAppBadge();
 }
 
-async function createNotice(type,targetUid,title,body,targetId){
+async function createNotice(type,targetUid,title,body,targetId,options={}){
   try{
-    return await addDoc(collection(db,"notifications"),{
+    const payload={
       type,targetUid,title,body,targetId,
       actorUid:currentUID,actorId:currentId,createdAt:serverTimestamp()
-    });
+    };
+    if(options.bellOnly===true)payload.bellOnly=true;
+    return await addDoc(collection(db,"notifications"),payload);
   }catch(e){
     console.warn("notice",e);
     const s=$("noticeListenerStatus");if(s)s.textContent=`書込エラー：${e.code||e.message||e}`;
     throw e;
   }
+}
+async function createCommentNotices(type,ownerUid,existingComments,ownerTitle,participantTitle,body,targetId){
+  const targets=[...new Set([
+    ownerUid,
+    ...(existingComments||[]).map(c=>c?.uid)
+  ].filter(uid=>uid&&uid!==currentUID))];
+  await Promise.all(targets.map(uid=>createNotice(
+    type,
+    uid,
+    uid===ownerUid?ownerTitle:participantTitle,
+    body,
+    targetId,
+    {bellOnly:uid!==ownerUid}
+  )));
 }
 function noticeMillis(n){return n.createdAt?.toMillis?.()||0}
 function listenNotifications(){
@@ -5591,6 +5607,7 @@ function updateNotificationBadge(){
 
   const hasCommentNotice=notifications.some(n=>
     (n.type==="solo_comment"||n.type==="schedule_comment") &&
+    n.bellOnly!==true &&
     noticeMillis(n)>notificationReadAt
   );
   const hasBadge=!!(pbSettings.badge&&(unreadTalkCount>0||hasCommentNotice));
@@ -5696,7 +5713,7 @@ async function runShortcutBadgeCheck(user){
       hasUnread=ns.docs.some(d=>{
         const x=d.data(),created=x.createdAt?.toMillis?.()||0;
         const forMe=x.actorUid!==currentUID&&(x.targetUid==="all"||x.targetUid===currentUID);
-        return forMe&&(x.type==="solo_comment"||x.type==="schedule_comment")&&created>noticeReadAt;
+        return forMe&&(x.type==="solo_comment"||x.type==="schedule_comment")&&x.bellOnly!==true&&created>noticeReadAt;
       });
     }
 
@@ -6307,6 +6324,7 @@ function showApp(user){
     if(decoyMode==="news")renderNewsArticle();
     if(decoyMode==="notes")renderNotesDecoy();
     if(decoyMode==="pcnotepad")renderPcNotepad();
+    requestAnimationFrame(()=>markCamouflageRead());
   }else{
     $("appScreen").classList.remove("hidden");
     if(stealthReadMode){
@@ -6748,7 +6766,10 @@ function handleIncomingMessage(data){
 document.addEventListener("visibilitychange",()=>{
   /* ホームへ戻る瞬間はバッジを再計算しない。
      前面に戻った時だけ画面内表示を同期する。 */
-  if(document.visibilityState==="visible")updateNotificationUI();
+  if(document.visibilityState==="visible"){
+    updateNotificationUI();
+    if(camouflageMode)requestAnimationFrame(()=>markCamouflageRead());
+  }
 });
 
 
@@ -6986,6 +7007,7 @@ function listenMessages(){
     }
 
     previousNewestMessageId=newestId;
+    if(camouflageMode)requestAnimationFrame(()=>markCamouflageRead());
   });
 }
 
@@ -8263,6 +8285,46 @@ function listenReadStates(){
   });
 }
 let readTimer=null,lastReadWriteUid="",lastReadWriteMessageId="";
+const CAMOUFLAGE_READ_SCREENS={
+  instagram:"camoScreen",
+  news:"newsScreen",
+  weather:"weatherScreen",
+  teams:"teamsScreen",
+  notes:"notesDecoyScreen",
+  pcnotepad:"pcNotepadScreen"
+};
+function camouflageReadViewActive(){
+  const screenId=CAMOUFLAGE_READ_SCREENS[decoyMode];
+  return !!(
+    camouflageMode&&screenId&&pinPassed&&currentUID&&!standbyMode&&!stealthReadMode&&
+    document.visibilityState==="visible"&&!$(screenId)?.classList.contains("hidden")
+  );
+}
+function markCamouflageRead(){
+  if(!camouflageReadViewActive())return;
+  const visibleMessages=[...messageDocs.values()]
+    .filter(x=>decoyMode==="pcnotepad"||!!x.text)
+    .sort((a,b)=>(a.createdAt?.toMillis?.()||0)-(b.createdAt?.toMillis?.()||0));
+  const newest=visibleMessages[visibleMessages.length-1];
+  const messageId=newest?.id;
+  if(!newest?.createdAt?.toMillis?.())return;
+  if(lastReadWriteUid===currentUID&&lastReadWriteMessageId===messageId){clearUnreadTalk();return}
+  if(readStates[currentUID]?.lastReadAt?.toMillis?.()>=newest.createdAt.toMillis()){clearUnreadTalk();return}
+  const readUid=currentUID;
+  clearTimeout(readTimer);
+  readTimer=setTimeout(async()=>{
+    if(!camouflageReadViewActive()||currentUID!==readUid)return;
+    if(lastReadWriteUid===readUid&&lastReadWriteMessageId===messageId)return;
+    lastReadWriteUid=readUid;lastReadWriteMessageId=messageId;
+    try{
+      await setDoc(doc(db,"readStates",readUid),{uid:readUid,senderId:currentId,lastReadAt:serverTimestamp()},{merge:true});
+      clearUnreadTalk();
+    }catch(e){
+      if(lastReadWriteUid===readUid&&lastReadWriteMessageId===messageId)lastReadWriteMessageId="";
+      console.error(e);
+    }
+  },250);
+}
 function markTalkRead(){
   if(stealthReadMode||standbyMode)return;
   if(!currentUID||!pinPassed||activePage()!=="talkPage"||!isNearBottom()||talkDateFilter)return;
@@ -8486,10 +8548,12 @@ function toggleComments(post,data){
     const t=input.value.trim();if(!t)return;
     const comments=[...(data.comments||[]),{id:`${currentUID}-${Date.now()}`,uid:currentUID,senderId:currentId,text:t,createdAt:Date.now()}];
     await updateDoc(doc(db,"solo",data.id),{comments});
-    if(data.uid!==currentUID){
-      const excerpt=(data.text||"").replace(/\s+/g," ").slice(0,36);
-      await createNotice("solo_comment",data.uid,"ひとりごとにコメント",`「${excerpt}${(data.text||"").length>36?"…":""}」\n${currentId}：${t}`,data.id);
-    }
+    const excerpt=(data.text||"").replace(/\s+/g," ").slice(0,36);
+    await createCommentNotices(
+      "solo_comment",data.uid,data.comments||[],
+      "ひとりごとにコメント","参加したひとりごとに新しいコメント",
+      `「${excerpt}${(data.text||"").length>36?"…":""}」\n${currentId}：${t}`,data.id
+    );
   };
   comp.append(input,send);box.appendChild(comp);post.appendChild(box);
 }
@@ -9851,9 +9915,11 @@ function renderSelectedDay(){
         createdAt:Date.now()
       }];
       await updateDoc(doc(db,"schedules",s.id),{comments});
-      if(s.uid!==currentUID){
-        await createNotice("schedule_comment",s.uid,"予定にコメント",`${scheduleNoticeLabel(s)}\n${currentId}：${val}`,s.id);
-      }
+      await createCommentNotices(
+        "schedule_comment",s.uid,s.comments||[],
+        "予定にコメント","参加した予定に新しいコメント",
+        `${scheduleNoticeLabel(s)}\n${currentId}：${val}`,s.id
+      );
     };
     composer.append(input,send);
     commentsPanel.appendChild(composer);
