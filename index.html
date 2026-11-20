@@ -4002,9 +4002,10 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 .recordMonthRow button{border:0;background:none;font-size:24px;color:#555;padding:5px}
 #recordMonthTitle{text-align:center;font-weight:800;font-size:16px}
 .recordControls{display:flex;align-items:center;gap:7px;margin-top:6px}
-.recordFilters{display:flex;gap:5px;flex:1;min-width:0}
+.recordFilters{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
 .recordFilterBtn{border:1px solid #d7d7d7;border-radius:999px;background:#fff;color:#777;font-size:11px;font-weight:700;padding:6px 11px}
 .recordFilterBtn.active{background:var(--theme,#222);border-color:var(--theme,#222);color:#fff}
+.recordCategoryFilter{min-width:0;max-width:116px;border:1px solid #d7d7d7;border-radius:999px;background:#fff;color:#666;font-size:11px;font-weight:700;padding:6px 22px 6px 9px}
 .recordAddBtn{border:0;border-radius:10px;background:var(--theme,#222);color:#fff;font-weight:700;padding:7px 11px;white-space:nowrap}
 .recordSearchWrap{margin-top:7px}
 #recordSearchInput{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:10px;padding:8px 10px;font-size:16px;background:#f8f8f8}
@@ -4024,7 +4025,13 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 .recordMeta{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:9px;color:#999;min-width:0}
 .recordMeta .target{font-weight:700}
 .recordMemo{font-size:10px;line-height:1.45;color:#666;margin-top:5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap;word-break:break-word}
+.recordCategory{margin-left:auto;border-radius:999px;padding:2px 6px;font-size:8px;font-weight:800;white-space:nowrap}
+.recordCategory.category-two{background:#efe5ff;color:#7040a0}
+.recordCategory.category-work{background:#dfeeff;color:#245d9c}
+.recordCategory.category-home{background:#fff0cf;color:#945c00}
+.recordCategory.category-other{background:#ddf3e4;color:#297044}
 .recordMenu{margin-left:auto;position:relative}
+.recordCategory + .recordMenu{margin-left:0}
 .recordMenuBtn{border:0;background:none;color:#777;font-size:16px;line-height:1;padding:0 1px}
 .recordMenuPopup{position:absolute;right:0;top:19px;z-index:60;background:#fff;border:1px solid #ddd;border-radius:9px;box-shadow:0 4px 15px #0002;min-width:78px;overflow:hidden}
 .recordMenuPopup.hidden{display:none!important}
@@ -4046,7 +4053,7 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
   padding:20px 16px 22px!important;
   overflow-x:hidden!important;
 }
-#recordModal input,#recordModal textarea{
+#recordModal input,#recordModal textarea,#recordModal select{
   box-sizing:border-box!important;
   width:100%!important;
   max-width:100%!important;
@@ -4099,8 +4106,12 @@ body.night-mode .recordMemo{color:#bbb}
 body.night-mode .recordDayLabel,body.night-mode .recordTime,body.night-mode .recordMeta{color:#999}
 body.night-mode .recordGrid.two::before{background:#3a3a3a}
 body.night-mode #recordSearchInput{background:#222;border-color:#3a3a3a;color:#eee}
-body.night-mode .recordFilterBtn,body.night-mode .recordTargetBtn{background:#222;border-color:#444;color:#bbb}
+body.night-mode .recordFilterBtn,body.night-mode .recordTargetBtn,body.night-mode .recordCategoryFilter{background:#222;border-color:#444;color:#bbb}
 body.night-mode .recordFilterBtn.active,body.night-mode .recordTargetBtn.active{background:var(--theme,#555);color:#fff}
+body.night-mode .recordCategory.category-two{background:#3b2c4c;color:#d8b8ff}
+body.night-mode .recordCategory.category-work{background:#213852;color:#9bc8ff}
+body.night-mode .recordCategory.category-home{background:#493820;color:#ffd28a}
+body.night-mode .recordCategory.category-other{background:#203d2b;color:#9de0b4}
 body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{background:#222;color:#ddd;border-color:#444}
 
 /* v3.8.1 ノート裏面：Todo */
@@ -4204,7 +4215,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoReminderTitle{font-size:13px;font-weight:800}
 .todoReminderMeta{font-size:10px;color:#a33;margin-top:3px}
 .todoReminderItem.today .todoReminderMeta{color:#365f9c}
-.todoReportNav{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 5px}.todoReportNav button{width:36px;height:34px;border:1px solid var(--pb-border);border-radius:50%;background:var(--pb-surface);color:var(--pb-accent);font-size:20px}.todoReportMonth{min-width:128px;text-align:center;font-size:15px;font-weight:800}.todoReportOwner{text-align:center;color:var(--pb-muted);font-size:10px;margin-bottom:10px}.todoReportBody{border:1px solid var(--pb-border);border-radius:12px;background:var(--pb-bg);padding:12px;white-space:pre-wrap;font-size:13px;line-height:1.75;min-height:170px}.todoReportCopy{background:var(--pb-accent)!important;color:#fff!important;font-weight:700}
+.todoReportNav{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px 0 5px}.todoReportNav button{width:36px;height:34px;border:1px solid var(--pb-border);border-radius:50%;background:var(--pb-surface);color:var(--pb-accent);font-size:20px}.todoReportMonth{min-width:128px;text-align:center;font-size:15px;font-weight:800}.todoReportOwner{text-align:center;color:var(--pb-muted);font-size:10px;margin-bottom:10px}.todoReportBody{border:1px solid var(--pb-border);border-radius:12px;background:var(--pb-bg);padding:12px;white-space:pre-wrap;font-size:13px;line-height:1.75;min-height:170px}.todoReportExcluded{margin-top:10px;border:1px solid var(--pb-border);border-radius:10px;background:var(--pb-surface);overflow:hidden}.todoReportExcluded summary{cursor:pointer;padding:9px 11px;color:var(--pb-muted);font-size:11px;font-weight:800}.todoReportExcludedList{padding:0 9px 8px}.todoReportExcludedItem{display:flex;align-items:center;gap:7px;border-top:1px solid var(--pb-border);padding:8px 2px;font-size:11px}.todoReportExcludedItem span{flex:1;min-width:0;word-break:break-word}.todoReportExcludedItem button{flex:0 0 auto;border:1px solid var(--pb-border);border-radius:999px;background:var(--pb-surface-2);color:var(--pb-accent);font-size:10px;font-weight:700;padding:5px 8px}.todoReportCopy{background:var(--pb-accent)!important;color:#fff!important;font-weight:700}.todoReportScopeText{margin:4px 0 12px;color:var(--pb-muted);font-size:12px;line-height:1.6}.todoReportScopeBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.todoReportScopeBtns button{border:1px solid var(--pb-border);border-radius:10px;background:var(--pb-surface);color:var(--pb-text);font-weight:800;padding:11px 8px}.todoReportScopeBtns .future{background:var(--pb-accent);border-color:var(--pb-accent);color:#fff}
 body.night-mode #todoView,body.night-mode #todoList{background:#111}
 body.night-mode .todoMonthDivider{color:#909095}
 body.night-mode .todoMonthDivider::before,body.night-mode .todoMonthDivider::after{border-top-color:#3a3a3c}
@@ -4704,6 +4715,13 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
       <div class="recordControls">
         <div class="recordFilters">
           <button id="recordMineBtn" class="recordFilterBtn active" type="button">自分</button>
+          <select id="recordCategoryFilter" class="recordCategoryFilter" aria-label="記録カテゴリで絞り込み">
+            <option value="all">すべて</option>
+            <option value="two">2人のこと</option>
+            <option value="work">仕事</option>
+            <option value="home">家のこと</option>
+            <option value="other">その他</option>
+          </select>
           <button id="recordOtherBtn" class="recordFilterBtn active" type="button">相手</button>
         </div>
         <button id="openRecordModal" class="recordAddBtn" type="button">＋ 記録</button>
@@ -4744,6 +4762,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.9.4</div><div class="updateDate">2026/11/17</div><ul class="updateItems"><li>記録に「2人のこと・仕事・家のこと・その他」のカテゴリを追加し、カード表示と絞り込みに対応</li><li>仕事Todoをレポート対象外に設定し、対象外一覧から戻せる機能を追加</li><li>繰り返しTodoのレポート設定を「今回だけ・今後も」から選べるよう対応</li><li>土曜・日曜・祝日は、仕事Todoの「本日期限」と「期限超過」をお知らせに表示しないよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.2</div><div class="updateDate">2026/11/2</div><ul class="updateItems"><li>PIN再ロック時にTodo通知や編集画面がPIN画面の上へ残る問題を修正</li><li>Todo通知を未確認のまま画面を離れた場合は、PIN認証後に再表示するよう改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.1</div><div class="updateDate">2026/10/30</div><ul class="updateItems"><li>行きたい場所のカードに🌍を追加し、場所名をGoogleマップで検索できるよう対応</li></ul></div>
@@ -5172,7 +5191,23 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
     <div class="todoReportNav"><button id="todoReportPrev" type="button" aria-label="前月">‹</button><div id="todoReportMonth" class="todoReportMonth"></div><button id="todoReportNext" type="button" aria-label="次月">›</button></div>
     <div id="todoReportOwner" class="todoReportOwner"></div>
     <div id="todoReportBody" class="todoReportBody"></div>
+    <details id="todoReportExcluded" class="todoReportExcluded hidden">
+      <summary id="todoReportExcludedSummary">レポート対象外（0件）</summary>
+      <div id="todoReportExcludedList" class="todoReportExcludedList"></div>
+    </details>
     <div class="modalBtns"><button id="closeTodoReport" type="button">閉じる</button><button id="copyTodoReport" class="todoReportCopy" type="button">コピー</button></div>
+  </div>
+</div>
+
+<div id="todoReportScopeModal" class="modalOverlay hidden">
+  <div class="modal">
+    <h3 id="todoReportScopeTitle">レポート対象外の設定</h3>
+    <div id="todoReportScopeText" class="todoReportScopeText"></div>
+    <div class="todoReportScopeBtns">
+      <button id="todoReportScopeCurrent" type="button">今回だけ</button>
+      <button id="todoReportScopeFuture" class="future" type="button">今後も</button>
+    </div>
+    <div class="modalBtns"><button id="cancelTodoReportScope" type="button">キャンセル</button></div>
   </div>
 </div>
 
@@ -5223,6 +5258,13 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
       <label for="recordTimeInput">時刻（任意）</label>
       <input id="recordTimeInput" type="time">
     </div>
+    <label class="todoFormLabel" for="recordCategoryInput">カテゴリ</label>
+    <select id="recordCategoryInput">
+      <option value="two">2人のこと</option>
+      <option value="work">仕事</option>
+      <option value="home">家のこと</option>
+      <option value="other">その他</option>
+    </select>
     <div class="recordTargetRow">
       <div class="recordTargetLabel">記録対象</div>
       <div class="recordTargetButtons">
@@ -5371,9 +5413,9 @@ let readStates={}, locationWatch=null;
 let locationShareActive=false, locationShareBusy=false;
 let statusUnsub=null,currentStatuses=new Map();
 let schedules=[], calendarDate=new Date(), selectedDate=new Date(), scheduleShowMine=true, scheduleShowOther=true, editingSchedule=null;
-let records=[], recordMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1), recordShowMine=true, recordShowOther=true, editingRecord=null, recordTarget="mine", scheduleViewMode="schedule";
+let records=[], recordMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1), recordShowMine=true, recordShowOther=true, recordCategory="all", editingRecord=null, recordTarget="mine", scheduleViewMode="schedule";
 let soloPosts=[], soloFilter="all", editingSoloPost=null, notes=[], editingNote=null, noteShowMine=true, noteShowOther=true, noteArchiveMode=false, editingChecklist=[], editingLinks=[], noteSortMode=localStorage.getItem("pb.noteSort")||"updated";
-let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShownDate="", todoReminderQueued=false, todoReportMonth="";
+let todos=[], notesViewMode="notes", todoOwnerMode="mine", todoShowCompleted=false, todoCategory="all", todoSortMode=localStorage.getItem("pb.todoSort")||"new", editingTodo=null, completingTodo=null, completingTodoItems=null, registeringNextTodo=null, todoMultiMode=false, editingTodoItems=[], expandedTodoIds=new Set(), todoReminderShownDate="", todoReminderQueued=false, todoReportMonth="", todoReportScopeAction=null;
 let talkDateFilter=null; // {start:Date,end:Date,label:string}
 let adjustingMessageMenu=false;
 let unsubscribeMessages=null, unsubscribeReads=null, unsubscribeSolo=null, unsubscribeNotes=null, unsubscribeTodos=null, unsubscribeSchedules=null, unsubscribeRecords=null, unsubscribeLocations=null, unsubscribeVoice=null, unsubscribeNotifications=null;
@@ -5387,7 +5429,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.9.3";
+const APP_VERSION="3.9.4";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -9041,6 +9083,11 @@ function renderTodos(){
       const menuBtn=document.createElement("button");menuBtn.type="button";menuBtn.className="todoMenuBtn";menuBtn.textContent="…";menuBtn.setAttribute("aria-label","Todoの操作");
       const popup=document.createElement("div");popup.className="todoMenuPopup hidden";
       const edit=document.createElement("button");edit.type="button";edit.textContent="編集";edit.onclick=e=>{e.stopPropagation();popup.classList.add("hidden");openTodoEditor(t)};popup.appendChild(edit);
+      if(t.category==="work"){
+        const report=document.createElement("button");report.type="button";report.textContent=t.reportExcluded?"レポート対象に戻す":"レポート対象外";
+        report.onclick=e=>{e.stopPropagation();popup.classList.add("hidden");requestTodoReportSetting(t,!t.reportExcluded)};
+        popup.appendChild(report);
+      }
       if(mine){const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="削除";del.onclick=async e=>{e.stopPropagation();popup.classList.add("hidden");if(confirm("このTodoを削除しますか？"))await deleteDoc(doc(db,"todos",t.id))};popup.appendChild(del)}
       menuBtn.onclick=e=>{e.stopPropagation();document.querySelectorAll(".todoMenuPopup").forEach(x=>{if(x!==popup)x.classList.add("hidden")});popup.classList.toggle("hidden")};
       menu.append(menuBtn,popup);head.appendChild(menu);
@@ -9126,7 +9173,8 @@ function closeTodoNext(){registeringNextTodo=null;$("todoNextModal").classList.a
 function nextTodoPayload(t,dueDate){
   const sourceDue=t.revisedDueDate||t.initialDueDate;
   const items=(Array.isArray(t.items)?t.items:[]).map(x=>({id:todoItemId(),text:String(x.text||""),done:false,dueDate:shiftedTodoItemDue(x.dueDate,sourceDue,dueDate)}));
-  return {title:t.title||"",initialDueDate:dueDate,revisedDueDate:null,category:t.category||"other",details:t.details||"",privateOnly:!!t.privateOnly,shared:!!t.shared,multiItem:items.length>0,items,repeatNext:!!t.repeatNext,uid:t.uid,senderId:t.senderId||currentId,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,previousTodoId:t.id,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),updatedBy:currentId};
+  const reportExcludeFuture=!!t.reportExcludeFuture;
+  return {title:t.title||"",initialDueDate:dueDate,revisedDueDate:null,category:t.category||"other",details:t.details||"",privateOnly:!!t.privateOnly,shared:!!t.shared,multiItem:items.length>0,items,repeatNext:!!t.repeatNext,reportExcluded:reportExcludeFuture,reportExcludeFuture,uid:t.uid,senderId:t.senderId||currentId,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,previousTodoId:t.id,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),updatedBy:currentId};
 }
 async function createNextTodo(t,dueDate,completionPayload=null){
   const sourceRef=doc(db,"todos",t.id),nextRef=doc(collection(db,"todos"));
@@ -9146,9 +9194,18 @@ function shiftTodoReportMonth(delta){
 function todoReportData(){
   const month=todoReportMonth||todayId().slice(0,7);
   const work=todos.filter(canSeeTodo).filter(todoOwnerMatches).filter(t=>t.category==="work");
-  const completed=work.filter(t=>t.completed&&String(t.completedDate||"").startsWith(month)).sort((a,b)=>String(a.completedDate||"").localeCompare(String(b.completedDate||""))||todoMillis(a,"completedAt")-todoMillis(b,"completedAt"));
-  const incomplete=work.filter(t=>!t.completed&&String(todoEffectiveSortDue(t)||"").startsWith(month)).sort((a,b)=>String(todoEffectiveSortDue(a)).localeCompare(String(todoEffectiveSortDue(b)))||todoMillis(a,"createdAt")-todoMillis(b,"createdAt"));
-  return {month,completed,incomplete};
+  const inMonth=t=>t.completed?String(t.completedDate||"").startsWith(month):String(todoEffectiveSortDue(t)||"").startsWith(month);
+  const monthRows=work.filter(inMonth);
+  const included=monthRows.filter(t=>!t.reportExcluded),excluded=monthRows.filter(t=>!!t.reportExcluded);
+  const completed=included.filter(t=>t.completed).sort((a,b)=>String(a.completedDate||"").localeCompare(String(b.completedDate||""))||todoMillis(a,"completedAt")-todoMillis(b,"completedAt"));
+  const incomplete=included.filter(t=>!t.completed).sort((a,b)=>String(todoEffectiveSortDue(a)).localeCompare(String(todoEffectiveSortDue(b)))||todoMillis(a,"createdAt")-todoMillis(b,"createdAt"));
+  excluded.sort((a,b)=>{
+    const byStatus=Number(b.completed)-Number(a.completed);if(byStatus)return byStatus;
+    const aDate=a.completed?String(a.completedDate||""):String(todoEffectiveSortDue(a));
+    const bDate=b.completed?String(b.completedDate||""):String(todoEffectiveSortDue(b));
+    return aDate.localeCompare(bDate);
+  });
+  return {month,completed,incomplete,excluded};
 }
 function todoReportText(){
   const {month,completed,incomplete}=todoReportData(),[year,monthNo]=month.split("-");
@@ -9156,10 +9213,13 @@ function todoReportText(){
   return `${year}年${Number(monthNo)}月\nカテゴリ：仕事\n\n完了\n${lines(completed)}\n\n未完了\n${lines(incomplete)}`;
 }
 function renderTodoReport(){
-  const month=todoReportMonth||todayId().slice(0,7),[year,monthNo]=month.split("-");
+  const month=todoReportMonth||todayId().slice(0,7),[year,monthNo]=month.split("-"),{excluded}=todoReportData();
   $("todoReportMonth").textContent=`${year}年${Number(monthNo)}月`;
   $("todoReportOwner").textContent=`${todoOwnerMode==="mine"?"自分":"相手"}のTodo・カテゴリ：仕事`;
   $("todoReportBody").textContent=todoReportText();
+  const details=$("todoReportExcluded"),list=$("todoReportExcludedList");
+  details.classList.toggle("hidden",!excluded.length);$("todoReportExcludedSummary").textContent=`レポート対象外（${excluded.length}件）`;list.innerHTML="";
+  excluded.forEach(t=>{const row=document.createElement("div");row.className="todoReportExcludedItem";const label=document.createElement("span");label.textContent=`${t.completed?"完了":"未完了"}・${t.title||"無題"}`;const restore=document.createElement("button");restore.type="button";restore.textContent="対象に戻す";restore.onclick=()=>requestTodoReportSetting(t,false);row.append(label,restore);list.appendChild(row)});
 }
 function openTodoReport(){todoReportMonth=todayId().slice(0,7);renderTodoReport();$("todoReportModal").classList.remove("hidden")}
 function closeTodoReport(){$("todoReportModal").classList.add("hidden")}
@@ -9168,13 +9228,41 @@ async function copyTodoReport(){
   try{await navigator.clipboard.writeText(text)}catch(_){const area=document.createElement("textarea");area.value=text;area.style.position="fixed";area.style.opacity="0";document.body.appendChild(area);area.select();document.execCommand("copy");area.remove()}
   const button=$("copyTodoReport"),before=button.textContent;button.textContent="コピーしました";setTimeout(()=>button.textContent=before,1200);
 }
+async function applyTodoReportSetting(t,excluded,scope="current"){
+  const sourceRef=doc(db,"todos",t.id);
+  await runTransaction(db,async transaction=>{
+    const sourceSnap=await transaction.get(sourceRef);if(!sourceSnap.exists())throw new Error("Todoが見つかりません");
+    const fresh=sourceSnap.data();let nextRef=null,nextSnap=null;
+    if(scope==="future"&&fresh.nextTodoCreated&&fresh.nextTodoId){nextRef=doc(db,"todos",fresh.nextTodoId);nextSnap=await transaction.get(nextRef)}
+    const payload={reportExcluded:excluded,updatedAt:serverTimestamp(),updatedBy:currentId};
+    if(scope==="future")payload.reportExcludeFuture=excluded;
+    transaction.update(sourceRef,payload);
+    if(nextRef&&nextSnap?.exists())transaction.update(nextRef,{reportExcluded:excluded,reportExcludeFuture:excluded,updatedAt:serverTimestamp(),updatedBy:currentId});
+  });
+  t.reportExcluded=excluded;if(scope==="future")t.reportExcludeFuture=excluded;
+  if(scope==="future"&&t.nextTodoId){const next=todos.find(x=>x.id===t.nextTodoId);if(next){next.reportExcluded=excluded;next.reportExcludeFuture=excluded}}
+  renderTodos();if(!$("todoReportModal").classList.contains("hidden"))renderTodoReport();
+}
+function requestTodoReportSetting(t,excluded){
+  if(!t.repeatNext){applyTodoReportSetting(t,excluded).catch(e=>{console.error("todo report setting",e);alert("レポート設定を変更できませんでした。");});return}
+  todoReportScopeAction={t,excluded};
+  $("todoReportScopeTitle").textContent=excluded?"レポート対象外にする":"レポート対象に戻す";
+  $("todoReportScopeText").textContent=`「${t.title||"無題"}」の設定を、今回のTodoだけに反映するか、次回以降にも反映するか選んでください。`;
+  $("todoReportScopeModal").classList.remove("hidden");
+}
+function closeTodoReportScope(){todoReportScopeAction=null;$("todoReportScopeModal").classList.add("hidden")}
+async function saveTodoReportScope(scope){
+  const action=todoReportScopeAction;if(!action)return;const buttons=[$("todoReportScopeCurrent"),$("todoReportScopeFuture")];buttons.forEach(b=>b.disabled=true);
+  try{await applyTodoReportSetting(action.t,action.excluded,scope);closeTodoReportScope()}catch(e){console.error("todo report scope",e);alert("レポート設定を変更できませんでした。")}finally{buttons.forEach(b=>b.disabled=false)}
+}
 function showTodoReminders(){
   if(!pinPassed||!auth.currentUser||camouflageMode||stealthReadMode||!$("pinScreen").classList.contains("hidden")||$("appScreen").classList.contains("hidden"))return false;
   const today=todayId();
+  const todayDate=todoDate(today),hideWorkReminder=!!todayDate&&(todayDate.getDay()===0||todayDate.getDay()===6||!!holidayNameFor(todayDate));
   const eligible=todos.filter(t=>!t.completed&&(t.uid===currentUID||t.shared));
   const reminderRows=eligible.map(t=>{const nextItem=nearestTodoItem(t.items);return {t,nextItem,dueDate:nextItem?.dueDate||t.revisedDueDate||t.initialDueDate||""}});
-  const dueToday=reminderRows.filter(row=>row.dueDate===today);
-  const overdue=reminderRows.filter(row=>row.dueDate&&row.dueDate<today);
+  const dueToday=reminderRows.filter(row=>row.dueDate===today&&!(hideWorkReminder&&row.t.category==="work"));
+  const overdue=reminderRows.filter(row=>row.dueDate&&row.dueDate<today&&!(hideWorkReminder&&row.t.category==="work"));
   if(!dueToday.length&&!overdue.length)return false;
   const box=$("todoReminderList");box.innerHTML="";
   const openFromReminder=t=>{todoReminderShownDate=today;$("todoReminderModal").classList.add("hidden");const tab=document.querySelector('.tab[data-page="notesPage"]');if(tab&&!tab.classList.contains("active"))tab.click();setNotesViewMode("todos");openTodoEditor(t)};
@@ -9217,6 +9305,10 @@ $("todoReportNext").onclick=()=>shiftTodoReportMonth(1);
 $("closeTodoReport").onclick=closeTodoReport;
 $("copyTodoReport").onclick=copyTodoReport;
 $("todoReportModal").onclick=e=>{if(e.target===$("todoReportModal"))closeTodoReport()};
+$("todoReportScopeCurrent").onclick=()=>saveTodoReportScope("current");
+$("todoReportScopeFuture").onclick=()=>saveTodoReportScope("future");
+$("cancelTodoReportScope").onclick=closeTodoReportScope;
+$("todoReportScopeModal").onclick=e=>{if(e.target===$("todoReportScopeModal"))closeTodoReportScope()};
 $("openTodoModal").onclick=()=>openTodoEditor();
 $("todoMultiToggle").onclick=()=>{
   if(todoMultiMode&&editingTodoItems.length&&!confirm("複数項目を解除すると、入力した項目は削除されます。解除しますか？"))return;
@@ -9244,7 +9336,7 @@ $("saveTodo").onclick=async()=>{
       if(!canEditTodo(editingTodo))throw new Error("編集権限がありません");
       delete payload.initialDueDate;
       await updateDoc(doc(db,"todos",editingTodo.id),payload);
-    }else await addDoc(collection(db,"todos"),{...payload,uid:currentUID,senderId:currentId,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,createdAt:serverTimestamp()});
+    }else await addDoc(collection(db,"todos"),{...payload,uid:currentUID,senderId:currentId,reportExcluded:false,reportExcludeFuture:false,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,createdAt:serverTimestamp()});
     closeTodoEditor();
   }catch(e){console.error("save todo",e);alert("Todoを保存できませんでした。")}finally{btn.disabled=false}
 };
@@ -10053,6 +10145,7 @@ function filteredRecords(){
     const side=recordTargetOwner(r);
     const sideOK=side==="both"||(side==="mine"&&recordShowMine)||(side==="other"&&recordShowOther);
     if(!sideOK)return false;
+    if(recordCategory!=="all"&&r.category!==recordCategory)return false;
     if(!q)return true;
     return `${r.title||""} ${r.memo||""}`.toLowerCase().includes(q);
   });
@@ -10060,6 +10153,7 @@ function filteredRecords(){
 function syncRecordFilterButtons(){
   $("recordMineBtn")?.classList.toggle("active",recordShowMine);
   $("recordOtherBtn")?.classList.toggle("active",recordShowOther);
+  if($("recordCategoryFilter"))$("recordCategoryFilter").value=recordCategory;
 }
 function recordDateKey(r){
   if(r.date)return r.date;
@@ -10105,6 +10199,7 @@ function renderRecordTimeline(){
       const meta=document.createElement("div");meta.className="recordMeta";
       const target=document.createElement("span");target.className="target";target.textContent=recordTargetLabel(side);meta.appendChild(target);
       if(r.privateOnly){const lock=document.createElement("span");lock.textContent="🔒 自分のみ";meta.appendChild(lock)}
+      if(TODO_CATEGORIES[r.category]){const category=document.createElement("span");category.className=`recordCategory category-${r.category}`;category.textContent=TODO_CATEGORIES[r.category];meta.appendChild(category)}
       if(r.uid===currentUID||side==="mine"){
         const wrap=document.createElement("span");wrap.className="recordMenu";
         const btn=document.createElement("button");btn.type="button";btn.className="recordMenuBtn";btn.textContent="…";
@@ -10132,6 +10227,7 @@ function openRecordEditor(r=null){
   $("recordTitleInput").value=r?.title||"";
   $("recordDateInput").value=r?.date||dateId(d);
   $("recordTimeInput").value=r?.time||(r?.hasTime&&r?.occurredAt?.toDate?d.toTimeString().slice(0,5):"");
+  $("recordCategoryInput").value=TODO_CATEGORIES[r?.category]?r.category:"two";
   $("recordPrivateInput").checked=!!r?.privateOnly;
   $("recordMemoInput").value=r?.memo||"";
   if(r){
@@ -10148,19 +10244,20 @@ $("recordPrevMonth")?.addEventListener("click",()=>{recordMonth=new Date(recordM
 $("recordNextMonth")?.addEventListener("click",()=>{recordMonth=new Date(recordMonth.getFullYear(),recordMonth.getMonth()+1,1);renderRecordTimeline()});
 $("recordMineBtn")?.addEventListener("click",()=>{if(recordShowMine&&!recordShowOther)return;recordShowMine=!recordShowMine;syncRecordFilterButtons();renderRecordTimeline()});
 $("recordOtherBtn")?.addEventListener("click",()=>{if(recordShowOther&&!recordShowMine)return;recordShowOther=!recordShowOther;syncRecordFilterButtons();renderRecordTimeline()});
+$("recordCategoryFilter")?.addEventListener("change",e=>{recordCategory=e.target.value;renderRecordTimeline()});
 $("recordSearchInput")?.addEventListener("input",renderRecordTimeline);
 $("openRecordModal")?.addEventListener("click",()=>openRecordEditor());
 document.querySelectorAll(".recordTargetBtn").forEach(b=>b.addEventListener("click",()=>setRecordTarget(b.dataset.target)));
 $("cancelRecordModal")?.addEventListener("click",()=>{$("recordModal").classList.add("hidden");editingRecord=null});
 $("recordModal")?.addEventListener("click",e=>{if(e.target===$("recordModal")){$("recordModal").classList.add("hidden");editingRecord=null}});
 $("saveRecord")?.addEventListener("click",async()=>{
-  const title=$("recordTitleInput").value.trim(),date=$("recordDateInput").value,time=$("recordTimeInput").value,memo=$("recordMemoInput").value.trim(),privateOnly=$("recordPrivateInput").checked;
+  const title=$("recordTitleInput").value.trim(),date=$("recordDateInput").value,time=$("recordTimeInput").value,category=$("recordCategoryInput").value,memo=$("recordMemoInput").value.trim(),privateOnly=$("recordPrivateInput").checked;
   if(!title||!date){alert("タイトルと日付を入力してください");return}
   const occurredAt=Timestamp.fromDate(new Date(`${date}T${time||"12:00"}:00`));
   let targetUid=null;
   if(recordTarget==="mine")targetUid=currentUID;
   else if(recordTarget==="other"){const other=[...currentStatuses.keys()].find(uid=>uid!==currentUID);targetUid=other||null}
-  const content={title,memo,date,time,hasTime:!!time,occurredAt,updatedAt:serverTimestamp()};
+  const content={title,memo,category,date,time,hasTime:!!time,occurredAt,updatedAt:serverTimestamp()};
   const payload={...content,target:recordTarget,targetUid,privateOnly};
   try{
     if(editingRecord)await updateDoc(doc(db,"records",editingRecord.id),editingRecord.uid===currentUID?payload:content);
