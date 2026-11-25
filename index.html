@@ -997,8 +997,7 @@ body.pinLocked{overflow:hidden!important;height:100dvh!important;overscroll-beha
 #pinScreen .pinDot{
   width:15px!important;
   height:15px!important;
-  border:1.5px solid #555!important;
-  border-radius:50%!important;
+  border:1.5px solid #555!important;  border-radius:50%!important;
   background:transparent!important;
 }
 #pinScreen .pinDot.on{
@@ -1997,8 +1996,7 @@ body.stealth-read-mode.standbyMode *::-webkit-scrollbar{
   height:0!important;
 }
 
-#standbyFlash{
-  position:fixed;inset:0;z-index:50000;pointer-events:none;
+#standbyFlash{  position:fixed;inset:0;z-index:50000;pointer-events:none;
   background:#fff;opacity:0;display:none
 }
 #standbyFlash.flashNow{display:block;animation:pbStandbyFlash .42s ease-in-out 0s 3 alternate}
@@ -2997,8 +2995,7 @@ body.night-mode #schedulePage .scheduleCard{
   background:var(--pb-surface)!important;
   color:var(--pb-text)!important;
 }
-body.night-mode #schedulePage .scheduleTitle{color:#edf0f3!important}
-body.night-mode #schedulePage .scheduleTime,
+body.night-mode #schedulePage .scheduleTitle{color:#edf0f3!important}body.night-mode #schedulePage .scheduleTime,
 body.night-mode #schedulePage .scheduleMemo,
 body.night-mode #schedulePage .scheduleOwner{
   color:#b8bec6!important;
@@ -3997,8 +3994,7 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 
 /* v3.7.5i 記録タイムライン */
 #recordView{display:flex;flex-direction:column;min-height:0;flex:1;background:var(--pb-page-bg,#f7f7f8)}
-.recordToolbar{flex-shrink:0;padding:8px 10px 7px;background:#fff;border-bottom:1px solid #e8e8e8}
-.recordMonthRow{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px}
+.recordToolbar{flex-shrink:0;padding:8px 10px 7px;background:#fff;border-bottom:1px solid #e8e8e8}.recordMonthRow{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px}
 .recordMonthRow button{border:0;background:none;font-size:24px;color:#555;padding:5px}
 #recordMonthTitle{text-align:center;font-weight:800;font-size:16px}
 .recordControls{display:flex;align-items:center;gap:7px;margin-top:6px}
@@ -4133,6 +4129,9 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoMonthDivider{display:flex;align-items:center;gap:8px;margin:10px 4px 7px;color:#8a8a8f;font-size:10px;font-weight:700;line-height:1;letter-spacing:.02em}
 .todoMonthDivider::before,.todoMonthDivider::after{content:"";flex:1;border-top:1px dashed #d4d4d8}
 .todoMonthDivider span{white-space:nowrap}
+.todoHoldSection{display:flex;align-items:center;gap:8px;margin:16px 4px 7px;color:#777;font-size:10px;font-weight:800;line-height:1;letter-spacing:.02em}
+.todoHoldSection::before,.todoHoldSection::after{content:"";flex:1;border-top:1px solid #c9c9ce}
+.todoHoldSection span{white-space:nowrap}
 .todoCard{background:#fff;border-radius:11px;border:1px solid #e4e4e4;border-left:4px solid #2f6fed;padding:7px 8px 6px;margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,.025)}
 .todoCard.ownerHitomi{border-left-color:#e24a4a}
 .todoCard.shared{border-left-color:#8e8e93;background:#f4f4f5}
@@ -4141,6 +4140,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoCard.completed{opacity:1}
 .todoCard.completed .todoCheck,
 .todoCard.completed .todoMain{opacity:.82}
+.todoCard.paused{border-left-color:#9b9ba3;background:#f3f3f5}
 .todoHead{display:flex;align-items:flex-start;gap:7px}
 .todoCheck{width:19px!important;height:19px!important;flex:0 0 auto;margin:1px 0 0}
 .todoMain{flex:1;min-width:0}
@@ -4158,6 +4158,7 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoDates .late{color:#d13b3b;font-weight:800}
 .todoProgress{flex:0 0 auto;border-radius:999px;background:#eef3ff;color:#2f6fed;font-size:9px;font-weight:800;padding:2px 6px}
 .todoPrivacyIcon{flex:0 0 auto;font-size:12px;line-height:1}
+.todoHoldBadge{flex:0 0 auto;border-radius:999px;background:#e3e3e6;color:#6d6d75;font-size:8px;font-weight:800;padding:2px 6px;white-space:nowrap}
 .todoDetails{white-space:pre-wrap;word-break:break-word;font-size:10px;line-height:1.35;color:#555;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .todoMeta{font-size:8px;color:#999;margin-top:3px}
 .todoMenu{flex:0 0 auto;position:relative;margin-left:1px}
@@ -4764,6 +4765,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.9.5</div><div class="updateDate">2026/11/25</div><ul class="updateItems"><li>Todoを一時的に保留できる「保留」機能を追加。保留中のTodoは月別一覧の下にまとめて表示し、保留解除できるよう対応</li><li>保留中のTodoは朝の期限通知と仕事Todoレポートの対象外になるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.4</div><div class="updateDate">2026/11/17</div><ul class="updateItems"><li>記録に「2人のこと・仕事・家のこと・その他」のカテゴリを追加し、カード表示と絞り込みに対応</li><li>仕事Todoをレポート対象外に設定し、対象外一覧から戻せる機能を追加</li><li>繰り返しTodoのレポート設定を「今回だけ・今後も」から選べるよう対応</li><li>土曜・日曜・祝日は、仕事Todoの「本日期限」と「期限超過」をお知らせに表示しないよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.2</div><div class="updateDate">2026/11/2</div><ul class="updateItems"><li>PIN再ロック時にTodo通知や編集画面がPIN画面の上へ残る問題を修正</li><li>Todo通知を未確認のまま画面を離れた場合は、PIN認証後に再表示するよう改善</li></ul></div>
@@ -4990,7 +4992,6 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
     </div>
   </div>
 </div>
-
 
 <div id="soloEditModal" class="modalOverlay hidden">
   <div class="modal">
@@ -5431,7 +5432,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.9.4";
+const APP_VERSION="3.9.5";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -5992,7 +5993,6 @@ function lockToPin(){
   $("miniLocationPanel")?.classList.add("hidden");
   $("savedMessagesPanel")?.classList.add("hidden");
   $("notificationsPanel")?.classList.add("hidden");
-
   ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen",
    "notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"]
     .forEach(id=>$(id)?.classList.add("hidden"));
@@ -6991,8 +6991,7 @@ $("applyCustomDate").onclick=()=>{
 
 
 
-function syncTalkKeyboardViewport(){
-  const vv=window.visualViewport;
+function syncTalkKeyboardViewport(){  const vv=window.visualViewport;
   const input=$("messageInput");
   const focused=document.activeElement===input;
   const keyboardOpen=!!(focused&&vv&&vv.height<window.innerHeight*0.88);
@@ -7991,8 +7990,7 @@ function loadWeather(mode="fukuoka"){
   $("weatherStatus").textContent="現在地を取得しています…";
   navigator.geolocation.getCurrentPosition(
     p=>fetchWeather(p.coords.latitude,p.coords.longitude,"現在地"),
-    ()=>{alert("位置情報を取得できませんでした。福岡を表示します。");loadWeather("fukuoka")},
-    {enableHighAccuracy:false,timeout:10000,maximumAge:300000}
+    ()=>{alert("位置情報を取得できませんでした。福岡を表示します。");loadWeather("fukuoka")},    {enableHighAccuracy:false,timeout:10000,maximumAge:300000}
   );
 }
 $("weatherFukuoka").onclick=()=>loadWeather("fukuoka");
@@ -8989,9 +8987,9 @@ function listenTodos(){
 function filteredTodos(){
   const rows=todos.filter(canSeeTodo).filter(todoOwnerMatches)
     .filter(t=>!!t.completed===todoShowCompleted)
+    .filter(t=>!t.paused)
     .filter(t=>todoCategory==="all"||t.category===todoCategory);
-  rows.sort((a,b)=>{
-    if(todoShowCompleted)return String(b.completedDate||"").localeCompare(String(a.completedDate||""))||todoMillis(b,"completedAt")-todoMillis(a,"completedAt");
+  rows.sort((a,b)=>{    if(todoShowCompleted)return String(b.completedDate||"").localeCompare(String(a.completedDate||""))||todoMillis(b,"completedAt")-todoMillis(a,"completedAt");
     if(todoSortMode==="due"){
       const byDate=String(todoEffectiveSortDue(a)).localeCompare(String(todoEffectiveSortDue(b)));
       if(byDate)return byDate;
@@ -9000,6 +8998,13 @@ function filteredTodos(){
     }
     return todoMillis(b,"createdAt")-todoMillis(a,"createdAt");
   });
+  return rows;
+}
+function pausedTodos(){
+  const rows=todos.filter(canSeeTodo).filter(todoOwnerMatches)
+    .filter(t=>!t.completed&&!!t.paused)
+    .filter(t=>todoCategory==="all"||t.category===todoCategory);
+  rows.sort((a,b)=>todoMillis(b,"pausedAt")-todoMillis(a,"pausedAt")||todoMillis(b,"updatedAt")-todoMillis(a,"updatedAt")||todoMillis(b,"createdAt")-todoMillis(a,"createdAt"));
   return rows;
 }
 function renderTodos(){
@@ -9014,10 +9019,17 @@ function renderTodos(){
   document.querySelectorAll("#todoCategoryMenu [data-todo-category]").forEach(b=>b.classList.toggle("active",b.dataset.todoCategory===todoCategory));
   document.querySelectorAll("#todoSortMenu [data-todo-sort]").forEach(b=>b.classList.toggle("active",b.dataset.todoSort===todoSortMode));
   const rows=filteredTodos();
-  if(!rows.length){box.innerHTML=`<div class="todoEmpty">${todoShowCompleted?"該当する完了Todoはありません。":"該当するTodoはありません。"}</div>`;return}
+  const heldRows=todoShowCompleted?[]:pausedTodos();
+  if(!rows.length&&!heldRows.length){box.innerHTML=`<div class="todoEmpty">${todoShowCompleted?"該当する完了Todoはありません。":"該当するTodoはありません。"}</div>`;return}
+  const displayRows=heldRows.length?[...rows,{__todoHoldHeading:true},...heldRows]:rows;
   let lastCompletedMonth="";
   let lastDueMonth="";
-  rows.forEach(t=>{
+  displayRows.forEach(t=>{
+    if(t.__todoHoldHeading){
+      const section=document.createElement("div");section.className="todoHoldSection";
+      const label=document.createElement("span");label.textContent=`保留（${heldRows.length}件）`;
+      section.appendChild(label);box.appendChild(section);return;
+    }
     if(todoShowCompleted&&t.completedDate){
       const month=t.completedDate.slice(0,7);
       if(month!==lastCompletedMonth){
@@ -9046,7 +9058,7 @@ function renderTodos(){
     const card=document.createElement("div");
     const ownerClass=String(t.senderId||"").toLowerCase()==="hitomi"?"ownerHitomi":"ownerNatsuki";
     const effectiveDue=t.completed?"":todoEffectiveSortDue(t),dueClass=effectiveDue&&effectiveDue!=="9999"?(effectiveDue<todayId()?"due-overdue":effectiveDue===todayId()?"due-today":""):"";
-    card.className=`todoCard ${t.shared?"shared":ownerClass} ${t.completed?"completed":""} ${dueClass} ${isMulti?"multiExpandable":""}`;
+    card.className=`todoCard ${t.shared?"shared":ownerClass} ${t.completed?"completed":""} ${t.paused?"paused":""} ${dueClass} ${isMulti?"multiExpandable":""}`;
     const head=document.createElement("div");head.className="todoHead";
     const check=document.createElement("input");check.type="checkbox";check.className="todoCheck";check.checked=!!t.completed;check.disabled=!editable||(isMulti&&!t.completed);
     check.setAttribute("aria-label",t.completed?"未完了に戻す":"完了にする");
@@ -9072,6 +9084,7 @@ function renderTodos(){
     info.append(cat,dates);
     if(isMulti){const progress=document.createElement("span");progress.className="todoProgress";progress.textContent=`${doneCount}/${items.length}`;info.appendChild(progress)}
     if(t.privateOnly){const privacy=document.createElement("span");privacy.className="todoPrivacyIcon";privacy.textContent="🔓";privacy.title="自分のみ";privacy.setAttribute("aria-label","自分のみ");info.appendChild(privacy)}
+    if(t.paused){const held=document.createElement("span");held.className="todoHoldBadge";held.textContent="保留";info.appendChild(held)}
     main.append(title,info);
     if(t.details){const details=document.createElement("div");details.className="todoDetails";details.textContent=t.details;main.appendChild(details)}
     if(isMulti&&!t.completed){const nextItem=nearestTodoItem(items);if(nextItem){const nearest=document.createElement("div");nearest.className=`todoNearestItem ${nextItem.dueDate&&nextItem.dueDate<todayId()?"overdue":""}`;const label=document.createElement("span");label.className="label";label.textContent="次：";const text=document.createElement("span");text.className="text";text.textContent=nextItem.text||"未入力の項目";const due=document.createElement("span");due.className="due";due.textContent=todoShortDateLabel(nextItem.dueDate);nearest.append(label,text,due);main.appendChild(nearest)}}
@@ -9089,6 +9102,15 @@ function renderTodos(){
         const report=document.createElement("button");report.type="button";report.textContent=t.reportExcluded?"レポート対象に戻す":"レポート対象外";
         report.onclick=e=>{e.stopPropagation();popup.classList.add("hidden");requestTodoReportSetting(t,!t.reportExcluded)};
         popup.appendChild(report);
+      }
+      if(!t.completed){
+        const hold=document.createElement("button");hold.type="button";hold.textContent=t.paused?"保留を解除":"保留";
+        hold.onclick=async e=>{
+          e.stopPropagation();popup.classList.add("hidden");
+          try{await updateDoc(doc(db,"todos",t.id),{paused:!t.paused,pausedAt:t.paused?null:serverTimestamp(),updatedAt:serverTimestamp(),updatedBy:currentId})}
+          catch(err){console.error("todo hold",err);alert(t.paused?"保留を解除できませんでした。":"保留にできませんでした。")}
+        };
+        popup.appendChild(hold);
       }
       if(mine){const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="削除";del.onclick=async e=>{e.stopPropagation();popup.classList.add("hidden");if(confirm("このTodoを削除しますか？"))await deleteDoc(doc(db,"todos",t.id))};popup.appendChild(del)}
       menuBtn.onclick=e=>{e.stopPropagation();document.querySelectorAll(".todoMenuPopup").forEach(x=>{if(x!==popup)x.classList.add("hidden")});popup.classList.toggle("hidden")};
@@ -9176,7 +9198,7 @@ function nextTodoPayload(t,dueDate){
   const sourceDue=t.revisedDueDate||t.initialDueDate;
   const items=(Array.isArray(t.items)?t.items:[]).map(x=>({id:todoItemId(),text:String(x.text||""),done:false,dueDate:shiftedTodoItemDue(x.dueDate,sourceDue,dueDate)}));
   const reportExcludeFuture=!!t.reportExcludeFuture;
-  return {title:t.title||"",initialDueDate:dueDate,revisedDueDate:null,category:t.category||"other",details:t.details||"",privateOnly:!!t.privateOnly,shared:!!t.shared,multiItem:items.length>0,items,repeatNext:!!t.repeatNext,reportExcluded:reportExcludeFuture,reportExcludeFuture,uid:t.uid,senderId:t.senderId||currentId,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,previousTodoId:t.id,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),updatedBy:currentId};
+  return {title:t.title||"",initialDueDate:dueDate,revisedDueDate:null,category:t.category||"other",details:t.details||"",privateOnly:!!t.privateOnly,shared:!!t.shared,multiItem:items.length>0,items,repeatNext:!!t.repeatNext,reportExcluded:reportExcludeFuture,reportExcludeFuture,paused:false,pausedAt:null,uid:t.uid,senderId:t.senderId||currentId,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,previousTodoId:t.id,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),updatedBy:currentId};
 }
 async function createNextTodo(t,dueDate,completionPayload=null){
   const sourceRef=doc(db,"todos",t.id),nextRef=doc(collection(db,"todos"));
@@ -9195,7 +9217,7 @@ function shiftTodoReportMonth(delta){
 }
 function todoReportData(){
   const month=todoReportMonth||todayId().slice(0,7);
-  const work=todos.filter(canSeeTodo).filter(todoOwnerMatches).filter(t=>t.category==="work");
+  const work=todos.filter(canSeeTodo).filter(todoOwnerMatches).filter(t=>!t.paused).filter(t=>t.category==="work");
   const inMonth=t=>t.completed?String(t.completedDate||"").startsWith(month):String(todoEffectiveSortDue(t)||"").startsWith(month);
   const monthRows=work.filter(inMonth);
   const included=monthRows.filter(t=>!t.reportExcluded),excluded=monthRows.filter(t=>!!t.reportExcluded);
@@ -9261,7 +9283,7 @@ function showTodoReminders(){
   if(!pinPassed||!auth.currentUser||camouflageMode||stealthReadMode||!$("pinScreen").classList.contains("hidden")||$("appScreen").classList.contains("hidden"))return false;
   const today=todayId();
   const todayDate=todoDate(today),hideWorkReminder=!!todayDate&&(todayDate.getDay()===0||todayDate.getDay()===6||!!holidayNameFor(todayDate));
-  const eligible=todos.filter(t=>!t.completed&&(t.uid===currentUID||t.shared));
+  const eligible=todos.filter(t=>!t.completed&&!t.paused&&(t.uid===currentUID||t.shared));
   const reminderRows=eligible.map(t=>{const nextItem=nearestTodoItem(t.items);return {t,nextItem,dueDate:nextItem?.dueDate||t.revisedDueDate||t.initialDueDate||""}});
   const dueToday=reminderRows.filter(row=>row.dueDate===today&&!(hideWorkReminder&&row.t.category==="work"));
   const overdue=reminderRows.filter(row=>row.dueDate&&row.dueDate<today&&!(hideWorkReminder&&row.t.category==="work"));
@@ -9338,7 +9360,7 @@ $("saveTodo").onclick=async()=>{
       if(!canEditTodo(editingTodo))throw new Error("編集権限がありません");
       delete payload.initialDueDate;
       await updateDoc(doc(db,"todos",editingTodo.id),payload);
-    }else await addDoc(collection(db,"todos"),{...payload,uid:currentUID,senderId:currentId,reportExcluded:false,reportExcludeFuture:false,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,createdAt:serverTimestamp()});
+    }else await addDoc(collection(db,"todos"),{...payload,uid:currentUID,senderId:currentId,reportExcluded:false,reportExcludeFuture:false,paused:false,pausedAt:null,completed:false,completedDate:null,completedAt:null,completedBy:null,nextTodoPending:false,nextTodoCreated:false,nextTodoId:null,nextDueDate:null,createdAt:serverTimestamp()});
     closeTodoEditor();
   }catch(e){console.error("save todo",e);alert("Todoを保存できませんでした。")}finally{btn.disabled=false}
 };
@@ -9967,7 +9989,6 @@ function renderSelectedDay(){
         const dots=document.createElement("button");dots.className="scheduleCommentMenuButton";dots.textContent="…";
         const pop=document.createElement("div");pop.className="scheduleCommentPopup hidden";
         const del=document.createElement("button");del.className="danger";del.textContent="削除";
-
         del.onclick=async e=>{
           e.stopPropagation();
           pop.classList.add("hidden");
@@ -10966,8 +10987,7 @@ function reconnectPBListeners(){
   listenPlaces();
   listenNotifications();
 }
-function recoverPBViewAfterResume(){
-  if(!auth.currentUser||!pinPassed||document.hidden)return;
+function recoverPBViewAfterResume(){  if(!auth.currentUser||!pinPassed||document.hidden)return;
   const now=Date.now();
   const away=pbResumeHiddenAt?now-pbResumeHiddenAt:0;
   pbResumeHiddenAt=0;
