@@ -9336,7 +9336,7 @@ function showTodoReminders(){
     rows.forEach(({t,nextItem,dueDate})=>{
       const item=document.createElement("div");item.className=`todoReminderItem ${isToday?"today":""}`;
       const head=document.createElement("div");head.className="todoReminderHead";
-      const check=document.createElement("input");check.type="checkbox";check.className="todoReminderCheck";check.setAttribute("aria-label",`${t.title||"無題"}を完了にする`);check.disabled=!canEditTodo(t);
+      const check=document.createElement("input");check.type="checkbox";check.className="todoReminderCheck";check.setAttribute("aria-label",`${t.title||"無題"}を完了にする`);check.disabled=!canEditTodo(t)||(Array.isArray(t.items)&&t.items.length>0);
       check.onclick=e=>e.stopPropagation();
       check.onchange=e=>{e.stopPropagation();check.checked=false;todoReminderShownDate=today;$('todoReminderModal').classList.add('hidden');openTodoComplete(t)};
       const body=document.createElement("div");body.className="todoReminderBody";
