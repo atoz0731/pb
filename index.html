@@ -5804,7 +5804,7 @@ window.addEventListener("pagehide",stopTyping);
 $("camoInput")?.addEventListener("input",()=>{$("camoInput").value.trim()?pulseTyping():stopTyping()});
 
 $("messageInput")?.addEventListener("input",()=>{
-  resizeMessageInput();
+  if(!messageInputComposing) scheduleMessageInputResize();
   $("messageInput").value.trim()?pulseTyping():stopTyping();
 });
 
@@ -6983,6 +6983,15 @@ $("applyCustomDate").onclick=()=>{
 
 
 
+let messageInputComposing=false;
+let messageInputResizeTimer=null;
+function scheduleMessageInputResize(delay=0){
+  clearTimeout(messageInputResizeTimer);
+  messageInputResizeTimer=setTimeout(()=>{
+    messageInputResizeTimer=null;
+    if(!messageInputComposing)resizeMessageInput();
+  },delay);
+}
 let talkKeyboardViewportOpen=false;
 let talkKeyboardViewportTimer=null;
 function resizeMessageInput(){
@@ -7008,7 +7017,7 @@ function syncTalkKeyboardViewport(){
      is opening. Do not pin the whole app to that transient value. */
   const keyboardOpen=!!(focused&&vv&&visibleHeight>320&&visibleHeight<window.innerHeight*0.88);
   if(keyboardOpen){
-    resizeMessageInput();
+    if(!messageInputComposing)scheduleMessageInputResize(60);
     if(!talkKeyboardViewportOpen){
       talkKeyboardViewportOpen=true;
       clearTimeout(talkKeyboardViewportTimer);
@@ -7026,7 +7035,17 @@ if(window.visualViewport){
   window.visualViewport.addEventListener("scroll",syncTalkKeyboardViewport);
 }
 $("messageInput").addEventListener("focus",()=>setTimeout(syncTalkKeyboardViewport,50));
+$("messageInput").addEventListener("compositionstart",()=>{
+  messageInputComposing=true;
+  clearTimeout(messageInputResizeTimer);
+});
+$("messageInput").addEventListener("compositionend",()=>{
+  messageInputComposing=false;
+  scheduleMessageInputResize(80);
+});
 $("messageInput").addEventListener("blur",()=>{
+  messageInputComposing=false;
+  clearTimeout(messageInputResizeTimer);
   setTimeout(()=>{
     recoverPBViewportAfterKeyboard(talkWasAtLatestBeforeInput);
   },80);
