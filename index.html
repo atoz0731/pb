@@ -4765,7 +4765,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
-<div class="updateCard"><div class="updateVersion">v3.9.5</div><div class="updateDate">2026/11/25</div><ul class="updateItems"><li>Todoを一時的に保留できる「保留」機能を追加。保留中のTodoは月別一覧の下にまとめて表示し、保留解除できるよう対応</li><li>保留中のTodoは朝の期限通知と仕事Todoレポートの対象外になるよう対応</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.9.6</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iPhoneでキーボードを開閉した際、画面位置や表示領域が一時的に崩れた場合に自動復帰するよう改善</li><li>Simejiなどで一時的な画面サイズが報告された場合は、PB全体をそのサイズに固定しないよう調整</li></ul></div><div class="updateCard"><div class="updateVersion">v3.9.5</div><div class="updateDate">2026/11/25</div><ul class="updateItems"><li>Todoを一時的に保留できる「保留」機能を追加。保留中のTodoは月別一覧の下にまとめて表示し、保留解除できるよう対応</li><li>保留中のTodoは朝の期限通知と仕事Todoレポートの対象外になるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.4</div><div class="updateDate">2026/11/17</div><ul class="updateItems"><li>記録に「2人のこと・仕事・家のこと・その他」のカテゴリを追加し、カード表示と絞り込みに対応</li><li>仕事Todoをレポート対象外に設定し、対象外一覧から戻せる機能を追加</li><li>繰り返しTodoのレポート設定を「今回だけ・今後も」から選べるよう対応</li><li>土曜・日曜・祝日は、仕事Todoの「本日期限」と「期限超過」をお知らせに表示しないよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.2</div><div class="updateDate">2026/11/2</div><ul class="updateItems"><li>PIN再ロック時にTodo通知や編集画面がPIN画面の上へ残る問題を修正</li><li>Todo通知を未確認のまま画面を離れた場合は、PIN認証後に再表示するよう改善</li></ul></div>
@@ -5432,7 +5432,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.9.5";
+const APP_VERSION="3.9.6";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -6429,6 +6429,7 @@ let talkWasAtLatestBeforeInput=false;
 
 function recoverPBViewportAfterKeyboard(restoreTalkLatest=false){
   [80,220,450].forEach(ms=>setTimeout(()=>{
+    document.body.classList.remove("talkKeyboardOpen");
     document.documentElement.style.removeProperty("--pb-viewport-height");
     document.documentElement.style.removeProperty("--pb-visible-height");
 
@@ -6990,16 +6991,30 @@ $("applyCustomDate").onclick=()=>{
 };
 
 
-
-function syncTalkKeyboardViewport(){  const vv=window.visualViewport;
+let talkKeyboardViewportOpen=false;
+let talkKeyboardViewportTimer=null;
+function syncTalkKeyboardViewport(){
+  const vv=window.visualViewport;
   const input=$("messageInput");
   const focused=document.activeElement===input;
-  const keyboardOpen=!!(focused&&vv&&vv.height<window.innerHeight*0.88);
-  document.body.classList.toggle("talkKeyboardOpen",keyboardOpen);
+  const visibleHeight=vv?.height||0;
+  /* Simeji/iOS can briefly report a bogus visualViewport height while it
+     is opening. Do not pin the whole app to that transient value. */
+  const keyboardOpen=!!(focused&&vv&&visibleHeight>320&&visibleHeight<window.innerHeight*0.88);
   if(keyboardOpen){
-    document.documentElement.style.setProperty("--pb-visible-height",`${Math.round(vv.height)}px`);
-    requestAnimationFrame(()=>scrollToLatest(false));
+    document.body.classList.add("talkKeyboardOpen");
+    document.documentElement.style.setProperty("--pb-visible-height",`${Math.round(visibleHeight)}px`);
+    if(!talkKeyboardViewportOpen){
+      talkKeyboardViewportOpen=true;
+      clearTimeout(talkKeyboardViewportTimer);
+      talkKeyboardViewportTimer=setTimeout(()=>{
+        if(document.activeElement===input)scrollToLatest(false);
+      },120);
+    }
   }else{
+    talkKeyboardViewportOpen=false;
+    clearTimeout(talkKeyboardViewportTimer);
+    document.body.classList.remove("talkKeyboardOpen");
     document.documentElement.style.removeProperty("--pb-visible-height");
   }
 }
@@ -7010,8 +7025,7 @@ if(window.visualViewport){
 $("messageInput").addEventListener("focus",()=>setTimeout(syncTalkKeyboardViewport,50));
 $("messageInput").addEventListener("blur",()=>{
   setTimeout(()=>{
-    document.body.classList.remove("talkKeyboardOpen");
-    document.documentElement.style.removeProperty("--pb-visible-height");
+    recoverPBViewportAfterKeyboard(talkWasAtLatestBeforeInput);
   },80);
 });
 
@@ -7976,8 +7990,7 @@ function setWeatherModeButtons(mode){
   weatherMode=mode;
   $("weatherFukuoka").classList.toggle("active",mode==="fukuoka");
   $("weatherCurrent").classList.toggle("active",mode==="current");
-}
-function loadWeather(mode="fukuoka"){
+}function loadWeather(mode="fukuoka"){
   if(mode==="fukuoka"){
     setWeatherModeButtons("fukuoka");
     fetchWeather(FUKUOKA.lat,FUKUOKA.lon,FUKUOKA.label);
@@ -7990,7 +8003,8 @@ function loadWeather(mode="fukuoka"){
   $("weatherStatus").textContent="現在地を取得しています…";
   navigator.geolocation.getCurrentPosition(
     p=>fetchWeather(p.coords.latitude,p.coords.longitude,"現在地"),
-    ()=>{alert("位置情報を取得できませんでした。福岡を表示します。");loadWeather("fukuoka")},    {enableHighAccuracy:false,timeout:10000,maximumAge:300000}
+    ()=>{alert("位置情報を取得できませんでした。福岡を表示します。");loadWeather("fukuoka")},
+    {enableHighAccuracy:false,timeout:10000,maximumAge:300000}
   );
 }
 $("weatherFukuoka").onclick=()=>loadWeather("fukuoka");
@@ -8975,8 +8989,7 @@ function todoMillis(t,key){return t?.[key]?.toMillis?.()??((t?.[key]?.seconds||0
 function todoEffectiveSortDue(t){const next=nearestTodoItem(t?.items);return next?.dueDate||t?.revisedDueDate||t?.initialDueDate||"9999"}
 function listenTodos(){
   if(unsubscribeTodos)unsubscribeTodos();
-  unsubscribeTodos=onSnapshot(query(collection(db,"todos"),orderBy("createdAt","desc")),snap=>{
-    todos=snap.docs.map(d=>({id:d.id,...d.data()})).filter(canSeeTodo);
+  unsubscribeTodos=onSnapshot(query(collection(db,"todos"),orderBy("createdAt","desc")),snap=>{    todos=snap.docs.map(d=>({id:d.id,...d.data()})).filter(canSeeTodo);
     if(notesViewMode==="todos")renderTodos();
     maybeShowTodoReminders();
   },e=>{
@@ -8989,7 +9002,8 @@ function filteredTodos(){
     .filter(t=>!!t.completed===todoShowCompleted)
     .filter(t=>!t.paused)
     .filter(t=>todoCategory==="all"||t.category===todoCategory);
-  rows.sort((a,b)=>{    if(todoShowCompleted)return String(b.completedDate||"").localeCompare(String(a.completedDate||""))||todoMillis(b,"completedAt")-todoMillis(a,"completedAt");
+  rows.sort((a,b)=>{
+    if(todoShowCompleted)return String(b.completedDate||"").localeCompare(String(a.completedDate||""))||todoMillis(b,"completedAt")-todoMillis(a,"completedAt");
     if(todoSortMode==="due"){
       const byDate=String(todoEffectiveSortDue(a)).localeCompare(String(todoEffectiveSortDue(b)));
       if(byDate)return byDate;
@@ -9975,7 +9989,6 @@ function renderSelectedDay(){
     (s.comments||[]).forEach(cm=>{
       const cr=document.createElement("div");cr.className="comment scheduleCommentRow";
       const body=document.createElement("div");body.className="scheduleCommentBody";
-
       const meta=document.createElement("div");meta.className="commentMeta";
       meta.textContent=`${cm.uid===currentUID?"自分":cm.senderId||""}　${cm.createdAt?new Date(cm.createdAt).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):""}`;
 
@@ -9989,6 +10002,7 @@ function renderSelectedDay(){
         const dots=document.createElement("button");dots.className="scheduleCommentMenuButton";dots.textContent="…";
         const pop=document.createElement("div");pop.className="scheduleCommentPopup hidden";
         const del=document.createElement("button");del.className="danger";del.textContent="削除";
+
         del.onclick=async e=>{
           e.stopPropagation();
           pop.classList.add("hidden");
@@ -10973,8 +10987,7 @@ document.addEventListener("visibilitychange",async()=>{
 
 let pbResumeHiddenAt=0;
 let pbLastRecoveryAt=0;
-function reconnectPBListeners(){
-  if(!auth.currentUser||!pinPassed||document.hidden)return;
+function reconnectPBListeners(){  if(!auth.currentUser||!pinPassed||document.hidden)return;
   listenMessages();
   listenTyping();
   listenReadStates();
@@ -10987,7 +11000,8 @@ function reconnectPBListeners(){
   listenPlaces();
   listenNotifications();
 }
-function recoverPBViewAfterResume(){  if(!auth.currentUser||!pinPassed||document.hidden)return;
+function recoverPBViewAfterResume(){
+  if(!auth.currentUser||!pinPassed||document.hidden)return;
   const now=Date.now();
   const away=pbResumeHiddenAt?now-pbResumeHiddenAt:0;
   pbResumeHiddenAt=0;
