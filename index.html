@@ -4213,6 +4213,9 @@ body.night-mode .recordMenuPopup,body.night-mode .recordMenuPopup button{backgro
 .todoReminderList{max-height:52vh;overflow:auto;margin:8px 0 12px}
 .todoReminderItem{border-left:4px solid #d13b3b;background:#fff4f3;border-radius:9px;padding:9px 10px;margin-bottom:7px}
 .todoReminderItem.today{border-left-color:#2f6fed;background:#f1f6ff}
+.todoReminderHead{display:flex;align-items:flex-start;gap:8px}
+.todoReminderCheck{width:21px!important;height:21px!important;flex:0 0 auto;margin:0 1px 0 0}
+.todoReminderBody{flex:1;min-width:0}
 .todoReminderSection{font-size:11px;font-weight:800;color:#666;margin:10px 2px 6px}
 .todoReminderTitle{font-size:13px;font-weight:800}
 .todoReminderMeta{font-size:10px;color:#a33;margin-top:3px}
@@ -4764,7 +4767,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
-<div class="updateCard"><div class="updateVersion">v3.9.7</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>トークを上へスクロールした際、画面下部の矢印から最新メッセージへ戻れるよう改善</li><li>メッセージ入力欄が入力内容に合わせて複数行へ伸びるよう改善</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.9.7</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>トークを上へスクロールした際、画面下部の矢印から最新メッセージへ戻れるよう改善</li><li>メッセージ入力欄が入力内容に合わせて複数行へ伸びるよう改善</li><li>Todoの当日通知から、チェックボックスで完了処理を開始できるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.6</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iPhoneでキーボードを開閉した際、画面位置や表示領域が一時的に崩れた場合に自動復帰するよう改善</li><li>Simejiなどで一時的な画面サイズが報告された場合は、PB全体をそのサイズに固定しないよう調整</li></ul></div><div class="updateCard"><div class="updateVersion">v3.9.5</div><div class="updateDate">2026/11/25</div><ul class="updateItems"><li>Todoを一時的に保留できる「保留」機能を追加。保留中のTodoは月別一覧の下にまとめて表示し、保留解除できるよう対応</li><li>保留中のTodoは朝の期限通知と仕事Todoレポートの対象外になるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.4</div><div class="updateDate">2026/11/17</div><ul class="updateItems"><li>記録に「2人のこと・仕事・家のこと・その他」のカテゴリを追加し、カード表示と絞り込みに対応</li><li>仕事Todoをレポート対象外に設定し、対象外一覧から戻せる機能を追加</li><li>繰り返しTodoのレポート設定を「今回だけ・今後も」から選べるよう対応</li><li>土曜・日曜・祝日は、仕事Todoの「本日期限」と「期限超過」をお知らせに表示しないよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
@@ -4990,8 +4993,8 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
     <div class="settingsNote">通話表示がおかしい場合だけ使用してください。</div>
 
     </div>
-  </div>
-</div>
+  </div></div>
+
 
 <div id="soloEditModal" class="modalOverlay hidden">
   <div class="modal">
@@ -5989,10 +5992,10 @@ function lockToPin(){
   pin="";
   updateDots();
   $("pinError").textContent="";
-  $("headerMenu")?.classList.add("hidden");
-  closeAuxWindows();
+  $("headerMenu")?.classList.add("hidden");  closeAuxWindows();
   hideSensitiveOverlaysForPin();
-  $("decoyMenu")?.classList.add("hidden");  $("miniLocationPanel")?.classList.add("hidden");
+  $("decoyMenu")?.classList.add("hidden");
+  $("miniLocationPanel")?.classList.add("hidden");
   $("savedMessagesPanel")?.classList.add("hidden");
   $("notificationsPanel")?.classList.add("hidden");
 
@@ -6988,10 +6991,10 @@ document.querySelectorAll("[data-datefilter]").forEach(b=>b.onclick=()=>{
     const end=new Date(now);end.setHours(23,59,59,999);
     const start=new Date(now);start.setDate(start.getDate()-6);start.setHours(0,0,0,0);
     applyTalkDateFilter(start,new Date(end.getTime()+1),"直近7日のトーク");
-  }
-  $("dateFilterModal").classList.add("hidden");
+  }  $("dateFilterModal").classList.add("hidden");
 });
-$("applyCustomDate").onclick=()=>{  const v=$("customFilterDate").value;if(!v)return;
+$("applyCustomDate").onclick=()=>{
+  const v=$("customFilterDate").value;if(!v)return;
   const d=new Date(`${v}T00:00:00`),r=localDayRange(d);
   applyTalkDateFilter(r.start,r.end,d.toLocaleDateString("ja-JP",{year:"numeric",month:"long",day:"numeric"}));
   $("dateFilterModal").classList.add("hidden");
@@ -7987,10 +7990,10 @@ async function fetchWeather(lat,lon,label){
     const currentHour=new Date(d.current.time).getHours();
     let start=d.hourly.time.findIndex(t=>new Date(t).getHours()===currentHour&&new Date(t)>=new Date(d.current.time.slice(0,13)+":00"));
     if(start<0)start=0;
-    $("weatherHourly").innerHTML="";
-    for(let i=start;i<Math.min(start+12,d.hourly.time.length);i++){
+    $("weatherHourly").innerHTML="";    for(let i=start;i<Math.min(start+12,d.hourly.time.length);i++){
       const tm=new Date(d.hourly.time[i]);
-      const wi=weatherInfo(d.hourly.weather_code[i]);      const el=document.createElement("div");el.className="hourItem";
+      const wi=weatherInfo(d.hourly.weather_code[i]);
+      const el=document.createElement("div");el.className="hourItem";
       el.innerHTML=`<div>${tm.getHours()}時</div><div class="hourIcon">${wi[1]}</div><div class="hourTemp">${Math.round(d.hourly.temperature_2m[i])}°</div><div>${d.hourly.precipitation_probability[i]??0}%</div>`;
       $("weatherHourly").appendChild(el);
     }
@@ -8986,10 +8989,10 @@ function todoDateLabel(value){
   return d.toLocaleDateString("ja-JP",{year:"numeric",month:"numeric",day:"numeric",weekday:"short"});
 }
 function todoShortDateLabel(value){const d=todoDate(value);return d?d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"}):"期限なし"}
-function todoItemsInDueOrder(items){return (Array.isArray(items)?items:[]).map((item,sourceIndex)=>({item,sourceIndex})).sort((a,b)=>(Number(!!a.item.done)-Number(!!b.item.done))||String(a.item.dueDate||"9999").localeCompare(String(b.item.dueDate||"9999"))||a.sourceIndex-b.sourceIndex)}
-function nearestTodoItem(items){const undone=(Array.isArray(items)?items:[]).map((item,index)=>({item,index})).filter(x=>!x.item.done);if(!undone.length)return null;const dated=undone.filter(x=>x.item.dueDate).sort((a,b)=>String(a.item.dueDate).localeCompare(String(b.item.dueDate))||a.index-b.index);return (dated[0]||undone[0]).item}
+function todoItemsInDueOrder(items){return (Array.isArray(items)?items:[]).map((item,sourceIndex)=>({item,sourceIndex})).sort((a,b)=>(Number(!!a.item.done)-Number(!!b.item.done))||String(a.item.dueDate||"9999").localeCompare(String(b.item.dueDate||"9999"))||a.sourceIndex-b.sourceIndex)}function nearestTodoItem(items){const undone=(Array.isArray(items)?items:[]).map((item,index)=>({item,index})).filter(x=>!x.item.done);if(!undone.length)return null;const dated=undone.filter(x=>x.item.dueDate).sort((a,b)=>String(a.item.dueDate).localeCompare(String(b.item.dueDate))||a.index-b.index);return (dated[0]||undone[0]).item}
 function shiftedTodoItemDue(value,sourceDue,targetDue){const itemDate=todoDate(value),from=todoDate(sourceDue),to=todoDate(targetDue);if(!itemDate||!from||!to)return value||"";itemDate.setDate(itemDate.getDate()+Math.round((to-from)/86400000));return `${itemDate.getFullYear()}-${String(itemDate.getMonth()+1).padStart(2,"0")}-${String(itemDate.getDate()).padStart(2,"0")}`}
-function updateTodoWeekdayHints(){  const initial=$("todoInitialDueInput")?.value||"",revised=$("todoRevisedDueInput")?.value||"";
+function updateTodoWeekdayHints(){
+  const initial=$("todoInitialDueInput")?.value||"",revised=$("todoRevisedDueInput")?.value||"";
   if($("todoInitialDueWeekday"))$("todoInitialDueWeekday").textContent=initial?`${todoDate(initial).toLocaleDateString("ja-JP",{weekday:"long"})}`:"";
   if($("todoRevisedDueWeekday"))$("todoRevisedDueWeekday").textContent=revised?`${todoDate(revised).toLocaleDateString("ja-JP",{weekday:"long"})}`:"";
 }
@@ -9330,7 +9333,17 @@ function showTodoReminders(){
   const appendSection=(label,rows,isToday)=>{
     if(!rows.length)return;
     const section=document.createElement("div");section.className="todoReminderSection";section.textContent=label;box.appendChild(section);
-    rows.forEach(({t,nextItem,dueDate})=>{const item=document.createElement("div");item.className=`todoReminderItem ${isToday?"today":""}`;const title=document.createElement("div");title.className="todoReminderTitle";title.textContent=t.title||"無題";const meta=document.createElement("div");meta.className="todoReminderMeta";const nextLabel=nextItem?`・次：${nextItem.text||"未入力の項目"}`:"";meta.textContent=isToday?`本日 ${todoDateLabel(dueDate)}・${TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other}${nextLabel}`:`目標 ${todoDateLabel(dueDate)}・${todoDayDiff(dueDate,today)}日超過${nextLabel}`;item.append(title,meta);item.onclick=()=>openFromReminder(t);box.appendChild(item)});
+    rows.forEach(({t,nextItem,dueDate})=>{
+      const item=document.createElement("div");item.className=`todoReminderItem ${isToday?"today":""}`;
+      const head=document.createElement("div");head.className="todoReminderHead";
+      const check=document.createElement("input");check.type="checkbox";check.className="todoReminderCheck";check.setAttribute("aria-label",`${t.title||"無題"}を完了にする`);check.disabled=!canEditTodo(t);
+      check.onclick=e=>e.stopPropagation();
+      check.onchange=e=>{e.stopPropagation();check.checked=false;todoReminderShownDate=today;$('todoReminderModal').classList.add('hidden');openTodoComplete(t)};
+      const body=document.createElement("div");body.className="todoReminderBody";
+      const title=document.createElement("div");title.className="todoReminderTitle";title.textContent=t.title||"無題";
+      const meta=document.createElement("div");meta.className="todoReminderMeta";const nextLabel=nextItem?`・次：${nextItem.text||"未入力の項目"}`:"";meta.textContent=isToday?`本日 ${todoDateLabel(dueDate)}・${TODO_CATEGORIES[t.category]||TODO_CATEGORIES.other}${nextLabel}`:`目標 ${todoDateLabel(dueDate)}・${todoDayDiff(dueDate,today)}日超過${nextLabel}`;
+      body.append(title,meta);head.append(check,body);item.appendChild(head);item.onclick=()=>openFromReminder(t);box.appendChild(item)
+    });
   };
   dueToday.sort((a,b)=>(TODO_CATEGORY_ORDER[a.t.category]??99)-(TODO_CATEGORY_ORDER[b.t.category]??99)||todoMillis(b.t,"createdAt")-todoMillis(a.t,"createdAt"));
   overdue.sort((a,b)=>String(a.dueDate).localeCompare(String(b.dueDate))||(TODO_CATEGORY_ORDER[a.t.category]??99)-(TODO_CATEGORY_ORDER[b.t.category]??99));
@@ -9975,8 +9988,7 @@ function renderSelectedDay(){
     row.appendChild(commentToggle);
 
     /* 自分の予定だけ … → 編集 / 削除 */
-    if(s.uid===currentUID){
-      const menuWrap=document.createElement("div");menuWrap.className="scheduleMenuWrap";
+    if(s.uid===currentUID){      const menuWrap=document.createElement("div");menuWrap.className="scheduleMenuWrap";
       const dots=document.createElement("button");dots.className="scheduleMainDots";dots.textContent="…";
       const popup=document.createElement("div");popup.className="scheduleMainPopup hidden";
 
@@ -9989,6 +10001,7 @@ function renderSelectedDay(){
         popup.classList.add("hidden");
         if(confirm("この予定を削除しますか？"))await deleteDoc(doc(db,"schedules",s.id));
       };
+
       dots.onclick=e=>{
         e.stopPropagation();
         document.querySelectorAll(".scheduleMainPopup,.scheduleCommentPopup").forEach(x=>{if(x!==popup)x.classList.add("hidden")});
@@ -10974,8 +10987,7 @@ function renderVoiceSnapshot(d){
 
   if(d.status==="ringing"&&!voiceJoined){
     if(!isPBForeground()){hideVoiceBar();return}
-    setVoiceBarMode("incoming","📞 通話のお誘い");
-    $("voiceBar").classList.remove("hidden");
+    setVoiceBarMode("incoming","📞 通話のお誘い");    $("voiceBar").classList.remove("hidden");
     $("joinVoice").classList.remove("hidden");$("declineVoice").classList.remove("hidden");
     $("muteVoice").classList.add("hidden");$("leaveVoice").classList.add("hidden");
     return;
@@ -10987,7 +10999,8 @@ function renderVoiceSnapshot(d){
   }else hideVoiceBar();
 }
 function listenVoiceRoom(){
-  if(unsubscribeVoice)unsubscribeVoice();  unsubscribeVoice=onSnapshot(voiceRoomRef,s=>renderVoiceSnapshot(s.data()));
+  if(unsubscribeVoice)unsubscribeVoice();
+  unsubscribeVoice=onSnapshot(voiceRoomRef,s=>renderVoiceSnapshot(s.data()));
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 
