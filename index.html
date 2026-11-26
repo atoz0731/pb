@@ -2272,28 +2272,9 @@ body.stealth-read-mode.standbyMode #standbyFlash.flashNow{
   border:1px solid #ccc;border-radius:12px
 }
 
-/* iOS入力中もPBヘッダー＋タブを画面上部に残す */
-body.talkKeyboardOpen{
-  overflow:hidden!important;
-}
-body.talkKeyboardOpen #appScreen{
-  position:fixed!important;
-  inset:0 auto auto 0!important;
-  width:100%!important;
-  height:var(--pb-visible-height,100dvh)!important;
-  min-height:0!important;
-  max-height:var(--pb-visible-height,100dvh)!important;
-  overflow:hidden!important;
-}
-body.talkKeyboardOpen #appScreen > header,
-body.talkKeyboardOpen #appScreen > .tabs{
-  flex-shrink:0!important;
-}
-body.talkKeyboardOpen #talkPage{
-  flex:1 1 auto!important;
-  min-height:0!important;
-  overflow:hidden!important;
-}
+/* iOS/Simeji入力中はPB全体を固定せず、OS側のリサイズに任せる。
+   固定すると、複数行入力やキーボード再配置の途中で入力欄だけが
+   画面上部へ移動し、大きな余白が残ることがある。 */
 /* 送信中を視覚的に明確化 */
 #sendMessage.sending{
   opacity:.55!important;
@@ -4767,7 +4748,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
-<div class="updateCard"><div class="updateVersion">v3.9.7</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>トークを上へスクロールした際、画面下部の矢印から最新メッセージへ戻れるよう改善</li><li>メッセージ入力欄が入力内容に合わせて複数行へ伸びるよう改善</li><li>Todoの当日通知から、チェックボックスで完了処理を開始できるよう対応</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.9.8</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iOS/Simejiで入力中に画面上部へずれることがある問題を改善</li><li>複数行入力時の高さ再計算を安定化</li></ul></div><div class="updateCard"><div class="updateVersion">v3.9.7</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>トークを上へスクロールした際、画面下部の矢印から最新メッセージへ戻れるよう改善</li><li>メッセージ入力欄が入力内容に合わせて複数行へ伸びるよう改善</li><li>Todoの当日通知から、チェックボックスで完了処理を開始できるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.6</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iPhoneでキーボードを開閉した際、画面位置や表示領域が一時的に崩れた場合に自動復帰するよう改善</li><li>Simejiなどで一時的な画面サイズが報告された場合は、PB全体をそのサイズに固定しないよう調整</li></ul></div><div class="updateCard"><div class="updateVersion">v3.9.5</div><div class="updateDate">2026/11/25</div><ul class="updateItems"><li>Todoを一時的に保留できる「保留」機能を追加。保留中のTodoは月別一覧の下にまとめて表示し、保留解除できるよう対応</li><li>保留中のTodoは朝の期限通知と仕事Todoレポートの対象外になるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.4</div><div class="updateDate">2026/11/17</div><ul class="updateItems"><li>記録に「2人のこと・仕事・家のこと・その他」のカテゴリを追加し、カード表示と絞り込みに対応</li><li>仕事Todoをレポート対象外に設定し、対象外一覧から戻せる機能を追加</li><li>繰り返しTodoのレポート設定を「今回だけ・今後も」から選べるよう対応</li><li>土曜・日曜・祝日は、仕事Todoの「本日期限」と「期限超過」をお知らせに表示しないよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
@@ -5435,7 +5416,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.9.7";
+const APP_VERSION="3.9.8";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -7010,7 +6991,9 @@ function resizeMessageInput(){
   /* LINEのように入力内容に合わせて伸ばす。極端な長文だけは
      一覧を完全に隠さないよう、端末の表示領域に応じて上限を設ける。 */
   const maxHeight=Math.min(300,Math.max(160,Math.floor(window.innerHeight*.42)));
-  input.style.height="auto";
+  /* autoのままだと、visualViewportの再配置中に前回の高さを拾って
+     2行目以降の伸縮が一段遅れることがある。0pxから毎回測り直す。 */
+  input.style.height="0px";
   input.style.maxHeight=`${maxHeight}px`;
   const nextHeight=Math.min(maxHeight,Math.max(40,input.scrollHeight));
   input.style.height=`${nextHeight}px`;
@@ -7025,8 +7008,6 @@ function syncTalkKeyboardViewport(){
      is opening. Do not pin the whole app to that transient value. */
   const keyboardOpen=!!(focused&&vv&&visibleHeight>320&&visibleHeight<window.innerHeight*0.88);
   if(keyboardOpen){
-    document.body.classList.add("talkKeyboardOpen");
-    document.documentElement.style.setProperty("--pb-visible-height",`${Math.round(visibleHeight)}px`);
     resizeMessageInput();
     if(!talkKeyboardViewportOpen){
       talkKeyboardViewportOpen=true;
@@ -7038,8 +7019,6 @@ function syncTalkKeyboardViewport(){
   }else{
     talkKeyboardViewportOpen=false;
     clearTimeout(talkKeyboardViewportTimer);
-    document.body.classList.remove("talkKeyboardOpen");
-    document.documentElement.style.removeProperty("--pb-visible-height");
   }
 }
 if(window.visualViewport){
