@@ -241,7 +241,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 #replyBar,#editBar{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:6px 11px;background:#eee;border-top:1px solid #ddd;font-size:11px}
 #replyBar button,#editBar button{border:0;background:none;font-size:18px}
 .composer{flex-shrink:0;display:flex;align-items:flex-end;gap:7px;padding:7px 9px calc(7px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #ddd}
-.composer textarea{flex:1;resize:none;min-height:40px;max-height:95px;border:1px solid #ccc;border-radius:19px;padding:9px 13px;font-size:16px}
+.composer textarea{flex:1;resize:none;min-height:40px;max-height:300px;overflow-y:hidden;border:1px solid #ccc;border-radius:19px;padding:9px 13px;font-size:16px;line-height:1.35}
 .send{flex-shrink:0;width:41px;height:41px;border:0;border-radius:50%;background:#111;color:#fff;font-size:17px}
 
 
@@ -2287,12 +2287,22 @@ body.talkKeyboardOpen #appScreen{
 }
 body.talkKeyboardOpen #appScreen > header,
 body.talkKeyboardOpen #appScreen > .tabs{
+  flex:0 0 auto!important;
   flex-shrink:0!important;
+  position:relative!important;
+  z-index:40!important;
+  visibility:visible!important;
+  opacity:1!important;
 }
 body.talkKeyboardOpen #talkPage{
   flex:1 1 auto!important;
   min-height:0!important;
   overflow:hidden!important;
+}
+body.talkKeyboardOpen #talkPage .composer{
+  flex:0 0 auto!important;
+  position:relative!important;
+  z-index:35!important;
 }
 
 /* 送信中を視覚的に明確化 */
@@ -2985,8 +2995,7 @@ body.night-mode #schedulePage .monthNav{
   color:#e8eaed!important;
 }
 body.night-mode #schedulePage .dayCell.selected{
-  outline-color:#7f8996!important;
-}
+  outline-color:#7f8996!important;}
 body.night-mode #schedulePage .dayCell.today .dayNumber{
   background:var(--pb-accent)!important;
   color:#fff!important;
@@ -2995,7 +3004,8 @@ body.night-mode #schedulePage .scheduleCard{
   background:var(--pb-surface)!important;
   color:var(--pb-text)!important;
 }
-body.night-mode #schedulePage .scheduleTitle{color:#edf0f3!important}body.night-mode #schedulePage .scheduleTime,
+body.night-mode #schedulePage .scheduleTitle{color:#edf0f3!important}
+body.night-mode #schedulePage .scheduleTime,
 body.night-mode #schedulePage .scheduleMemo,
 body.night-mode #schedulePage .scheduleOwner{
   color:#b8bec6!important;
@@ -3984,8 +3994,7 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 }
 .talkImageViewerHint{
   flex:0 0 auto;
-  padding:8px 10px calc(9px + env(safe-area-inset-bottom));
-  text-align:center;
+  padding:8px 10px calc(9px + env(safe-area-inset-bottom));  text-align:center;
   background:rgba(0,0,0,.88);
   color:#aaa;
   font-size:10px;
@@ -3994,7 +4003,8 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 
 /* v3.7.5i 記録タイムライン */
 #recordView{display:flex;flex-direction:column;min-height:0;flex:1;background:var(--pb-page-bg,#f7f7f8)}
-.recordToolbar{flex-shrink:0;padding:8px 10px 7px;background:#fff;border-bottom:1px solid #e8e8e8}.recordMonthRow{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px}
+.recordToolbar{flex-shrink:0;padding:8px 10px 7px;background:#fff;border-bottom:1px solid #e8e8e8}
+.recordMonthRow{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px}
 .recordMonthRow button{border:0;background:none;font-size:24px;color:#555;padding:5px}
 #recordMonthTitle{text-align:center;font-weight:800;font-size:16px}
 .recordControls{display:flex;align-items:center;gap:7px;margin-top:6px}
@@ -4765,6 +4775,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
+<div class="updateCard"><div class="updateVersion">v3.9.7</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iPhoneでキーボード表示中も、上部のタブ切り替えが残るようレイアウトを安定化</li><li>メッセージ入力欄が入力内容に合わせて複数行へ伸びるよう改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.6</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iPhoneでキーボードを開閉した際、画面位置や表示領域が一時的に崩れた場合に自動復帰するよう改善</li><li>Simejiなどで一時的な画面サイズが報告された場合は、PB全体をそのサイズに固定しないよう調整</li></ul></div><div class="updateCard"><div class="updateVersion">v3.9.5</div><div class="updateDate">2026/11/25</div><ul class="updateItems"><li>Todoを一時的に保留できる「保留」機能を追加。保留中のTodoは月別一覧の下にまとめて表示し、保留解除できるよう対応</li><li>保留中のTodoは朝の期限通知と仕事Todoレポートの対象外になるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.4</div><div class="updateDate">2026/11/17</div><ul class="updateItems"><li>記録に「2人のこと・仕事・家のこと・その他」のカテゴリを追加し、カード表示と絞り込みに対応</li><li>仕事Todoをレポート対象外に設定し、対象外一覧から戻せる機能を追加</li><li>繰り返しTodoのレポート設定を「今回だけ・今後も」から選べるよう対応</li><li>土曜・日曜・祝日は、仕事Todoの「本日期限」と「期限超過」をお知らせに表示しないよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
@@ -4982,8 +4993,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
       <button id="testBadgeOne" type="button">バッジ1テスト</button>
       <button id="clearBadgeTest" type="button">バッジ解除</button>
       <button id="testNotice" type="button">お知らせテスト</button>
-    </div>
-    <div class="settingsNote">切り分け用です。badgetest=1 は未読判定をせず、ホーム画面バッジを強制的に「1」にします。</div>
+    </div>    <div class="settingsNote">切り分け用です。badgetest=1 は未読判定をせず、ホーム画面バッジを強制的に「1」にします。</div>
 
     <div class="settingsGroup">音声通話</div>
     <button id="resetVoiceRoom" class="dangerButton">音声通話をリセット</button>
@@ -4992,6 +5002,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
     </div>
   </div>
 </div>
+
 
 <div id="soloEditModal" class="modalOverlay hidden">
   <div class="modal">
@@ -5432,7 +5443,7 @@ let appInitialized=false, hiddenAt=0;
 const REACTION_REGULAR=["👍","❤️","🤣","😮","😢","🥺","🤔","🥰"];
 const REACTION_MORE=["😊","😆","😂","😅","😇","😎","😙","😘","😍","💕","😌","😭","😩","🤭","😳","🤫","👀","😑","🙄","🙏","👏","🙌","🎉"];
 const REACTIONS=[...REACTION_REGULAR,...REACTION_MORE];
-const APP_VERSION="3.9.6";
+const APP_VERSION="3.9.7";
 
 const urlParams=new URLSearchParams(location.search);
 const shortcutBadgeCheck=urlParams.get("badgecheck")==="1";
@@ -5819,7 +5830,10 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)stopTyping(
 window.addEventListener("pagehide",stopTyping);
 $("camoInput")?.addEventListener("input",()=>{$("camoInput").value.trim()?pulseTyping():stopTyping()});
 
-$("messageInput")?.addEventListener("input",()=>{$("messageInput").value.trim()?pulseTyping():stopTyping()});
+$("messageInput")?.addEventListener("input",()=>{
+  resizeMessageInput();
+  $("messageInput").value.trim()?pulseTyping():stopTyping();
+});
 
 /* PIN */
 function updateDots(){ document.querySelectorAll(".pinDot").forEach((d,i)=>d.classList.toggle("on",i<pin.length)); }
@@ -5978,8 +5992,7 @@ function lockToPin(){
 
   // v3.7.3a: relock must leave every hidden/decoy mode before showing PIN.
   stealthReadMode=false;
-  document.body.classList.remove("stealth-read-mode");
-  camouflageMode=false;
+  document.body.classList.remove("stealth-read-mode");  camouflageMode=false;
   decoyMode="";
 
   pinPassed=false;
@@ -5993,6 +6006,7 @@ function lockToPin(){
   $("miniLocationPanel")?.classList.add("hidden");
   $("savedMessagesPanel")?.classList.add("hidden");
   $("notificationsPanel")?.classList.add("hidden");
+
   ["appScreen","camoScreen","newsScreen","weatherScreen","teamsScreen",
    "notesDecoyScreen","pcNotepadScreen","loginScreen","camoLoginScreen"]
     .forEach(id=>$(id)?.classList.add("hidden"));
@@ -6977,8 +6991,7 @@ document.querySelectorAll("[data-datefilter]").forEach(b=>b.onclick=()=>{
   }else if(b.dataset.datefilter==="yesterday"){
     const d=new Date(now);d.setDate(d.getDate()-1);const r=localDayRange(d);applyTalkDateFilter(r.start,r.end,"昨日のトーク");
   }else{
-    const end=new Date(now);end.setHours(23,59,59,999);
-    const start=new Date(now);start.setDate(start.getDate()-6);start.setHours(0,0,0,0);
+    const end=new Date(now);end.setHours(23,59,59,999);    const start=new Date(now);start.setDate(start.getDate()-6);start.setHours(0,0,0,0);
     applyTalkDateFilter(start,new Date(end.getTime()+1),"直近7日のトーク");
   }
   $("dateFilterModal").classList.add("hidden");
@@ -6991,8 +7004,21 @@ $("applyCustomDate").onclick=()=>{
 };
 
 
+
 let talkKeyboardViewportOpen=false;
 let talkKeyboardViewportTimer=null;
+function resizeMessageInput(){
+  const input=$("messageInput");
+  if(!input)return;
+  /* LINEのように入力内容に合わせて伸ばす。極端な長文だけは
+     一覧を完全に隠さないよう、端末の表示領域に応じて上限を設ける。 */
+  const maxHeight=Math.min(300,Math.max(160,Math.floor(window.innerHeight*.42)));
+  input.style.height="auto";
+  input.style.maxHeight=`${maxHeight}px`;
+  const nextHeight=Math.min(maxHeight,Math.max(40,input.scrollHeight));
+  input.style.height=`${nextHeight}px`;
+  input.style.overflowY=input.scrollHeight>maxHeight?"auto":"hidden";
+}
 function syncTalkKeyboardViewport(){
   const vv=window.visualViewport;
   const input=$("messageInput");
@@ -7004,6 +7030,7 @@ function syncTalkKeyboardViewport(){
   if(keyboardOpen){
     document.body.classList.add("talkKeyboardOpen");
     document.documentElement.style.setProperty("--pb-visible-height",`${Math.round(visibleHeight)}px`);
+    resizeMessageInput();
     if(!talkKeyboardViewportOpen){
       talkKeyboardViewportOpen=true;
       clearTimeout(talkKeyboardViewportTimer);
@@ -7515,6 +7542,7 @@ $("cancelReply").onclick=()=>{
 };
 function editMessage(data){
   replyTarget=null;$("replyBar").classList.add("hidden");editingMessage=data;$("messageInput").value=data.text||"";
+  resizeMessageInput();
   $("editBar").classList.remove("hidden");$("messageInput").focus();
 }
 $("cancelEdit").onclick=()=>{
@@ -7693,6 +7721,7 @@ async function sendMessage(){
     lastSuccessfulSendAt=Date.now();
 
     input.value="";
+    resizeMessageInput();
     replyTarget=null;
     $("replyBar").classList.add("hidden");
     stopTyping();
@@ -7961,8 +7990,7 @@ async function fetchWeather(lat,lon,label){
     $("weatherHumidity").textContent=`${d.current.relative_humidity_2m??"--"}%`;
     $("weatherWind").textContent=`${Math.round((d.current.wind_speed_10m||0)/3.6*10)/10} m/s`;
 
-    const currentHour=new Date(d.current.time).getHours();
-    let start=d.hourly.time.findIndex(t=>new Date(t).getHours()===currentHour&&new Date(t)>=new Date(d.current.time.slice(0,13)+":00"));
+    const currentHour=new Date(d.current.time).getHours();    let start=d.hourly.time.findIndex(t=>new Date(t).getHours()===currentHour&&new Date(t)>=new Date(d.current.time.slice(0,13)+":00"));
     if(start<0)start=0;
     $("weatherHourly").innerHTML="";
     for(let i=start;i<Math.min(start+12,d.hourly.time.length);i++){
@@ -7990,7 +8018,8 @@ function setWeatherModeButtons(mode){
   weatherMode=mode;
   $("weatherFukuoka").classList.toggle("active",mode==="fukuoka");
   $("weatherCurrent").classList.toggle("active",mode==="current");
-}function loadWeather(mode="fukuoka"){
+}
+function loadWeather(mode="fukuoka"){
   if(mode==="fukuoka"){
     setWeatherModeButtons("fukuoka");
     fetchWeather(FUKUOKA.lat,FUKUOKA.lon,FUKUOKA.label);
@@ -8960,8 +8989,7 @@ function todoDate(value){
 }
 function todoDateLabel(value){
   const d=todoDate(value);if(!d)return "－";
-  return d.toLocaleDateString("ja-JP",{year:"numeric",month:"numeric",day:"numeric",weekday:"short"});
-}
+  return d.toLocaleDateString("ja-JP",{year:"numeric",month:"numeric",day:"numeric",weekday:"short"});}
 function todoShortDateLabel(value){const d=todoDate(value);return d?d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"}):"期限なし"}
 function todoItemsInDueOrder(items){return (Array.isArray(items)?items:[]).map((item,sourceIndex)=>({item,sourceIndex})).sort((a,b)=>(Number(!!a.item.done)-Number(!!b.item.done))||String(a.item.dueDate||"9999").localeCompare(String(b.item.dueDate||"9999"))||a.sourceIndex-b.sourceIndex)}
 function nearestTodoItem(items){const undone=(Array.isArray(items)?items:[]).map((item,index)=>({item,index})).filter(x=>!x.item.done);if(!undone.length)return null;const dated=undone.filter(x=>x.item.dueDate).sort((a,b)=>String(a.item.dueDate).localeCompare(String(b.item.dueDate))||a.index-b.index);return (dated[0]||undone[0]).item}
@@ -8989,7 +9017,8 @@ function todoMillis(t,key){return t?.[key]?.toMillis?.()??((t?.[key]?.seconds||0
 function todoEffectiveSortDue(t){const next=nearestTodoItem(t?.items);return next?.dueDate||t?.revisedDueDate||t?.initialDueDate||"9999"}
 function listenTodos(){
   if(unsubscribeTodos)unsubscribeTodos();
-  unsubscribeTodos=onSnapshot(query(collection(db,"todos"),orderBy("createdAt","desc")),snap=>{    todos=snap.docs.map(d=>({id:d.id,...d.data()})).filter(canSeeTodo);
+  unsubscribeTodos=onSnapshot(query(collection(db,"todos"),orderBy("createdAt","desc")),snap=>{
+    todos=snap.docs.map(d=>({id:d.id,...d.data()})).filter(canSeeTodo);
     if(notesViewMode==="todos")renderTodos();
     maybeShowTodoReminders();
   },e=>{
@@ -9959,7 +9988,6 @@ function renderSelectedDay(){
 
       const edit=document.createElement("button");edit.textContent="編集";
       edit.onclick=e=>{e.stopPropagation();popup.classList.add("hidden");openScheduleEditor(s)};
-
       const del=document.createElement("button");del.className="danger";del.textContent="削除";
       del.onclick=async e=>{
         e.stopPropagation();
@@ -9989,6 +10017,7 @@ function renderSelectedDay(){
     (s.comments||[]).forEach(cm=>{
       const cr=document.createElement("div");cr.className="comment scheduleCommentRow";
       const body=document.createElement("div");body.className="scheduleCommentBody";
+
       const meta=document.createElement("div");meta.className="commentMeta";
       meta.textContent=`${cm.uid===currentUID?"自分":cm.senderId||""}　${cm.createdAt?new Date(cm.createdAt).toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}):""}`;
 
@@ -10958,8 +10987,7 @@ function renderVoiceSnapshot(d){
     return;
   }
 
-  if(voiceJoined){
-    $("voiceBar").classList.remove("hidden");
+  if(voiceJoined){    $("voiceBar").classList.remove("hidden");
     setVoiceBarMode("connected",d.status==="connected"?"通話中":"接続中…");
   }else hideVoiceBar();
 }
@@ -10987,7 +11015,8 @@ document.addEventListener("visibilitychange",async()=>{
 
 let pbResumeHiddenAt=0;
 let pbLastRecoveryAt=0;
-function reconnectPBListeners(){  if(!auth.currentUser||!pinPassed||document.hidden)return;
+function reconnectPBListeners(){
+  if(!auth.currentUser||!pinPassed||document.hidden)return;
   listenMessages();
   listenTyping();
   listenReadStates();
