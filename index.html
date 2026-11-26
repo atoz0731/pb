@@ -237,7 +237,7 @@ header{flex-shrink:0;background:#111;color:#fff;padding:calc(10px + env(safe-are
 .popupActions{display:flex;gap:10px}
 .popupActions button{border:0;background:none;color:#555;font-size:11px;padding:3px 0}
 
-#newMessageButton{position:absolute;left:50%;bottom:calc(69px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;border:0;border-radius:20px;padding:8px 14px;background:#111;color:#fff;font-size:12px;font-weight:700;box-shadow:0 3px 12px rgba(0,0,0,.2);white-space:nowrap}
+#newMessageButton{position:absolute;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;width:42px;height:42px;border:0;border-radius:50%;padding:0;background:#111;color:#fff;font-size:24px;font-weight:700;line-height:42px;box-shadow:0 3px 12px rgba(0,0,0,.2);white-space:nowrap}
 #replyBar,#editBar{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:6px 11px;background:#eee;border-top:1px solid #ddd;font-size:11px}
 #replyBar button,#editBar button{border:0;background:none;font-size:18px}
 .composer{flex-shrink:0;display:flex;align-items:flex-end;gap:7px;padding:7px 9px calc(7px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #ddd}
@@ -2287,24 +2287,13 @@ body.talkKeyboardOpen #appScreen{
 }
 body.talkKeyboardOpen #appScreen > header,
 body.talkKeyboardOpen #appScreen > .tabs{
-  flex:0 0 auto!important;
   flex-shrink:0!important;
-  position:relative!important;
-  z-index:40!important;
-  visibility:visible!important;
-  opacity:1!important;
 }
 body.talkKeyboardOpen #talkPage{
   flex:1 1 auto!important;
   min-height:0!important;
   overflow:hidden!important;
 }
-body.talkKeyboardOpen #talkPage .composer{
-  flex:0 0 auto!important;
-  position:relative!important;
-  z-index:35!important;
-}
-
 /* 送信中を視覚的に明確化 */
 #sendMessage.sending{
   opacity:.55!important;
@@ -2995,7 +2984,8 @@ body.night-mode #schedulePage .monthNav{
   color:#e8eaed!important;
 }
 body.night-mode #schedulePage .dayCell.selected{
-  outline-color:#7f8996!important;}
+  outline-color:#7f8996!important;
+}
 body.night-mode #schedulePage .dayCell.today .dayNumber{
   background:var(--pb-accent)!important;
   color:#fff!important;
@@ -3005,8 +2995,7 @@ body.night-mode #schedulePage .scheduleCard{
   color:var(--pb-text)!important;
 }
 body.night-mode #schedulePage .scheduleTitle{color:#edf0f3!important}
-body.night-mode #schedulePage .scheduleTime,
-body.night-mode #schedulePage .scheduleMemo,
+body.night-mode #schedulePage .scheduleTime,body.night-mode #schedulePage .scheduleMemo,
 body.night-mode #schedulePage .scheduleOwner{
   color:#b8bec6!important;
 }
@@ -3994,7 +3983,8 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 }
 .talkImageViewerHint{
   flex:0 0 auto;
-  padding:8px 10px calc(9px + env(safe-area-inset-bottom));  text-align:center;
+  padding:8px 10px calc(9px + env(safe-area-inset-bottom));
+  text-align:center;
   background:rgba(0,0,0,.88);
   color:#aaa;
   font-size:10px;
@@ -4004,8 +3994,7 @@ body.night-mode .noteViewerMeta{color:#aeb4bb!important}
 /* v3.7.5i 記録タイムライン */
 #recordView{display:flex;flex-direction:column;min-height:0;flex:1;background:var(--pb-page-bg,#f7f7f8)}
 .recordToolbar{flex-shrink:0;padding:8px 10px 7px;background:#fff;border-bottom:1px solid #e8e8e8}
-.recordMonthRow{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px}
-.recordMonthRow button{border:0;background:none;font-size:24px;color:#555;padding:5px}
+.recordMonthRow{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px}.recordMonthRow button{border:0;background:none;font-size:24px;color:#555;padding:5px}
 #recordMonthTitle{text-align:center;font-weight:800;font-size:16px}
 .recordControls{display:flex;align-items:center;gap:7px;margin-top:6px}
 .recordFilters{display:flex;align-items:center;gap:5px;flex:1;min-width:0}
@@ -4604,7 +4593,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
     <div id="messageList"></div>
   </div>
 
-  <button id="newMessageButton" class="hidden">↓ 新着メッセージ</button>
+  <button id="newMessageButton" class="hidden" aria-label="最新メッセージへ移動" title="最新メッセージへ移動">↓</button>
 
   <div id="replyBar" class="hidden"><span id="replyText"></span><button id="cancelReply">×</button></div>
   <div id="editBar" class="hidden"><span>メッセージを編集中</span><button id="cancelEdit">×</button></div>
@@ -4775,7 +4764,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 </div>
 
 <div id="updatesPage" class="page hidden"><div class="scroll">
-<div class="updateCard"><div class="updateVersion">v3.9.7</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iPhoneでキーボード表示中も、上部のタブ切り替えが残るようレイアウトを安定化</li><li>メッセージ入力欄が入力内容に合わせて複数行へ伸びるよう改善</li></ul></div>
+<div class="updateCard"><div class="updateVersion">v3.9.7</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>トークを上へスクロールした際、画面下部の矢印から最新メッセージへ戻れるよう改善</li><li>メッセージ入力欄が入力内容に合わせて複数行へ伸びるよう改善</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.6</div><div class="updateDate">2026/11/27</div><ul class="updateItems"><li>iPhoneでキーボードを開閉した際、画面位置や表示領域が一時的に崩れた場合に自動復帰するよう改善</li><li>Simejiなどで一時的な画面サイズが報告された場合は、PB全体をそのサイズに固定しないよう調整</li></ul></div><div class="updateCard"><div class="updateVersion">v3.9.5</div><div class="updateDate">2026/11/25</div><ul class="updateItems"><li>Todoを一時的に保留できる「保留」機能を追加。保留中のTodoは月別一覧の下にまとめて表示し、保留解除できるよう対応</li><li>保留中のTodoは朝の期限通知と仕事Todoレポートの対象外になるよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.4</div><div class="updateDate">2026/11/17</div><ul class="updateItems"><li>記録に「2人のこと・仕事・家のこと・その他」のカテゴリを追加し、カード表示と絞り込みに対応</li><li>仕事Todoをレポート対象外に設定し、対象外一覧から戻せる機能を追加</li><li>繰り返しTodoのレポート設定を「今回だけ・今後も」から選べるよう対応</li><li>土曜・日曜・祝日は、仕事Todoの「本日期限」と「期限超過」をお知らせに表示しないよう対応</li></ul></div>
 <div class="updateCard"><div class="updateVersion">v3.9.3</div><div class="updateDate">2026/11/9</div><ul class="updateItems"><li>Todoの目標日順で月が変わる位置に、控えめな点線と月表示を追加</li></ul></div>
@@ -4993,7 +4982,8 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
       <button id="testBadgeOne" type="button">バッジ1テスト</button>
       <button id="clearBadgeTest" type="button">バッジ解除</button>
       <button id="testNotice" type="button">お知らせテスト</button>
-    </div>    <div class="settingsNote">切り分け用です。badgetest=1 は未読判定をせず、ホーム画面バッジを強制的に「1」にします。</div>
+    </div>
+    <div class="settingsNote">切り分け用です。badgetest=1 は未読判定をせず、ホーム画面バッジを強制的に「1」にします。</div>
 
     <div class="settingsGroup">音声通話</div>
     <button id="resetVoiceRoom" class="dangerButton">音声通話をリセット</button>
@@ -5002,7 +4992,6 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
     </div>
   </div>
 </div>
-
 
 <div id="soloEditModal" class="modalOverlay hidden">
   <div class="modal">
@@ -5992,7 +5981,8 @@ function lockToPin(){
 
   // v3.7.3a: relock must leave every hidden/decoy mode before showing PIN.
   stealthReadMode=false;
-  document.body.classList.remove("stealth-read-mode");  camouflageMode=false;
+  document.body.classList.remove("stealth-read-mode");
+  camouflageMode=false;
   decoyMode="";
 
   pinPassed=false;
@@ -6002,8 +5992,7 @@ function lockToPin(){
   $("headerMenu")?.classList.add("hidden");
   closeAuxWindows();
   hideSensitiveOverlaysForPin();
-  $("decoyMenu")?.classList.add("hidden");
-  $("miniLocationPanel")?.classList.add("hidden");
+  $("decoyMenu")?.classList.add("hidden");  $("miniLocationPanel")?.classList.add("hidden");
   $("savedMessagesPanel")?.classList.add("hidden");
   $("notificationsPanel")?.classList.add("hidden");
 
@@ -6910,7 +6899,12 @@ $("messages").addEventListener("scroll",()=>{
   if(adjustingMessageMenu) return;
   const near=isNearBottom();
   followLatestMode=near;
-  if(near){$("newMessageButton").classList.add("hidden");markTalkRead();clearUnreadTalk()}
+  if(near){
+    $("newMessageButton").classList.add("hidden");
+    markTalkRead();clearUnreadTalk();
+  }else if($('messages').scrollHeight>$('messages').clientHeight+120){
+    $("newMessageButton").classList.remove("hidden");
+  }
 },{passive:true});
 
 
@@ -6991,13 +6985,13 @@ document.querySelectorAll("[data-datefilter]").forEach(b=>b.onclick=()=>{
   }else if(b.dataset.datefilter==="yesterday"){
     const d=new Date(now);d.setDate(d.getDate()-1);const r=localDayRange(d);applyTalkDateFilter(r.start,r.end,"昨日のトーク");
   }else{
-    const end=new Date(now);end.setHours(23,59,59,999);    const start=new Date(now);start.setDate(start.getDate()-6);start.setHours(0,0,0,0);
+    const end=new Date(now);end.setHours(23,59,59,999);
+    const start=new Date(now);start.setDate(start.getDate()-6);start.setHours(0,0,0,0);
     applyTalkDateFilter(start,new Date(end.getTime()+1),"直近7日のトーク");
   }
   $("dateFilterModal").classList.add("hidden");
 });
-$("applyCustomDate").onclick=()=>{
-  const v=$("customFilterDate").value;if(!v)return;
+$("applyCustomDate").onclick=()=>{  const v=$("customFilterDate").value;if(!v)return;
   const d=new Date(`${v}T00:00:00`),r=localDayRange(d);
   applyTalkDateFilter(r.start,r.end,d.toLocaleDateString("ja-JP",{year:"numeric",month:"long",day:"numeric"}));
   $("dateFilterModal").classList.add("hidden");
@@ -7990,13 +7984,13 @@ async function fetchWeather(lat,lon,label){
     $("weatherHumidity").textContent=`${d.current.relative_humidity_2m??"--"}%`;
     $("weatherWind").textContent=`${Math.round((d.current.wind_speed_10m||0)/3.6*10)/10} m/s`;
 
-    const currentHour=new Date(d.current.time).getHours();    let start=d.hourly.time.findIndex(t=>new Date(t).getHours()===currentHour&&new Date(t)>=new Date(d.current.time.slice(0,13)+":00"));
+    const currentHour=new Date(d.current.time).getHours();
+    let start=d.hourly.time.findIndex(t=>new Date(t).getHours()===currentHour&&new Date(t)>=new Date(d.current.time.slice(0,13)+":00"));
     if(start<0)start=0;
     $("weatherHourly").innerHTML="";
     for(let i=start;i<Math.min(start+12,d.hourly.time.length);i++){
       const tm=new Date(d.hourly.time[i]);
-      const wi=weatherInfo(d.hourly.weather_code[i]);
-      const el=document.createElement("div");el.className="hourItem";
+      const wi=weatherInfo(d.hourly.weather_code[i]);      const el=document.createElement("div");el.className="hourItem";
       el.innerHTML=`<div>${tm.getHours()}時</div><div class="hourIcon">${wi[1]}</div><div class="hourTemp">${Math.round(d.hourly.temperature_2m[i])}°</div><div>${d.hourly.precipitation_probability[i]??0}%</div>`;
       $("weatherHourly").appendChild(el);
     }
@@ -8989,13 +8983,13 @@ function todoDate(value){
 }
 function todoDateLabel(value){
   const d=todoDate(value);if(!d)return "－";
-  return d.toLocaleDateString("ja-JP",{year:"numeric",month:"numeric",day:"numeric",weekday:"short"});}
+  return d.toLocaleDateString("ja-JP",{year:"numeric",month:"numeric",day:"numeric",weekday:"short"});
+}
 function todoShortDateLabel(value){const d=todoDate(value);return d?d.toLocaleDateString("ja-JP",{month:"numeric",day:"numeric",weekday:"short"}):"期限なし"}
 function todoItemsInDueOrder(items){return (Array.isArray(items)?items:[]).map((item,sourceIndex)=>({item,sourceIndex})).sort((a,b)=>(Number(!!a.item.done)-Number(!!b.item.done))||String(a.item.dueDate||"9999").localeCompare(String(b.item.dueDate||"9999"))||a.sourceIndex-b.sourceIndex)}
 function nearestTodoItem(items){const undone=(Array.isArray(items)?items:[]).map((item,index)=>({item,index})).filter(x=>!x.item.done);if(!undone.length)return null;const dated=undone.filter(x=>x.item.dueDate).sort((a,b)=>String(a.item.dueDate).localeCompare(String(b.item.dueDate))||a.index-b.index);return (dated[0]||undone[0]).item}
 function shiftedTodoItemDue(value,sourceDue,targetDue){const itemDate=todoDate(value),from=todoDate(sourceDue),to=todoDate(targetDue);if(!itemDate||!from||!to)return value||"";itemDate.setDate(itemDate.getDate()+Math.round((to-from)/86400000));return `${itemDate.getFullYear()}-${String(itemDate.getMonth()+1).padStart(2,"0")}-${String(itemDate.getDate()).padStart(2,"0")}`}
-function updateTodoWeekdayHints(){
-  const initial=$("todoInitialDueInput")?.value||"",revised=$("todoRevisedDueInput")?.value||"";
+function updateTodoWeekdayHints(){  const initial=$("todoInitialDueInput")?.value||"",revised=$("todoRevisedDueInput")?.value||"";
   if($("todoInitialDueWeekday"))$("todoInitialDueWeekday").textContent=initial?`${todoDate(initial).toLocaleDateString("ja-JP",{weekday:"long"})}`:"";
   if($("todoRevisedDueWeekday"))$("todoRevisedDueWeekday").textContent=revised?`${todoDate(revised).toLocaleDateString("ja-JP",{weekday:"long"})}`:"";
 }
@@ -9988,13 +9982,13 @@ function renderSelectedDay(){
 
       const edit=document.createElement("button");edit.textContent="編集";
       edit.onclick=e=>{e.stopPropagation();popup.classList.add("hidden");openScheduleEditor(s)};
+
       const del=document.createElement("button");del.className="danger";del.textContent="削除";
       del.onclick=async e=>{
         e.stopPropagation();
         popup.classList.add("hidden");
         if(confirm("この予定を削除しますか？"))await deleteDoc(doc(db,"schedules",s.id));
       };
-
       dots.onclick=e=>{
         e.stopPropagation();
         document.querySelectorAll(".scheduleMainPopup,.scheduleCommentPopup").forEach(x=>{if(x!==popup)x.classList.add("hidden")});
@@ -10987,13 +10981,13 @@ function renderVoiceSnapshot(d){
     return;
   }
 
-  if(voiceJoined){    $("voiceBar").classList.remove("hidden");
+  if(voiceJoined){
+    $("voiceBar").classList.remove("hidden");
     setVoiceBarMode("connected",d.status==="connected"?"通話中":"接続中…");
   }else hideVoiceBar();
 }
 function listenVoiceRoom(){
-  if(unsubscribeVoice)unsubscribeVoice();
-  unsubscribeVoice=onSnapshot(voiceRoomRef,s=>renderVoiceSnapshot(s.data()));
+  if(unsubscribeVoice)unsubscribeVoice();  unsubscribeVoice=onSnapshot(voiceRoomRef,s=>renderVoiceSnapshot(s.data()));
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 
