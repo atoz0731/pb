@@ -1899,6 +1899,10 @@ body.pinLocked{
 .settingsModalBox{position:relative}
 .settingsCloseX{position:absolute;right:12px;top:10px;border:0;background:transparent;font-size:24px;line-height:1;z-index:2}
 #notificationsPanel .searchHeader{position:relative;padding-right:42px!important}
+#notificationsPanel #openPushSettingsFromNotifications{
+  position:absolute;right:43px;top:7px;width:32px;height:32px;
+  border:0;background:transparent;color:#fff;font-size:18px;line-height:32px;padding:0
+}
 #notificationsPanel #closeNotifications{position:absolute;right:9px;top:7px;width:32px;height:32px;border:0;background:transparent}
 .soundVolumeControl{display:flex;align-items:center;gap:7px}
 .soundVolumeControl select{min-width:58px;padding:6px;border:1px solid #ccc;border-radius:8px;background:#fff}
@@ -4792,6 +4796,7 @@ body.night-mode .todoNearestItem{background:#202938;color:#c7d1df}body.night-mod
 <div id="notificationsPanel" class="searchPanel hidden">
   <div class="searchHeader">
     <strong style="flex:1">お知らせ</strong>
+    <button id="openPushSettingsFromNotifications" type="button" aria-label="プッシュ通知設定" title="プッシュ通知設定">⚙️</button>
     <button id="closeNotifications" aria-label="閉じる">×</button>
   </div>
   <div id="notificationsList" class="searchResults"></div>
@@ -6535,11 +6540,14 @@ $("menuPersonalPage")?.addEventListener("click",()=>{
   location.href=u.toString();
 });
 
-$("openPushSettings")?.addEventListener("click",()=>{
+const openPBPushSettings=()=>{
   $("settingsModal")?.classList.add("hidden");
+  $("notificationsPanel")?.classList.add("hidden");
   forceStandbyOff();
   location.href=new URL("pb-push-settings.html",location.href).toString();
-});
+};
+$("openPushSettings")?.addEventListener("click",openPBPushSettings);
+$("openPushSettingsFromNotifications")?.addEventListener("click",openPBPushSettings);
 $("refreshFirestoreDiag")?.addEventListener("click",diagRender);
 $("copyFirestoreDiag")?.addEventListener("click",()=>{
   const v=$("firestoreDiagOutput")?.textContent||"";
